@@ -91,11 +91,15 @@ const UserMenu = () => {
 
       {isOpen && (
         <div 
-          className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
+          className="fixed right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
           style={{ 
             zIndex: 2147483647,
-            position: 'absolute',
-            isolation: 'isolate'
+            position: 'fixed',
+            top: '60px',
+            right: '16px',
+            isolation: 'isolate',
+            transform: 'translateZ(0)',
+            willChange: 'transform'
           }}
         >
           <div className="px-4 py-3 border-b border-gray-100">
