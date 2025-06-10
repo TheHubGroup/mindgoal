@@ -4,40 +4,18 @@ import { supabase } from '../lib/supabase'
 import { Profile } from '../types/profile'
 
 export const useProfile = () => {
-  const { user, bypassUser } = useAuth()
+  const { user } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (bypassUser) {
-      // Usar perfil del usuario bypass
-      const bypassProfile: Profile = {
-        id: bypassUser.id,
-        email: bypassUser.email,
-        nombre: bypassUser.profile.nombre,
-        apellido: bypassUser.profile.apellido,
-        grado: bypassUser.profile.grado,
-        nombre_colegio: bypassUser.profile.nombre_colegio,
-        ciudad: bypassUser.profile.ciudad,
-        pais: bypassUser.profile.pais,
-        edad: bypassUser.profile.edad,
-        sexo: bypassUser.profile.sexo,
-        avatar_url: bypassUser.profile.avatar_url || '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-      setProfile(bypassProfile)
-      setLoading(false)
-      return
-    }
-
     if (user && supabase) {
       fetchProfile()
     } else {
       setLoading(false)
     }
-  }, [user, bypassUser])
+  }, [user])
 
   const fetchProfile = async () => {
     if (!user || !supabase) return
@@ -65,47 +43,6 @@ export const useProfile = () => {
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (bypassUser) {
-      // Actualizar perfil bypass en localStorage
-      const updatedBypassUser = {
-        ...bypassUser,
-        profile: {
-          ...bypassUser.profile,
-          nombre: updates.nombre || bypassUser.profile.nombre,
-          apellido: updates.apellido || bypassUser.profile.apellido,
-          grado: updates.grado || bypassUser.profile.grado,
-          nombre_colegio: updates.nombre_colegio || bypassUser.profile.nombre_colegio,
-          ciudad: updates.ciudad || bypassUser.profile.ciudad,
-          pais: updates.pais || bypassUser.profile.pais,
-          edad: updates.edad || bypassUser.profile.edad,
-          sexo: updates.sexo || bypassUser.profile.sexo,
-          avatar_url: updates.avatar_url || bypassUser.profile.avatar_url
-        }
-      }
-
-      localStorage.setItem('bypassUser', JSON.stringify(updatedBypassUser))
-      
-      // Actualizar perfil local
-      const updatedProfile: Profile = {
-        id: bypassUser.id,
-        email: bypassUser.email,
-        nombre: updatedBypassUser.profile.nombre,
-        apellido: updatedBypassUser.profile.apellido,
-        grado: updatedBypassUser.profile.grado,
-        nombre_colegio: updatedBypassUser.profile.nombre_colegio,
-        ciudad: updatedBypassUser.profile.ciudad,
-        pais: updatedBypassUser.profile.pais,
-        edad: updatedBypassUser.profile.edad,
-        sexo: updatedBypassUser.profile.sexo,
-        avatar_url: updatedBypassUser.profile.avatar_url || '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-      
-      setProfile(updatedProfile)
-      return true
-    }
-
     if (!user || !supabase) return false
 
     try {
@@ -130,12 +67,6 @@ export const useProfile = () => {
   }
 
   const uploadAvatar = async (file: File) => {
-    if (bypassUser) {
-      // Para bypass, simular upload creando un URL local
-      const localUrl = URL.createObjectURL(file)
-      return localUrl
-    }
-
     if (!user || !supabase) return null
 
     try {

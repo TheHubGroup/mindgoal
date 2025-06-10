@@ -32,8 +32,6 @@ const LoginPage = () => {
           setError('Email o contraseña incorrectos')
         } else if (error.message.includes('Email not confirmed')) {
           setError('Por favor, confirma tu email antes de iniciar sesión')
-        } else if (error.message.includes('Usuario no encontrado en modo bypass')) {
-          setError('Usuario no encontrado. Por favor regístrate primero.')
         } else {
           setError(error.message || 'Error al iniciar sesión')
         }
@@ -140,15 +138,6 @@ const LoginPage = () => {
             >
               Regístrate aquí
             </Link>
-          </p>
-        </div>
-
-        {/* Demo Mode Notice */}
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-sm text-green-700 text-center">
-            <span className="font-semibold">🎯 Modo Demo Activo:</span><br/>
-            La aplicación funciona sin problemas de autenticación. 
-            Tus datos se guardan localmente.
           </p>
         </div>
 
