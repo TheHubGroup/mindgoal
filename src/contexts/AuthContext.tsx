@@ -2,31 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
 
-interface Profile {
-  id: string
-  user_id: string
-  email: string
-  first_name: string
-  last_name: string
-  grade?: string
-  school_name?: string
-  city?: string
-  country?: string
-  age?: number
-  gender?: string
-  avatar_url?: string
-  created_at: string
-}
-
 interface AuthContextType {
   user: User | null
-  profile: Profile | null
   session: Session | null
   loading: boolean
   signUp: (email: string, password: string, profileData: any) => Promise<{ error?: any }>
   signIn: (email: string, password: string) => Promise<{ error?: any }>
   signOut: () => Promise<void>
-  updateProfile: (updates: Partial<Profile>) => Promise<{ error?: any }>
+  bypassUser?: any
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -41,7 +24,6 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -53,15 +35,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
-      
-      if (session?.user) {
-        await fetchProfile(session.user.id)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setSession(session)
+        setUser(session?.user ?? null)
+      } catch (error) {
+        console.error('Error getting session:', error)
+      } finally {
+        setLoading(false)
       }
-      
-      setLoading(false)
     }
 
     getInitialSession()
@@ -69,15 +51,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email)
         setSession(session)
         setUser(session?.user ?? null)
-        
-        if (session?.user) {
-          await fetchProfile(session.user.id)
-        } else {
-          setProfile(null)
-        }
-        
         setLoading(false)
       }
     )
@@ -85,91 +61,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe()
   }, [])
 
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase!
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single()
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error)
-        return
-      }
-
-      setProfile(data)
-    } catch (error) {
-      console.error('Error in fetchProfile:', error)
-    }
-  }
-
   const signUp = async (email: string, password: string, profileData: any) => {
     if (!supabase) {
       return { error: { message: 'Supabase not configured' } }
     }
 
     try {
-      console.log('Starting signup process...')
+      console.log('🚀 Iniciando registro...')
       
-      // Sign up with Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: profileData.first_name,
-            last_name: profileData.last_name,
-          }
-        }
+      // Paso 1: Crear usuario en Supabase Auth (SIN metadata adicional)
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.toLowerCase().trim(),
+        password: password
       })
 
-      if (error) {
-        console.error('Auth signup error:', error)
-        return { error }
+      if (authError) {
+        console.error('❌ Error en auth.signUp:', authError)
+        return { error: authError }
       }
 
-      console.log('Auth signup successful:', data)
+      if (!authData.user) {
+        console.error('❌ No se creó el usuario')
+        return { error: { message: 'No se pudo crear el usuario' } }
+      }
 
-      // If user is created, create detailed profile
-      if (data.user) {
-        console.log('Creating profile for user:', data.user.id)
-        
+      console.log('✅ Usuario creado en auth:', authData.user.id)
+
+      // Paso 2: Crear perfil manualmente (después de que el usuario esté creado)
+      try {
         const profilePayload = {
-          id: data.user.id,
-          email: email.toLowerCase(),
-          first_name: profileData.first_name,
-          last_name: profileData.last_name,
-          grade: profileData.grade,
-          school_name: profileData.school_name,
-          city: profileData.city,
-          country: profileData.country,
-          age: profileData.age,
-          gender: profileData.gender,
-          avatar_url: profileData.avatar_url || '',
-          user_id: data.user.id
+          id: authData.user.id,
+          email: email.toLowerCase().trim(),
+          nombre: profileData.first_name || '',
+          apellido: profileData.last_name || '',
+          grado: profileData.grade || '',
+          nombre_colegio: profileData.school_name || '',
+          ciudad: profileData.city || '',
+          pais: profileData.country || 'Colombia',
+          edad: profileData.age || null,
+          sexo: profileData.gender || '',
+          avatar_url: ''
         }
 
-        console.log('Profile payload:', profilePayload)
+        console.log('📝 Creando perfil:', profilePayload)
 
-        const { data: profileResult, error: profileError } = await supabase
+        const { error: profileError } = await supabase
           .from('profiles')
           .insert(profilePayload)
-          .select()
-          .single()
 
         if (profileError) {
-          console.error('Error creating profile:', profileError)
-          // Don't return error here - user is created, profile can be updated later
-          console.warn('Profile creation failed, but user account was created successfully')
+          console.error('⚠️ Error creando perfil (no crítico):', profileError)
+          // No retornamos error aquí - el usuario se creó exitosamente
         } else {
-          console.log('Profile created successfully:', profileResult)
+          console.log('✅ Perfil creado exitosamente')
         }
+      } catch (profileError) {
+        console.error('⚠️ Error en creación de perfil:', profileError)
+        // No retornamos error - el usuario principal se creó
       }
 
       return { error: null }
     } catch (error: any) {
-      console.error('Signup error:', error)
+      console.error('❌ Error general en signUp:', error)
       return { error }
     }
   }
@@ -179,46 +132,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: { message: 'Supabase not configured' } }
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase().trim(),
+        password,
+      })
 
-    return { error }
+      return { error }
+    } catch (error: any) {
+      console.error('Error in signIn:', error)
+      return { error }
+    }
   }
 
   const signOut = async () => {
     if (!supabase) return
 
-    await supabase.auth.signOut()
-  }
-
-  const updateProfile = async (updates: Partial<Profile>) => {
-    if (!supabase || !user) {
-      return { error: { message: 'Not authenticated' } }
+    try {
+      await supabase.auth.signOut()
+    } catch (error) {
+      console.error('Error signing out:', error)
     }
-
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('user_id', user.id)
-
-    if (!error) {
-      setProfile(prev => prev ? { ...prev, ...updates } : null)
-    }
-
-    return { error }
   }
 
   const value = {
     user,
-    profile,
     session,
     loading,
     signUp,
     signIn,
     signOut,
-    updateProfile,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

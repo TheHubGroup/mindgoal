@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Clock, Sparkles, Eye, EyeOff, UserPlus, Camera, User, School, MapPin, Calendar, Users, AlertTriangle } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('')
@@ -52,34 +51,6 @@ const RegisterPage = () => {
         setAvatarPreview(e.target?.result as string)
       }
       reader.readAsDataURL(file)
-    }
-  }
-
-  const uploadAvatar = async (userId: string, file: File): Promise<string | null> => {
-    if (!supabase) return null
-
-    try {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${userId}.${fileExt}`
-      const filePath = `avatars/${fileName}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, { upsert: true })
-
-      if (uploadError) {
-        console.error('Error uploading avatar:', uploadError)
-        return null
-      }
-
-      const { data } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath)
-
-      return data.publicUrl
-    } catch (error: any) {
-      console.error('Error in uploadAvatar:', error)
-      return null
     }
   }
 
@@ -142,6 +113,8 @@ const RegisterPage = () => {
     setIsLoading(true)
 
     try {
+      console.log('🎯 Iniciando proceso de registro...')
+      
       // Prepare profile data
       const profileData = {
         first_name: nombre.trim(),
@@ -151,39 +124,42 @@ const RegisterPage = () => {
         city: ciudad.trim(),
         country: pais,
         age: Number(edad),
-        gender: sexo,
-        avatar_url: ''
+        gender: sexo
       }
 
-      // Sign up with Supabase Auth
-      const { error: signUpError } = await signUp(email.trim().toLowerCase(), password, profileData)
+      console.log('📋 Datos del perfil:', profileData)
+
+      // Sign up with simplified approach
+      const { error: signUpError } = await signUp(
+        email.trim().toLowerCase(), 
+        password, 
+        profileData
+      )
 
       if (signUpError) {
-        throw new Error(signUpError.message)
-      }
-
-      // Upload avatar if provided (after user creation)
-      if (avatarFile && supabase) {
-        // Get the current user to get their ID
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const avatarUrl = await uploadAvatar(user.id, avatarFile)
-          if (avatarUrl) {
-            // Update profile with avatar URL
-            await supabase
-              .from('profiles')
-              .update({ avatar_url: avatarUrl })
-              .eq('user_id', user.id)
-          }
+        console.error('❌ Error en registro:', signUpError)
+        
+        // Mensajes de error más específicos
+        if (signUpError.message?.includes('User already registered')) {
+          setError('Este email ya está registrado. Intenta iniciar sesión.')
+        } else if (signUpError.message?.includes('Invalid email')) {
+          setError('El formato del email no es válido')
+        } else if (signUpError.message?.includes('Password')) {
+          setError('La contraseña no cumple con los requisitos')
+        } else {
+          setError(signUpError.message || 'Error al crear la cuenta')
         }
+        return
       }
 
-      // Redirect to home
+      console.log('✅ Registro exitoso, redirigiendo...')
+      
+      // Success - redirect to home
       navigate('/')
       
     } catch (error: any) {
-      console.error('Registration error:', error)
-      setError(error.message || 'Error al crear la cuenta')
+      console.error('❌ Error inesperado:', error)
+      setError('Error inesperado. Por favor intenta de nuevo.')
     } finally {
       setIsLoading(false)
     }
