@@ -1,7 +1,7 @@
 import React from 'react'
 import { Plus } from 'lucide-react'
-import DraggableNote from './DraggableNote'
-import { TimelineNote } from '../lib/supabase'
+import DraggableTimelineNote from './DraggableTimelineNote'
+import { TimelineNote } from '../lib/timelineService'
 
 interface TimelineSectionProps {
   title: string
@@ -45,7 +45,7 @@ export default function TimelineSection({
 
       <div className="relative">
         {notes.map((note) => (
-          <DraggableNote
+          <DraggableTimelineNote
             key={note.id}
             note={note}
             onEdit={onEditNote}
