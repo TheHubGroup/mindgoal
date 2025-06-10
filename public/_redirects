@@ -1,0 +1,22 @@
+# Preserve assets with exact paths and MIME types
+/assets/*.js /assets/:splat 200!
+/assets/*.mjs /assets/:splat 200!
+/assets/*.css /assets/:splat 200!
+
+# Don't redirect any file with extension
+/*.js /:splat 200!
+/*.mjs /:splat 200!
+/*.css /:splat 200!
+/*.png /:splat 200!
+/*.jpg /:splat 200!
+/*.jpeg /:splat 200!
+/*.gif /:splat 200!
+/*.svg /:splat 200!
+/*.ico /:splat 200!
+/*.woff /:splat 200!
+/*.woff2 /:splat 200!
+/*.ttf /:splat 200!
+/*.eot /:splat 200!
+
+# SPA fallback for routes only (no file extensions)
+/* /index.html 200

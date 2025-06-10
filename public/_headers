@@ -1,0 +1,42 @@
+# JavaScript modules - highest priority
+/assets/*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.mjs
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# All JavaScript files
+*.js
+  Content-Type: application/javascript; charset=utf-8
+
+*.mjs
+  Content-Type: application/javascript; charset=utf-8
+
+*.jsx
+  Content-Type: application/javascript; charset=utf-8
+
+*.tsx
+  Content-Type: application/javascript; charset=utf-8
+
+*.ts
+  Content-Type: application/javascript; charset=utf-8
+
+# CSS files
+/assets/*.css
+  Content-Type: text/css; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+*.css
+  Content-Type: text/css; charset=utf-8
+
+# HTML files - no cache
+*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# Root index
+/
+  Cache-Control: no-cache, no-store, must-revalidate

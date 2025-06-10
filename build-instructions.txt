@@ -1,0 +1,22 @@
+INSTRUCCIONES RÁPIDAS PARA HOSTGATOR:
+
+1. En tu computadora:
+   - Abre terminal/cmd en la carpeta del proyecto
+   - Ejecuta: npm install
+   - Ejecuta: npm run build
+
+2. Se creará una carpeta llamada "dist"
+
+3. En HostGator:
+   - Ve a cPanel > Administrador de archivos
+   - Entra a public_html/
+   - BORRA todo lo que esté ahí
+   - SUBE TODO el contenido de la carpeta "dist"
+   - Sube también el archivo .htaccess
+
+4. ¡Listo! Tu sitio debería funcionar en tu dominio
+
+IMPORTANTE: 
+- NO subas las carpetas src/, node_modules/, ni package.json
+- SOLO sube el contenido de la carpeta "dist/"
+- El archivo .htaccess es necesario para que React funcione correctamente

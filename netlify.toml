@@ -1,0 +1,88 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# Headers for JavaScript modules - must come first
+[[headers]]
+  for = "/assets/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*.mjs"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "*.mjs"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "*.ts"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "*.jsx"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "*.tsx"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/assets/*.css"
+  [headers.values]
+    Content-Type = "text/css; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Content-Type = "text/css; charset=utf-8"
+
+# Prevent caching of HTML files
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Asset redirects - preserve original files with correct MIME types
+[[redirects]]
+  from = "/assets/*.js"
+  to = "/assets/:splat"
+  status = 200
+  force = false
+  headers = {Content-Type = "application/javascript; charset=utf-8"}
+
+[[redirects]]
+  from = "/assets/*.mjs"
+  to = "/assets/:splat"
+  status = 200
+  force = false
+  headers = {Content-Type = "application/javascript; charset=utf-8"}
+
+[[redirects]]
+  from = "/assets/*.css"
+  to = "/assets/:splat"
+  status = 200
+  force = false
+  headers = {Content-Type = "text/css; charset=utf-8"}
+
+# SPA fallback - must be last and should NOT apply to assets
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = [""], Country = [""], Language = [""]}
+  headers = {Cache-Control = "no-cache"}
