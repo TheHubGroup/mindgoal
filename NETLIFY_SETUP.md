@@ -5,13 +5,10 @@ La aplicación muestra "Supabase not configured" porque las variables de entorno
 
 ## Solución
 
-### 1. Obtener las credenciales de Supabase
+### 1. Credenciales de Supabase (ACTUALIZADAS)
 
-1. Ve a tu proyecto en [Supabase Dashboard](https://supabase.com/dashboard)
-2. Ve a **Settings** > **API**
-3. Copia los siguientes valores:
-   - **Project URL** (ejemplo: `https://xrmbcjkzqkfkmvwyjvlh.supabase.co`)
-   - **anon public** key (la clave larga que empieza con `eyJhbGciOiJIUzI1NiIs...`)
+**URL del proyecto:** `https://tcrzwztmwryjdnkvmwzu.supabase.co`
+**Clave anónima:** `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjcnp3enRtd3J5amRua3Ztd3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NzAxMzgsImV4cCI6MjA2NTE0NjEzOH0.LPj-QXKhLDPkzHowFWcLytPZEry87qY5n1GCuAuj9FA`
 
 ### 2. Configurar variables en Netlify
 
@@ -22,11 +19,11 @@ La aplicación muestra "Supabase not configured" porque las variables de entorno
 
    **Variable 1:**
    - Key: `VITE_SUPABASE_URL`
-   - Value: `https://xrmbcjkzqkfkmvwyjvlh.supabase.co` (tu URL real)
+   - Value: `https://tcrzwztmwryjdnkvmwzu.supabase.co`
 
    **Variable 2:**
    - Key: `VITE_SUPABASE_ANON_KEY`
-   - Value: `eyJhbGciOiJIUzI1NiIs...` (tu clave real)
+   - Value: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjcnp3enRtd3J5amRua3Ztd3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NzAxMzgsImV4cCI6MjA2NTE0NjEzOH0.LPj-QXKhLDPkzHowFWcLytPZEry87qY5n1GCuAuj9FA`
 
 ### 3. Redesplegar el sitio
 
@@ -43,14 +40,31 @@ La aplicación muestra "Supabase not configured" porque las variables de entorno
    - "Supabase URL: Configured"
    - "Supabase Anon Key: Configured"
 
+## Pasos Rápidos (Copia y Pega)
+
+### Variables para Netlify:
+
+```
+VITE_SUPABASE_URL=https://tcrzwztmwryjdnkvmwzu.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjcnp3enRtd3J5amRua3Ztd3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NzAxMzgsImV4cCI6MjA2NTE0NjEzOH0.LPj-QXKhLDPkzHowFWcLytPZEry87qY5n1GCuAuj9FA
+```
+
 ## Notas Importantes
 
-- Las variables deben empezar con `VITE_` para que Vite las incluya en el build
-- Después de agregar las variables, SIEMPRE debes redesplegar el sitio
-- No compartas las claves en repositorios públicos
+- ✅ Las credenciales ya están actualizadas con el nuevo proyecto de Supabase
+- ✅ Las variables deben empezar con `VITE_` para que Vite las incluya en el build
+- ✅ Después de agregar las variables, SIEMPRE debes redesplegar el sitio
+- ⚠️ No compartas las claves en repositorios públicos
 
 ## Si sigues teniendo problemas
 
-1. Verifica que las variables estén escritas exactamente como se muestra
+1. Verifica que las variables estén escritas exactamente como se muestra arriba
 2. Asegúrate de haber redesplegado después de agregar las variables
 3. Revisa la consola del navegador para más detalles del error
+4. Verifica que el nuevo proyecto de Supabase tenga las tablas necesarias configuradas
+
+## Configuración de Base de Datos
+
+Recuerda que necesitas ejecutar las migraciones en el nuevo proyecto de Supabase:
+1. Ve a Supabase Dashboard > SQL Editor
+2. Ejecuta la migración `20250610160103_scarlet_villa.sql` para crear las tablas necesarias
