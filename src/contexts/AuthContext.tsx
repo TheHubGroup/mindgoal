@@ -136,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Creating profile for user:', data.user.id)
         
         const profilePayload = {
-          user_id: data.user.id,
+          id: data.user.id,
           email: email.toLowerCase(),
           first_name: profileData.first_name,
           last_name: profileData.last_name,
@@ -146,7 +146,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           country: profileData.country,
           age: profileData.age,
           gender: profileData.gender,
-          avatar_url: profileData.avatar_url || ''
+          avatar_url: profileData.avatar_url || '',
+          user_id: data.user.id
         }
 
         console.log('Profile payload:', profilePayload)
