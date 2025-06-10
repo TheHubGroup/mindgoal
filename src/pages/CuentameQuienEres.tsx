@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
 import { supabase } from '../lib/supabase'
+import { userResponsesService } from '../lib/userResponsesService'
 import { 
   Heart, 
   X, 
@@ -10,7 +11,9 @@ import {
   Sparkles, 
   Save,
   Plus,
-  Trash2
+  Trash2,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react'
 
 interface PreferenceItem {
@@ -26,6 +29,8 @@ const CuentameQuienEres = () => {
   const [newItem, setNewItem] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState('')
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   useEffect(() => {
     loadPreferences()
@@ -35,19 +40,34 @@ const CuentameQuienEres = () => {
     if (!user) return
 
     try {
-      const { data, error } = await supabase
+      setIsLoading(true)
+      
+      // Cargar desde user_preferences (formato anterior)
+      const { data: oldPreferences, error: oldError } = await supabase
         .from('user_preferences')
         .select('*')
         .eq('user_id', user.id)
 
-      if (error) throw error
-
-      if (data) {
-        setPreferences(data.map(item => ({
+      if (!oldError && oldPreferences && oldPreferences.length > 0) {
+        // Convertir formato anterior a nuevo formato
+        const convertedPreferences = oldPreferences.map(item => ({
           id: item.id,
           text: item.preference_text,
           category: item.category as 'likes' | 'dislikes'
-        })))
+        }))
+        setPreferences(convertedPreferences)
+      } else {
+        // Cargar desde user_responses (nuevo formato)
+        const responses = await userResponsesService.getResponses(user.id, 'cuentame_quien_eres')
+        
+        if (responses.length > 0) {
+          const convertedPreferences = responses.map(response => ({
+            id: response.id || Date.now().toString(),
+            text: response.response,
+            category: response.question === 'me_gusta' ? 'likes' as const : 'dislikes' as const
+          }))
+          setPreferences(convertedPreferences)
+        }
       }
     } catch (error) {
       console.error('Error loading preferences:', error)
@@ -61,31 +81,52 @@ const CuentameQuienEres = () => {
 
     setIsSaving(true)
     try {
-      // Delete existing preferences
-      await supabase
-        .from('user_preferences')
-        .delete()
-        .eq('user_id', user.id)
-
-      // Insert new preferences
-      const preferencesToSave = preferences.map(pref => ({
-        user_id: user.id,
-        preference_text: pref.text,
-        category: pref.category
-      }))
-
-      if (preferencesToSave.length > 0) {
-        const { error } = await supabase
-          .from('user_preferences')
-          .insert(preferencesToSave)
-
-        if (error) throw error
+      // Limpiar respuestas anteriores de esta actividad
+      const existingResponses = await userResponsesService.getResponses(user.id, 'cuentame_quien_eres')
+      for (const response of existingResponses) {
+        if (response.id) {
+          await userResponsesService.deleteResponse(response.id)
+        }
       }
 
-      alert('¡Preferencias guardadas exitosamente!')
+      // Guardar nuevas respuestas en user_responses
+      const responsesToSave = preferences.map(pref => ({
+        user_id: user.id,
+        question: pref.category === 'likes' ? 'me_gusta' : 'no_me_gusta',
+        response: pref.text,
+        activity_type: 'cuentame_quien_eres'
+      }))
+
+      if (responsesToSave.length > 0) {
+        const success = await userResponsesService.saveMultipleResponses(responsesToSave)
+        
+        if (success) {
+          setSaveMessage('¡Preferencias guardadas exitosamente!')
+          setHasUnsavedChanges(false)
+          
+          // También mantener compatibilidad con user_preferences por ahora
+          await supabase.from('user_preferences').delete().eq('user_id', user.id)
+          const legacyPreferences = preferences.map(pref => ({
+            user_id: user.id,
+            preference_text: pref.text,
+            category: pref.category
+          }))
+          if (legacyPreferences.length > 0) {
+            await supabase.from('user_preferences').insert(legacyPreferences)
+          }
+        } else {
+          setSaveMessage('Error al guardar las preferencias')
+        }
+      } else {
+        setSaveMessage('¡Preferencias guardadas exitosamente!')
+        setHasUnsavedChanges(false)
+      }
+      
+      setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
       console.error('Error saving preferences:', error)
-      alert('Error al guardar las preferencias')
+      setSaveMessage('Error al guardar las preferencias')
+      setTimeout(() => setSaveMessage(''), 3000)
     } finally {
       setIsSaving(false)
     }
@@ -102,16 +143,19 @@ const CuentameQuienEres = () => {
 
     setPreferences([...preferences, newPreference])
     setNewItem('')
+    setHasUnsavedChanges(true)
   }
 
   const removePreference = (id: string) => {
     setPreferences(preferences.filter(pref => pref.id !== id))
+    setHasUnsavedChanges(true)
   }
 
   const movePreference = (id: string, newCategory: 'likes' | 'dislikes') => {
     setPreferences(preferences.map(pref => 
       pref.id === id ? { ...pref, category: newCategory } : pref
     ))
+    setHasUnsavedChanges(true)
   }
 
   const handleDragStart = (e: React.DragEvent, preference: PreferenceItem) => {
@@ -168,22 +212,35 @@ const CuentameQuienEres = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={savePreferences}
-              disabled={isSaving}
-              className="flex items-center gap-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full font-bold transition-all disabled:opacity-50"
+              disabled={isSaving || !hasUnsavedChanges}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
+                hasUnsavedChanges 
+                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white animate-pulse' 
+                  : 'bg-green-500 text-white'
+              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <Save size={20} />
-              {isSaving ? 'Guardando...' : 'Guardar'}
+              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
             </button>
             <UserMenu />
           </div>
         </div>
       </div>
 
+      {/* Mensaje de estado */}
+      {saveMessage && (
+        <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
+          <CheckCircle size={20} className="text-green-500" />
+          <span className="font-medium text-gray-800">{saveMessage}</span>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Debug Info */}
         <div className="mb-4 text-white text-sm opacity-70">
-          Usuario: {user?.email || 'No autenticado'} | Preferencias: {preferences.length}
+          Usuario: {user?.email || 'No autenticado'} | Preferencias: {preferences.length} | 
+          {hasUnsavedChanges ? ' ⚠️ Cambios sin guardar' : ' ✅ Todo guardado'}
         </div>
 
         {/* Instructions */}
@@ -342,6 +399,25 @@ const CuentameQuienEres = () => {
               • Haz clic en el ícono de basura para eliminar elementos<br/>
               • No olvides guardar tus cambios cuando termines
             </p>
+          </div>
+        </div>
+
+        {/* Estadísticas */}
+        <div className="mt-8 text-center">
+          <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto">
+            <h3 className="text-xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
+              📊 Tus Preferencias
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-white">
+              <div>
+                <div className="text-2xl font-bold text-green-300">{likesItems.length}</div>
+                <div className="text-sm opacity-80">Me Gusta</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-red-300">{dislikesItems.length}</div>
+                <div className="text-sm opacity-80">No Me Gusta</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
