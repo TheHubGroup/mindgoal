@@ -2,196 +2,143 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
-import ProfileDisplayCard from '../components/ProfileDisplayCard'
-import ProfileSetupModal from '../components/ProfileSetupModal'
-import { useProfile } from '../hooks/useProfile'
-import { userResponsesService, UserResponse } from '../lib/userResponsesService'
+import { supabase } from '../lib/supabase'
 import { 
   Heart, 
+  X, 
   ArrowLeft, 
   Sparkles, 
   Save,
-  MessageCircle,
-  CheckCircle,
-  AlertCircle,
-  User
+  Plus,
+  Trash2
 } from 'lucide-react'
 
-interface Question {
+interface PreferenceItem {
   id: string
   text: string
-  placeholder: string
-  category: 'personal' | 'preferences' | 'dreams'
+  category: 'likes' | 'dislikes'
 }
-
-const questions: Question[] = [
-  {
-    id: 'favorite_color',
-    text: '¿Cuál es tu color favorito y por qué?',
-    placeholder: 'Mi color favorito es... porque...',
-    category: 'preferences'
-  },
-  {
-    id: 'favorite_food',
-    text: '¿Cuál es tu comida favorita?',
-    placeholder: 'Me encanta comer...',
-    category: 'preferences'
-  },
-  {
-    id: 'hobby',
-    text: '¿Qué te gusta hacer en tu tiempo libre?',
-    placeholder: 'En mi tiempo libre me gusta...',
-    category: 'personal'
-  },
-  {
-    id: 'dream_job',
-    text: '¿Qué quieres ser cuando seas grande?',
-    placeholder: 'Cuando sea grande quiero ser...',
-    category: 'dreams'
-  },
-  {
-    id: 'favorite_subject',
-    text: '¿Cuál es tu materia favorita en el colegio?',
-    placeholder: 'Mi materia favorita es... porque...',
-    category: 'personal'
-  },
-  {
-    id: 'pet',
-    text: '¿Tienes mascotas o te gustaría tener alguna?',
-    placeholder: 'Tengo/Me gustaría tener...',
-    category: 'preferences'
-  },
-  {
-    id: 'superpower',
-    text: 'Si pudieras tener un superpoder, ¿cuál sería?',
-    placeholder: 'Mi superpoder sería... para...',
-    category: 'dreams'
-  },
-  {
-    id: 'family',
-    text: '¿Cómo es tu familia?',
-    placeholder: 'Mi familia está compuesta por...',
-    category: 'personal'
-  }
-]
 
 const CuentameQuienEres = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { profile, loading: profileLoading } = useProfile()
-  const [responses, setResponses] = useState<{ [key: string]: string }>({})
-  const [savedResponses, setSavedResponses] = useState<UserResponse[]>([])
+  const [preferences, setPreferences] = useState<PreferenceItem[]>([])
+  const [newItem, setNewItem] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [saveMessage, setSaveMessage] = useState('')
-  const [showProfileModal, setShowProfileModal] = useState(false)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   useEffect(() => {
-    if (user) {
-      loadResponses()
-    }
+    loadPreferences()
   }, [user])
 
-  // Mostrar modal de perfil automáticamente si no está completo
-  useEffect(() => {
-    if (!profileLoading && profile) {
-      const isProfileIncomplete = !profile.nombre || !profile.apellido || !profile.grado || !profile.nombre_colegio
-      if (isProfileIncomplete) {
-        setShowProfileModal(true)
-      }
-    }
-  }, [profile, profileLoading])
-
-  const loadResponses = async () => {
+  const loadPreferences = async () => {
     if (!user) return
-    
-    setIsLoading(true)
+
     try {
-      const userResponses = await userResponsesService.getResponses(user.id, 'cuentame_quien_eres')
-      setSavedResponses(userResponses)
-      
-      // Convertir respuestas guardadas a formato del formulario
-      const responseMap: { [key: string]: string } = {}
-      userResponses.forEach(response => {
-        responseMap[response.question] = response.response
-      })
-      setResponses(responseMap)
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', user.id)
+
+      if (error) throw error
+
+      if (data) {
+        setPreferences(data.map(item => ({
+          id: item.id,
+          text: item.preference_text,
+          category: item.category as 'likes' | 'dislikes'
+        })))
+      }
     } catch (error) {
-      console.error('Error loading responses:', error)
+      console.error('Error loading preferences:', error)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleResponseChange = (questionId: string, value: string) => {
-    setResponses(prev => ({
-      ...prev,
-      [questionId]: value
-    }))
-    setHasUnsavedChanges(true)
-  }
-
-  const handleSaveResponses = async () => {
+  const savePreferences = async () => {
     if (!user) return
 
     setIsSaving(true)
     try {
-      // Preparar respuestas para guardar
-      const responsesToSave = Object.entries(responses)
-        .filter(([_, response]) => response.trim() !== '')
-        .map(([questionId, response]) => ({
-          user_id: user.id,
-          question: questionId,
-          response: response.trim(),
-          activity_type: 'cuentame_quien_eres'
-        }))
+      // Delete existing preferences
+      await supabase
+        .from('user_preferences')
+        .delete()
+        .eq('user_id', user.id)
 
-      if (responsesToSave.length === 0) {
-        setSaveMessage('No hay respuestas para guardar')
-        setTimeout(() => setSaveMessage(''), 3000)
-        return
+      // Insert new preferences
+      const preferencesToSave = preferences.map(pref => ({
+        user_id: user.id,
+        preference_text: pref.text,
+        category: pref.category
+      }))
+
+      if (preferencesToSave.length > 0) {
+        const { error } = await supabase
+          .from('user_preferences')
+          .insert(preferencesToSave)
+
+        if (error) throw error
       }
 
-      // Eliminar respuestas anteriores del usuario para esta actividad
-      for (const savedResponse of savedResponses) {
-        if (savedResponse.id) {
-          await userResponsesService.deleteResponse(savedResponse.id)
-        }
-      }
-
-      // Guardar nuevas respuestas
-      const success = await userResponsesService.saveMultipleResponses(responsesToSave)
-      
-      if (success) {
-        setSaveMessage(`¡${responsesToSave.length} respuestas guardadas correctamente!`)
-        setHasUnsavedChanges(false)
-        await loadResponses() // Recargar para obtener los IDs
-      } else {
-        setSaveMessage('Error al guardar las respuestas')
-      }
-      
-      setTimeout(() => setSaveMessage(''), 3000)
+      alert('¡Preferencias guardadas exitosamente!')
     } catch (error) {
-      console.error('Error saving responses:', error)
-      setSaveMessage('Error al guardar las respuestas')
-      setTimeout(() => setSaveMessage(''), 3000)
+      console.error('Error saving preferences:', error)
+      alert('Error al guardar las preferencias')
     } finally {
       setIsSaving(false)
     }
   }
 
-  const getCompletedCount = () => {
-    return Object.values(responses).filter(response => response.trim() !== '').length
+  const addPreference = (category: 'likes' | 'dislikes') => {
+    if (!newItem.trim()) return
+
+    const newPreference: PreferenceItem = {
+      id: Date.now().toString(),
+      text: newItem.trim(),
+      category
+    }
+
+    setPreferences([...preferences, newPreference])
+    setNewItem('')
   }
 
-  if (profileLoading || isLoading) {
+  const removePreference = (id: string) => {
+    setPreferences(preferences.filter(pref => pref.id !== id))
+  }
+
+  const movePreference = (id: string, newCategory: 'likes' | 'dislikes') => {
+    setPreferences(preferences.map(pref => 
+      pref.id === id ? { ...pref, category: newCategory } : pref
+    ))
+  }
+
+  const handleDragStart = (e: React.DragEvent, preference: PreferenceItem) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify(preference))
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+  }
+
+  const handleDrop = (e: React.DragEvent, category: 'likes' | 'dislikes') => {
+    e.preventDefault()
+    const preferenceData = e.dataTransfer.getData('text/plain')
+    const preference = JSON.parse(preferenceData)
+    movePreference(preference.id, category)
+  }
+
+  const likesItems = preferences.filter(pref => pref.category === 'likes')
+  const dislikesItems = preferences.filter(pref => pref.category === 'dislikes')
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-400 to-purple-400 flex items-center justify-center">
         <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl p-8 text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-            Cargando...
+            Cargando tus preferencias...
           </p>
         </div>
       </div>
@@ -220,142 +167,184 @@ const CuentameQuienEres = () => {
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={handleSaveResponses}
-              disabled={isSaving || !hasUnsavedChanges}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
-                hasUnsavedChanges 
-                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white animate-pulse' 
-                  : 'bg-green-500 text-white'
-              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={savePreferences}
+              disabled={isSaving}
+              className="flex items-center gap-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full font-bold transition-all disabled:opacity-50"
             >
               <Save size={20} />
-              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Respuestas' : 'Todo Guardado'}
+              {isSaving ? 'Guardando...' : 'Guardar'}
             </button>
             <UserMenu />
           </div>
         </div>
       </div>
 
-      {/* Mensaje de estado */}
-      {saveMessage && (
-        <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
-          <CheckCircle size={20} className="text-green-500" />
-          <span className="font-medium text-gray-800">{saveMessage}</span>
-        </div>
-      )}
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Perfil del Usuario - SIEMPRE VISIBLE */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4 text-center" style={{ fontFamily: 'Fredoka' }}>
-            Tu Perfil
-          </h2>
-          <div className="max-w-md mx-auto">
-            <ProfileDisplayCard 
-              showEditButton={true}
-              onEdit={() => setShowProfileModal(true)}
-            />
-          </div>
+        {/* Debug Info */}
+        <div className="mb-4 text-white text-sm opacity-70">
+          Usuario: {user?.email || 'No autenticado'} | Preferencias: {preferences.length}
         </div>
 
-        {/* Instrucciones */}
+        {/* Instructions */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
-            ¡Comparte tu historia! 💫
+            ¡Comparte tus gustos y preferencias! 💫
           </h2>
-          <p className="text-xl text-white text-opacity-90 max-w-3xl mx-auto mb-4" style={{ fontFamily: 'Comic Neue' }}>
-            Responde estas preguntas para que todos puedan conocerte mejor. ¡Sé creativo y diviértete!
+          <p className="text-xl text-white text-opacity-90 max-w-3xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
+            Escribe algo que te gusta o no te gusta, y luego arrastra las tarjetas entre las columnas para organizarlas.
           </p>
-          
-          {/* Progreso */}
-          <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-4 max-w-md mx-auto">
-            <div className="flex items-center gap-3 text-white">
-              <MessageCircle size={24} />
-              <div>
-                <div className="text-lg font-bold">{getCompletedCount()} de {questions.length}</div>
-                <div className="text-sm opacity-80">preguntas respondidas</div>
-              </div>
-            </div>
-            <div className="w-full bg-white bg-opacity-30 rounded-full h-2 mt-3">
-              <div 
-                className="bg-white h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(getCompletedCount() / questions.length) * 100}%` }}
-              ></div>
+        </div>
+
+        {/* Add New Item */}
+        <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-6 mb-8">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <input
+              type="text"
+              value={newItem}
+              onChange={(e) => setNewItem(e.target.value)}
+              placeholder="Escribe algo que te gusta o no te gusta..."
+              className="flex-1 px-4 py-3 rounded-full border-none outline-none text-gray-800 font-medium"
+              style={{ fontFamily: 'Comic Neue' }}
+              onKeyPress={(e) => e.key === 'Enter' && addPreference('likes')}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => addPreference('likes')}
+                disabled={!newItem.trim()}
+                className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Heart size={20} />
+                Me Gusta
+              </button>
+              <button
+                onClick={() => addPreference('dislikes')}
+                disabled={!newItem.trim()}
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <X size={20} />
+                No Me Gusta
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Preguntas */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
-          {questions.map((question, index) => (
-            <div
-              key={question.id}
-              className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-6 hover:bg-opacity-20 transition-all"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-white bg-opacity-30 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
-                  {index + 1}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
-                    {question.text}
-                  </h3>
-                  <textarea
-                    value={responses[question.id] || ''}
-                    onChange={(e) => handleResponseChange(question.id, e.target.value)}
-                    placeholder={question.placeholder}
-                    className="w-full p-3 rounded-xl border-none outline-none text-gray-800 font-medium resize-none h-24 focus:ring-2 focus:ring-white focus:ring-opacity-50"
-                    style={{ fontFamily: 'Comic Neue' }}
-                  />
-                  {responses[question.id] && responses[question.id].trim() !== '' && (
-                    <div className="flex items-center gap-2 mt-2 text-green-300">
-                      <CheckCircle size={16} />
-                      <span className="text-sm">¡Respondida!</span>
-                    </div>
-                  )}
-                </div>
+        {/* Preferences Columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Me Gusta Column */}
+          <div
+            className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-6 min-h-96"
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, 'likes')}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                <Heart size={24} className="text-white" />
               </div>
+              <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+                Me Gusta ({likesItems.length})
+              </h3>
             </div>
-          ))}
+
+            <div className="space-y-3">
+              {likesItems.map((item) => (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, item)}
+                  className="bg-white rounded-2xl p-4 shadow-lg cursor-move hover:shadow-xl transition-all group"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-800 font-medium flex-1" style={{ fontFamily: 'Comic Neue' }}>
+                      {item.text}
+                    </span>
+                    <button
+                      onClick={() => removePreference(item.id)}
+                      className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {likesItems.length === 0 && (
+                <div className="text-center py-12 text-white text-opacity-70">
+                  <Heart size={48} className="mx-auto mb-4 opacity-50" />
+                  <p style={{ fontFamily: 'Comic Neue' }}>
+                    Arrastra aquí las cosas que te gustan
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* No Me Gusta Column */}
+          <div
+            className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-6 min-h-96"
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, 'dislikes')}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                <X size={24} className="text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+                No Me Gusta ({dislikesItems.length})
+              </h3>
+            </div>
+
+            <div className="space-y-3">
+              {dislikesItems.map((item) => (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, item)}
+                  className="bg-white rounded-2xl p-4 shadow-lg cursor-move hover:shadow-xl transition-all group"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-800 font-medium flex-1" style={{ fontFamily: 'Comic Neue' }}>
+                      {item.text}
+                    </span>
+                    <button
+                      onClick={() => removePreference(item.id)}
+                      className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {dislikesItems.length === 0 && (
+                <div className="text-center py-12 text-white text-opacity-70">
+                  <X size={48} className="mx-auto mb-4 opacity-50" />
+                  <p style={{ fontFamily: 'Comic Neue' }}>
+                    Arrastra aquí las cosas que no te gustan
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Estadísticas finales */}
-        <div className="mt-12 text-center">
+        {/* Tips */}
+        <div className="mt-8 text-center">
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto">
             <div className="flex items-center gap-3 justify-center mb-3">
               <Sparkles size={24} className="text-yellow-300" />
               <h4 className="text-xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-                ¡Excelente trabajo!
+                Consejos
               </h4>
             </div>
             <p className="text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
-              Has completado {getCompletedCount()} de {questions.length} preguntas. 
-              {getCompletedCount() === questions.length 
-                ? ' ¡Felicitaciones, has terminado todas las preguntas!' 
-                : ' ¡Sigue así para completar tu perfil!'
-              }
+              • Puedes arrastrar las tarjetas entre columnas para cambiar tu opinión<br/>
+              • Haz clic en el ícono de basura para eliminar elementos<br/>
+              • No olvides guardar tus cambios cuando termines
             </p>
-            {hasUnsavedChanges && (
-              <div className="flex items-center gap-2 justify-center mt-3 text-yellow-300">
-                <AlertCircle size={16} />
-                <span className="text-sm">Tienes cambios sin guardar</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
-
-      {/* Modal de Perfil */}
-      <ProfileSetupModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        onComplete={() => {
-          setShowProfileModal(false)
-          // Recargar la página para mostrar el perfil actualizado
-          window.location.reload()
-        }}
-      />
     </div>
   )
 }
