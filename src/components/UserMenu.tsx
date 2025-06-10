@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { User, LogOut, Settings, ChevronDown } from 'lucide-react'
+import { User, LogOut, Settings, ChevronDown, Edit } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const UserMenu = () => {
   const { user, signOut, bypassUser } = useAuth()
+  const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
   const [profile, setProfile] = useState<any>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -122,12 +124,12 @@ const UserMenu = () => {
             <button
               onClick={() => {
                 setIsOpen(false)
-                // TODO: Implement settings page
+                navigate('/profile')
               }}
               className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-3"
             >
-              <Settings size={16} />
-              Configuración
+              <Edit size={16} />
+              Editar Perfil
             </button>
             <button
               onClick={() => {

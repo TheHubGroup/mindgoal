@@ -60,7 +60,7 @@ const ProfilePage = () => {
         <div className="bg-white rounded-3xl shadow-2xl p-8 mb-6">
           <div className="flex items-center gap-4 mb-6">
             <button
-              onClick={() => navigate('/home')}
+              onClick={() => navigate('/')}
               className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors"
             >
               <ArrowLeft size={20} />
@@ -96,7 +96,7 @@ const ProfilePage = () => {
           {/* Profile Form */}
           <ProfileForm
             profile={profile}
-            onSave={handleSave}
+            onSubmit={handleSave}
             isLoading={isSubmitting}
           />
         </div>

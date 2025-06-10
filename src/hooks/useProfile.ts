@@ -46,9 +46,16 @@ export const useProfile = () => {
     if (!user || !supabase) return false
 
     try {
+      // Ensure we're updating the correct user's profile
+      const profileData = {
+        ...updates,
+        id: user.id, // Ensure the ID matches the authenticated user
+        email: user.email // Preserve the email from auth
+      }
+
       const { error } = await supabase
         .from('profiles')
-        .update(updates)
+        .upsert(profileData, { onConflict: 'id' })
         .eq('id', user.id)
 
       if (error) {

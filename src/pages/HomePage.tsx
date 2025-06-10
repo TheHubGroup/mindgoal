@@ -1,7 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useProfile } from '../hooks/useProfile'
 import UserMenu from '../components/UserMenu'
+import ProfileSetupModal from '../components/ProfileSetupModal'
 import { 
   Clock, 
   BookOpen, 
@@ -17,6 +19,26 @@ import {
 const HomePage = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { profile, loading: profileLoading } = useProfile()
+  const [showProfileSetup, setShowProfileSetup] = useState(false)
+
+  // Check if profile is incomplete
+  const isProfileIncomplete = profile && (
+    !profile.nombre || 
+    !profile.apellido || 
+    !profile.grado || 
+    !profile.nombre_colegio || 
+    !profile.ciudad || 
+    !profile.edad || 
+    !profile.sexo
+  )
+
+  useEffect(() => {
+    // Show profile setup modal if profile is incomplete
+    if (!profileLoading && isProfileIncomplete) {
+      setShowProfileSetup(true)
+    }
+  }, [profile, profileLoading, isProfileIncomplete])
 
   const activities = [
     {
@@ -179,6 +201,13 @@ const HomePage = () => {
           </p>
         </div>
       </div>
+
+      {/* Profile Setup Modal */}
+      <ProfileSetupModal
+        isOpen={showProfileSetup}
+        onClose={() => setShowProfileSetup(false)}
+        onComplete={() => setShowProfileSetup(false)}
+      />
     </div>
   )
 }

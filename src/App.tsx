@@ -5,6 +5,7 @@ import { useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import HomePage from './pages/HomePage'
+import ProfilePage from './pages/ProfilePage'
 import TimelineActivity from './pages/TimelineActivity'
 import CuentameQuienEres from './pages/CuentameQuienEres'
 
@@ -60,6 +61,11 @@ function App() {
             <Route path="/" element={
               <ProtectedRoute>
                 <HomePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             } />
             <Route path="/actividad/linea-tiempo" element={
