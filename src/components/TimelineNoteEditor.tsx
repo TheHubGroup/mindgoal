@@ -62,6 +62,27 @@ export default function TimelineNoteEditor({
 
   const handleSave = () => {
     if (text.trim()) {
+      // Generar posición inicial más inteligente
+      const generateSmartPosition = () => {
+        // Posiciones predefinidas que se ven bien
+        const goodPositions = [
+          { x: 30, y: 40 },
+          { x: 180, y: 60 },
+          { x: 80, y: 120 },
+          { x: 200, y: 30 },
+          { x: 50, y: 90 },
+          { x: 150, y: 100 },
+          { x: 100, y: 50 },
+          { x: 220, y: 80 }
+        ]
+        
+        // Seleccionar una posición aleatoria de las buenas posiciones
+        const randomIndex = Math.floor(Math.random() * goodPositions.length)
+        return goodPositions[randomIndex]
+      }
+
+      const smartPosition = generateSmartPosition()
+
       onSave({
         text: text.trim(),
         emoji,
@@ -69,8 +90,8 @@ export default function TimelineNoteEditor({
         shape,
         font,
         section,
-        position_x: editingNote?.position_x || Math.random() * 300,
-        position_y: editingNote?.position_y || Math.random() * 200,
+        position_x: editingNote?.position_x || smartPosition.x,
+        position_y: editingNote?.position_y || smartPosition.y,
         user_id: editingNote?.user_id
       })
       onClose()

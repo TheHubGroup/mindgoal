@@ -49,10 +49,17 @@ export const timelineService = {
       return null
     }
 
+    // Mejorar posición inicial de las notas
+    const improvedNote = {
+      ...note,
+      position_x: Math.max(20, Math.min(note.position_x, 250)), // Limitar entre 20 y 250px
+      position_y: Math.max(20, Math.min(note.position_y, 180))  // Limitar entre 20 y 180px
+    }
+
     try {
       const { data, error } = await supabase
         .from('timeline_notes')
-        .insert([note])
+        .insert([improvedNote])
         .select()
         .single()
 

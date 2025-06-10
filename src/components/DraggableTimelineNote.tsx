@@ -13,7 +13,10 @@ interface DraggableTimelineNoteProps {
 export default function DraggableTimelineNote({ note, onEdit, onDelete, onDrag }: DraggableTimelineNoteProps) {
   const handleDrag = (e: any, data: any) => {
     if (note.id) {
-      onDrag(note.id, data.x, data.y)
+      // Limitar el arrastre dentro de los límites del contenedor
+      const boundedX = Math.max(0, Math.min(data.x, 250))
+      const boundedY = Math.max(0, Math.min(data.y, 200))
+      onDrag(note.id, boundedX, boundedY)
     }
   }
 
@@ -22,30 +25,31 @@ export default function DraggableTimelineNote({ note, onEdit, onDelete, onDrag }
       defaultPosition={{ x: note.position_x, y: note.position_y }}
       onStop={handleDrag}
       handle=".drag-handle"
+      bounds={{ left: 0, top: 0, right: 250, bottom: 200 }}
     >
       <div
-        className={`absolute cursor-move shadow-lg border-3 border-purple-300 hover:border-purple-500 transition-all group hover:scale-105 ${note.shape} max-w-xs`}
+        className={`absolute cursor-move shadow-lg border-2 border-purple-300 hover:border-purple-500 transition-all group hover:scale-105 ${note.shape} max-w-[180px]`}
         style={{ backgroundColor: note.color, fontFamily: note.font }}
       >
-        <div className="drag-handle p-4">
+        <div className="drag-handle p-3">
           <div className="flex items-start gap-2">
-            <span className="text-2xl flex-shrink-0">{note.emoji}</span>
-            <p className="text-lg font-medium leading-tight break-words">{note.text}</p>
+            <span className="text-lg flex-shrink-0">{note.emoji}</span>
+            <p className="text-sm font-medium leading-tight break-words">{note.text}</p>
           </div>
         </div>
         
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
           <button
             onClick={() => onEdit(note)}
-            className="bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
+            className="bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600 transition-colors shadow-sm"
           >
-            <Edit size={14} />
+            <Edit size={12} />
           </button>
           <button
             onClick={() => note.id && onDelete(note.id)}
-            className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+            className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors shadow-sm"
           >
-            <Trash2 size={14} />
+            <Trash2 size={12} />
           </button>
         </div>
       </div>

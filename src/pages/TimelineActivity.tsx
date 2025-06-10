@@ -28,7 +28,7 @@ const TimelineActivity = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   const timelineSections = [
-    { id: 'pasado', title: 'Pasado', color: 'bg-gradient-to-br from-blue-500 to-cyan-500', icon: '⏮️' },
+    { id: 'pasado', title: 'Pasado', color: 'bg-gradient-to-br from-blue-500 to-cyan-500', icon: '📚' },
     { id: 'presente', title: 'Presente', color: 'bg-gradient-to-br from-green-500 to-emerald-500', icon: '⭐' },
     { id: 'futuro', title: 'Futuro', color: 'bg-gradient-to-br from-purple-500 to-pink-500', icon: '🚀' }
   ]
