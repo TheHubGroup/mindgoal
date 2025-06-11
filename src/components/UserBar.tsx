@@ -105,7 +105,7 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
   }
 
   return (
-    <div className={`bg-white bg-opacity-20 backdrop-blur-sm shadow-lg rounded-2xl px-6 py-3 flex items-center gap-4 relative ${className}`}>
+    <div className={`bg-white bg-opacity-20 backdrop-blur-sm shadow-lg rounded-full px-6 py-3 flex items-center gap-4 relative ${className}`}>
       {/* Avatar */}
       <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center flex-shrink-0">
         {profile?.avatar_url ? (

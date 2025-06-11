@@ -119,7 +119,7 @@ const StandaloneUserBar = () => {
   }
 
   return (
-    <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-between px-4 relative rounded-2xl">
+    <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-between px-4 relative">
       {/* User Info Section */}
       <div className="flex items-center gap-4">
         {/* Avatar */}
