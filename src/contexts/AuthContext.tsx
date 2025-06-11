@@ -149,11 +149,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!supabase) return
 
     try {
-      await supabase.auth.signOut()
+      // Check if we have a valid session before attempting server-side logout
+      if (session?.access_token) {
+        const { error } = await supabase.auth.signOut()
+        if (error) {
+          console.warn('Server-side logout failed:', error)
+          // Continue to clear local state even if server logout fails
+        }
+      } else {
+        console.log('No valid session found, skipping server-side logout')
+      }
     } catch (error) {
-      console.error('Error signing out:', error)
-      // Clear local auth state even if server-side logout fails
-      // This handles cases where the session is already invalid on the server
+      console.warn('Error during logout:', error)
+      // Continue to clear local state even if server logout fails
+    } finally {
+      // Always clear local auth state to ensure UI consistency
       setUser(null)
       setSession(null)
     }
