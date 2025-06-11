@@ -149,31 +149,31 @@ const StandaloneUserBar = () => {
       {/* Score and Actions Section */}
       <div className="flex items-center gap-4">
         {/* Score Display con etiqueta "Tu Score" */}
-        <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 backdrop-blur-sm rounded-2xl px-6 py-2 flex items-center gap-3 shadow-xl border-2 border-yellow-300 relative overflow-hidden min-w-[180px]">
+        <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 backdrop-blur-sm rounded-2xl px-8 py-1 flex items-center gap-4 shadow-xl border-2 border-yellow-300 relative overflow-hidden min-w-[220px]">
           {/* Efecto de brillo animado */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-pulse"></div>
           
           {/* Icono de trofeo con efecto */}
           <div className="relative">
-            <Trophy size={24} className="text-yellow-900 drop-shadow-lg" />
+            <Trophy size={20} className="text-yellow-900 drop-shadow-lg" />
             <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-200 rounded-full animate-ping"></div>
           </div>
           
-          <div className="text-center">
-            <div className="text-xs text-yellow-900 leading-tight font-bold tracking-wide" style={{ fontFamily: 'Fredoka' }}>
+          <div className="text-center flex-1">
+            <div className="text-xs text-yellow-900 leading-none font-bold tracking-wide" style={{ fontFamily: 'Fredoka' }}>
               🎮 TU SCORE
             </div>
-            <div className="font-black text-xl leading-tight text-yellow-900 drop-shadow-md" style={{ fontFamily: 'Fredoka' }}>
+            <div className="font-black text-lg leading-none text-yellow-900 drop-shadow-md" style={{ fontFamily: 'Fredoka' }}>
               {isLoading ? '...' : score.toLocaleString()}
             </div>
-            <div className="text-xs text-yellow-800 leading-tight font-semibold" style={{ fontFamily: 'Comic Neue' }}>
+            <div className="text-xs text-yellow-800 leading-none font-semibold" style={{ fontFamily: 'Comic Neue' }}>
               {isLoading ? 'Calculando...' : getScoreLevel()}
             </div>
           </div>
           
           {/* Partículas decorativas */}
-          <div className="absolute top-1 right-2 text-yellow-200 text-xs animate-bounce">✨</div>
-          <div className="absolute bottom-1 left-2 text-yellow-200 text-xs animate-bounce" style={{ animationDelay: '0.5s' }}>⭐</div>
+          <div className="absolute top-0 right-2 text-yellow-200 text-xs animate-bounce">✨</div>
+          <div className="absolute bottom-0 left-2 text-yellow-200 text-xs animate-bounce" style={{ animationDelay: '0.5s' }}>⭐</div>
         </div>
 
         {/* Settings Menu */}
