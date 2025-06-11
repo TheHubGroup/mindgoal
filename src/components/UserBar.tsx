@@ -178,13 +178,6 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
               </div>
 
               {/* Menu Items */}
-              <button
-                onClick={handleEditProfile}
-                className="w-full px-4 py-2 text-left text-gray-800 hover:bg-white hover:bg-opacity-50 flex items-center gap-3 transition-colors"
-              >
-                <Edit size={16} />
-                Editar Perfil
-              </button>
 
               <button
                 onClick={handleSignOut}
