@@ -134,13 +134,37 @@ const UserBarPage = () => {
         <div className="mt-8 text-center">
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
             <h3 className="text-xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
-              ¿Cómo usar tu barra de usuario?
+              ¿Cómo usar tu barra de usuario? 
             </h3>
+            
+            {/* Iframe Demo */}
+            <div className="mb-6">
+              <h4 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
+                🖼️ Versión para Iframe
+              </h4>
+              <div className="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
+                <iframe
+                  src="/standalone-user-bar"
+                  className="w-full h-16 border-0 rounded-lg"
+                  title="Barra de Usuario Standalone"
+                />
+              </div>
+              <p className="text-white text-opacity-80 text-sm mb-4" style={{ fontFamily: 'Comic Neue' }}>
+                Esta es la versión independiente que puedes incrustar en cualquier lugar usando:
+              </p>
+              <div className="bg-black bg-opacity-30 rounded-lg p-3 text-left">
+                <code className="text-green-300 text-sm">
+                  &lt;iframe src="/standalone-user-bar" width="100%" height="64px"&gt;&lt;/iframe&gt;
+                </code>
+              </div>
+            </div>
+            
             <div className="text-white text-opacity-90 space-y-2" style={{ fontFamily: 'Comic Neue' }}>
               <p>• Haz clic en el ícono de configuración para ver el menú</p>
               <p>• Tu score se actualiza automáticamente cuando participas en actividades</p>
               <p>• Puedes editar tu perfil en cualquier momento</p>
               <p>• El nivel cambia según tu progreso total</p>
+              <p>• La versión iframe es perfecta para incrustar en otras páginas</p>
             </div>
           </div>
         </div>
