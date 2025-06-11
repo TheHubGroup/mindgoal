@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
 import TimelineActivity from './pages/TimelineActivity'
 import CuentameQuienEres from './pages/CuentameQuienEres'
+import UserBarPage from './pages/UserBarPage'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -76,6 +77,11 @@ function App() {
             <Route path="/actividad/cuentame-quien-eres" element={
               <ProtectedRoute>
                 <CuentameQuienEres />
+              </ProtectedRoute>
+            } />
+            <Route path="/user-bar" element={
+              <ProtectedRoute>
+                <UserBarPage />
               </ProtectedRoute>
             } />
             

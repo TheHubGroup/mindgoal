@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
+import UserBar from '../components/UserBar'
 import { supabase } from '../lib/supabase'
 import { userResponsesService } from '../lib/userResponsesService'
 import { 
@@ -222,6 +223,7 @@ const CuentameQuienEres = () => {
               <Save size={20} />
               {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
             </button>
+            <UserBar />
             <UserMenu />
           </div>
         </div>
