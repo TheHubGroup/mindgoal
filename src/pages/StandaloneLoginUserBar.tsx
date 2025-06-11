@@ -1,9 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { User, LogIn, UserPlus, Sparkles, Trophy } from 'lucide-react'
+import { Eye, EyeOff, LogIn } from 'lucide-react'
 
 const StandaloneLoginUserBar = () => {
-  const { user } = useAuth()
+  const { user, signIn } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     // Optimizar para iframe
@@ -18,81 +23,91 @@ const StandaloneLoginUserBar = () => {
     }
   }, [])
 
-  const handleLogin = () => {
-    // Notificar al padre para navegar al login
-    window.parent.postMessage({ type: 'NAVIGATE_TO_LOGIN' }, '*')
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
+
+    try {
+      const { error } = await signIn(email, password)
+      if (error) {
+        setError('Email o contraseña incorrectos')
+      } else {
+        // Notificar al padre que el login fue exitoso
+        window.parent.postMessage({ type: 'LOGIN_SUCCESS' }, '*')
+      }
+    } catch (error) {
+      setError('Error al iniciar sesión')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleRegister = () => {
-    // Notificar al padre para navegar al registro
-    window.parent.postMessage({ type: 'NAVIGATE_TO_REGISTER' }, '*')
-  }
-
-  // Si el usuario ya está autenticado, mostrar mensaje
+  // Si el usuario ya está autenticado, redirigir
   if (user) {
+    window.parent.postMessage({ type: 'USER_ALREADY_LOGGED_IN' }, '*')
     return (
       <div className="h-16 bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center px-4">
-        <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 flex items-center gap-3">
-          <Trophy size={20} className="text-white" />
-          <span className="text-white font-medium" style={{ fontFamily: 'Fredoka' }}>
-            ¡Ya estás conectado!
-          </span>
-        </div>
+        <span className="text-white font-medium" style={{ fontFamily: 'Fredoka' }}>
+          ¡Ya estás conectado!
+        </span>
       </div>
     )
   }
 
   return (
-    <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-between px-4">
-      {/* Logo/Brand Section */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center border-2 border-white border-opacity-30">
-          <Sparkles size={20} className="text-white" />
-        </div>
-        <div className="text-white">
-          <div className="font-bold text-lg leading-tight" style={{ fontFamily: 'Fredoka' }}>
-            Plataforma Educativa
-          </div>
-          <div className="text-xs opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-            ¡Aprende y diviértete!
-          </div>
-        </div>
-      </div>
-
-      {/* Login Actions Section */}
-      <div className="flex items-center gap-3">
-        {/* Mensaje de bienvenida */}
-        <div className="text-white text-center mr-4 hidden sm:block">
-          <div className="text-sm font-medium" style={{ fontFamily: 'Fredoka' }}>
-            ¡Bienvenido!
-          </div>
-          <div className="text-xs opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-            Inicia sesión para continuar
-          </div>
+    <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center px-4">
+      <form onSubmit={handleLogin} className="flex items-center gap-3 w-full max-w-md">
+        {/* Campo Email */}
+        <div className="flex-1">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+            className="w-full px-3 py-2 rounded-lg border-0 bg-white bg-opacity-90 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:bg-opacity-100 text-sm"
+          />
         </div>
 
-        {/* Botón Iniciar Sesión */}
+        {/* Campo Contraseña */}
+        <div className="flex-1 relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Contraseña"
+            required
+            className="w-full px-3 py-2 pr-10 rounded-lg border-0 bg-white bg-opacity-90 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:bg-opacity-100 text-sm"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
+
+        {/* Botón Login */}
         <button
-          onClick={handleLogin}
-          className="bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 transition-all transform hover:scale-105 border border-white border-opacity-30"
+          type="submit"
+          disabled={isLoading || !email || !password}
+          className="bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-white border-opacity-30"
         >
-          <LogIn size={18} className="text-white" />
+          <LogIn size={16} className="text-white" />
           <span className="text-white font-medium text-sm" style={{ fontFamily: 'Fredoka' }}>
-            Iniciar Sesión
+            {isLoading ? 'Entrando...' : 'Entrar'}
           </span>
         </button>
+      </form>
 
-        {/* Botón Registrarse */}
-        <button
-          onClick={handleRegister}
-          className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 rounded-full px-4 py-2 flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg"
-        >
-          <UserPlus size={18} className="text-white" />
-          <span className="text-white font-bold text-sm" style={{ fontFamily: 'Fredoka' }}>
-            Registrarse
-          </span>
-        </button>
-      </div>
+      {/* Error Message */}
+      {error && (
+        <div className="absolute top-full left-4 right-4 mt-1 bg-red-500 bg-opacity-90 text-white text-xs px-3 py-1 rounded">
+          {error}
+        </div>
+      )}
     </div>
   )
 }
