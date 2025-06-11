@@ -33,8 +33,8 @@ const StandaloneLoginUserBar = () => {
       if (error) {
         setError('Email o contraseña incorrectos')
       } else {
-        // Notificar al padre que el login fue exitoso
-        window.parent.postMessage({ type: 'LOGIN_SUCCESS' }, '*')
+        // Redirigir directamente a standalone-user-bar
+        window.location.href = '/standalone-user-bar'
       }
     } catch (error) {
       setError('Error al iniciar sesión')
@@ -45,14 +45,9 @@ const StandaloneLoginUserBar = () => {
 
   // Si el usuario ya está autenticado, redirigir
   if (user) {
-    window.parent.postMessage({ type: 'USER_ALREADY_LOGGED_IN' }, '*')
-    return (
-      <div className="h-16 bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center px-4">
-        <span className="text-white font-medium" style={{ fontFamily: 'Fredoka' }}>
-          ¡Ya estás conectado!
-        </span>
-      </div>
-    )
+    // Si ya está logueado, redirigir inmediatamente
+    window.location.href = '/standalone-user-bar'
+    return null
   }
 
   return (
