@@ -107,7 +107,7 @@ const StandaloneUserBar = () => {
 
   if (!user) {
     return (
-      <div className="h-16 flex items-center justify-center px-4">
+      <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center px-4">
         <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 flex items-center gap-3">
           <User size={20} className="text-white" />
           <span className="text-white font-medium" style={{ fontFamily: 'Fredoka' }}>
@@ -119,9 +119,9 @@ const StandaloneUserBar = () => {
   }
 
   return (
-    <div className="h-16 flex items-center justify-between px-4 relative">
+    <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-between px-4 relative rounded-2xl">
       {/* User Info Section */}
-      <div className="flex items-center gap-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl px-4 py-2">
+      <div className="flex items-center gap-4">
         {/* Avatar */}
         <div className="w-12 h-12 rounded-full overflow-hidden bg-white bg-opacity-20 flex items-center justify-center flex-shrink-0 border-2 border-white border-opacity-30">
           {profile?.avatar_url ? (
