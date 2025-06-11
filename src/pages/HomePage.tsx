@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
 import UserMenu from '../components/UserMenu'
-import UserBar from '../components/UserBar'
 import { 
   Clock, 
   BookOpen, 
@@ -100,7 +99,6 @@ const HomePage = () => {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <UserBar />
             <UserMenu />
           </div>
         </div>
