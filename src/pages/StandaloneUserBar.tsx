@@ -176,87 +176,25 @@ const StandaloneUserBar = () => {
           <div className="absolute bottom-0 left-2 text-yellow-200 text-xs animate-bounce" style={{ animationDelay: '0.5s' }}>⭐</div>
         </div>
 
-        {/* Settings Menu */}
-        <div className="relative">
+        {/* Botones de acción directos */}
+        <div className="flex items-center gap-2">
+          {/* Botón Editar Perfil */}
           <button
-            onClick={() => setShowDropdown(!showDropdown)}
-            className="bg-white bg-opacity-20 hover:bg-opacity-30 p-3 rounded-full transition-all transform hover:scale-105"
+            onClick={handleEditProfile}
+            className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full transition-all transform hover:scale-105 group"
+            title="Editar Perfil"
           >
-            <Settings size={20} className="text-white" />
+            <Edit size={18} className="text-white group-hover:text-yellow-200" />
           </button>
 
-          {/* Dropdown Menu */}
-          {showDropdown && (
-            <>
-              {/* Overlay para cerrar el dropdown */}
-              <div
-                className="fixed inset-0 z-10"
-                onClick={() => setShowDropdown(false)}
-              />
-              
-              <div className="absolute right-0 top-full mt-2 w-64 bg-white bg-opacity-95 backdrop-blur-sm rounded-xl shadow-2xl border border-white border-opacity-30 py-2 z-20">
-                {/* Score Details */}
-                <div className="px-4 py-3 border-b border-white border-opacity-30">
-                  <div className="text-sm font-bold text-gray-800 mb-2" style={{ fontFamily: 'Fredoka' }}>
-                    📊 Tu Progreso Detallado
-                  </div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <Trophy size={18} className={getScoreColor()} />
-                    <div>
-                      <div className={`font-bold text-lg ${getScoreColor()}`}>
-                        {score.toLocaleString()} caracteres
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        Nivel: {getScoreLevel()}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 bg-opacity-50 rounded-full h-2 mb-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all duration-500 ${
-                        score >= 1000 ? 'bg-purple-500' :
-                        score >= 500 ? 'bg-blue-500' :
-                        score >= 200 ? 'bg-green-500' : 'bg-gray-400'
-                      }`}
-                      style={{ 
-                        width: `${Math.min((score / 1000) * 100, 100)}%` 
-                      }}
-                    />
-                  </div>
-                  
-                  <div className="text-xs text-gray-500">
-                    {score < 1000 ? `${1000 - score} caracteres para el siguiente nivel` : '¡Nivel máximo alcanzado!'}
-                  </div>
-                </div>
-
-                {/* Menu Items */}
-                <button
-                  onClick={handleEditProfile}
-                  className="w-full px-4 py-3 text-left text-gray-700 hover:bg-white hover:bg-opacity-50 flex items-center gap-3 transition-colors"
-                >
-                  <Edit size={16} />
-                  <div>
-                    <div className="font-medium">Editar Perfil</div>
-                    <div className="text-xs text-gray-500">Actualizar información personal</div>
-                  </div>
-                  <ExternalLink size={14} className="ml-auto text-gray-400" />
-                </button>
-
-                <button
-                  onClick={handleSignOut}
-                  className="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 hover:bg-opacity-50 flex items-center gap-3 transition-colors"
-                >
-                  <LogOut size={16} />
-                  <div>
-                    <div className="font-medium">Cerrar Sesión</div>
-                    <div className="text-xs text-red-400">Salir de la cuenta</div>
-                  </div>
-                </button>
-              </div>
-            </>
-          )}
+          {/* Botón Cerrar Sesión */}
+          <button
+            onClick={handleSignOut}
+            className="bg-white bg-opacity-20 hover:bg-red-500 hover:bg-opacity-80 p-2 rounded-full transition-all transform hover:scale-105 group"
+            title="Cerrar Sesión"
+          >
+            <LogOut size={18} className="text-white group-hover:text-white" />
+          </button>
         </div>
       </div>
     </div>
