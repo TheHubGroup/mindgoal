@@ -10,6 +10,7 @@ import TimelineActivity from './pages/TimelineActivity'
 import CuentameQuienEres from './pages/CuentameQuienEres'
 import UserBarPage from './pages/UserBarPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
+import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -89,6 +90,9 @@ function App() {
               <ProtectedRoute>
                 <StandaloneUserBar />
               </ProtectedRoute>
+            } />
+            <Route path="/standalone-login-bar" element={
+              <StandaloneLoginUserBar />
             } />
             
             {/* Catch all route */}
