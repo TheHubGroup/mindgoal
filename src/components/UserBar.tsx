@@ -92,10 +92,10 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
 
   if (!user) {
     return (
-      <div className={`bg-white shadow-lg rounded-full px-6 py-3 flex items-center gap-4 ${className}`}>
+      <div className={`bg-white bg-opacity-20 backdrop-blur-sm shadow-lg rounded-full px-6 py-3 flex items-center gap-4 ${className}`}>
         <button
           onClick={() => navigate('/login')}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          className="flex items-center gap-2 text-white hover:text-opacity-80 font-medium transition-colors"
         >
           <User size={20} />
           Iniciar Sesión
@@ -105,7 +105,7 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
   }
 
   return (
-    <div className={`bg-white shadow-lg rounded-full px-6 py-3 flex items-center gap-4 relative ${className}`}>
+    <div className={`bg-white bg-opacity-20 backdrop-blur-sm shadow-lg rounded-full px-6 py-3 flex items-center gap-4 relative ${className}`}>
       {/* Avatar */}
       <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center flex-shrink-0">
         {profile?.avatar_url ? (
@@ -122,21 +122,24 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
       {/* User Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <span className="font-bold text-gray-800 truncate" style={{ fontFamily: 'Fredoka' }}>
+          <span className="font-bold text-white truncate" style={{ fontFamily: 'Fredoka' }}>
             {getDisplayName()}
           </span>
           
-          {/* Score */}
-          <div className="flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1">
+          {/* Score con etiqueta "Tu Score" */}
+          <div className="flex items-center gap-1 bg-white bg-opacity-30 rounded-full px-3 py-1">
             <Trophy size={16} className={getScoreColor()} />
-            <span className={`font-bold text-sm ${getScoreColor()}`}>
-              {isLoading ? '...' : score.toLocaleString()}
-            </span>
+            <div className="text-center">
+              <div className="text-xs text-white font-medium leading-tight">Tu Score</div>
+              <div className={`font-bold text-sm ${getScoreColor()} leading-tight`}>
+                {isLoading ? '...' : score.toLocaleString()}
+              </div>
+            </div>
           </div>
         </div>
         
         {/* Score Level */}
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-white text-opacity-80 mt-1">
           {isLoading ? 'Calculando...' : `Nivel: ${getScoreLevel()}`}
         </div>
       </div>
@@ -145,9 +148,9 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
       <div className="relative">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
         >
-          <Settings size={20} className="text-gray-600" />
+          <Settings size={20} className="text-white" />
         </button>
 
         {/* Dropdown Menu */}
@@ -159,17 +162,17 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
               onClick={() => setShowDropdown(false)}
             />
             
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-20">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-white border-opacity-30 py-2 z-20">
               {/* Score Details */}
-              <div className="px-4 py-3 border-b border-gray-100">
-                <div className="text-sm font-medium text-gray-700">Tu Progreso</div>
+              <div className="px-4 py-3 border-b border-white border-opacity-30">
+                <div className="text-sm font-medium text-gray-800">Tu Progreso</div>
                 <div className="flex items-center gap-2 mt-1">
                   <Trophy size={16} className={getScoreColor()} />
                   <span className={`font-bold ${getScoreColor()}`}>
                     {score.toLocaleString()} caracteres
                   </span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-gray-600 mt-1">
                   {getScoreLevel()}
                 </div>
               </div>
@@ -177,7 +180,7 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
               {/* Menu Items */}
               <button
                 onClick={handleEditProfile}
-                className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                className="w-full px-4 py-2 text-left text-gray-800 hover:bg-white hover:bg-opacity-50 flex items-center gap-3 transition-colors"
               >
                 <Edit size={16} />
                 Editar Perfil
@@ -185,7 +188,7 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
 
               <button
                 onClick={handleSignOut}
-                className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
+                className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 hover:bg-opacity-50 flex items-center gap-3 transition-colors"
               >
                 <LogOut size={16} />
                 Cerrar Sesión

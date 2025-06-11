@@ -99,10 +99,10 @@ const StandaloneUserBar = () => {
   }
 
   const getScoreBgColor = () => {
-    if (score >= 1000) return 'bg-purple-100'
-    if (score >= 500) return 'bg-blue-100'
-    if (score >= 200) return 'bg-green-100'
-    return 'bg-gray-100'
+    if (score >= 1000) return 'bg-purple-100 bg-opacity-80'
+    if (score >= 500) return 'bg-blue-100 bg-opacity-80'
+    if (score >= 200) return 'bg-green-100 bg-opacity-80'
+    return 'bg-gray-100 bg-opacity-80'
   }
 
   if (!user) {
@@ -148,14 +148,15 @@ const StandaloneUserBar = () => {
 
       {/* Score and Actions Section */}
       <div className="flex items-center gap-4">
-        {/* Score Display */}
-        <div className={`${getScoreBgColor()} rounded-full px-4 py-2 flex items-center gap-2 shadow-lg`}>
+        {/* Score Display con etiqueta "Tu Score" */}
+        <div className={`${getScoreBgColor()} backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-lg`}>
           <Trophy size={20} className={getScoreColor()} />
           <div className="text-center">
+            <div className="text-xs text-gray-600 leading-tight font-medium">Tu Score</div>
             <div className={`font-bold text-lg leading-tight ${getScoreColor()}`}>
               {isLoading ? '...' : score.toLocaleString()}
             </div>
-            <div className="text-xs text-gray-600 leading-tight">
+            <div className="text-xs text-gray-500 leading-tight">
               {isLoading ? 'Calculando...' : getScoreLevel()}
             </div>
           </div>
@@ -179,9 +180,9 @@ const StandaloneUserBar = () => {
                 onClick={() => setShowDropdown(false)}
               />
               
-              <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-20">
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white bg-opacity-95 backdrop-blur-sm rounded-xl shadow-2xl border border-white border-opacity-30 py-2 z-20">
                 {/* Score Details */}
-                <div className="px-4 py-3 border-b border-gray-100">
+                <div className="px-4 py-3 border-b border-white border-opacity-30">
                   <div className="text-sm font-bold text-gray-800 mb-2" style={{ fontFamily: 'Fredoka' }}>
                     📊 Tu Progreso Detallado
                   </div>
@@ -198,7 +199,7 @@ const StandaloneUserBar = () => {
                   </div>
                   
                   {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div className="w-full bg-gray-200 bg-opacity-50 rounded-full h-2 mb-2">
                     <div 
                       className={`h-2 rounded-full transition-all duration-500 ${
                         score >= 1000 ? 'bg-purple-500' :
@@ -219,7 +220,7 @@ const StandaloneUserBar = () => {
                 {/* Menu Items */}
                 <button
                   onClick={handleEditProfile}
-                  className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                  className="w-full px-4 py-3 text-left text-gray-700 hover:bg-white hover:bg-opacity-50 flex items-center gap-3 transition-colors"
                 >
                   <Edit size={16} />
                   <div>
@@ -231,7 +232,7 @@ const StandaloneUserBar = () => {
 
                 <button
                   onClick={handleSignOut}
-                  className="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
+                  className="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 hover:bg-opacity-50 flex items-center gap-3 transition-colors"
                 >
                   <LogOut size={16} />
                   <div>
