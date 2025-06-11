@@ -223,7 +223,6 @@ const CuentameQuienEres = () => {
               <Save size={20} />
               {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
             </button>
-            <UserBar />
             <UserMenu />
           </div>
         </div>
