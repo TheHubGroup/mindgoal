@@ -104,7 +104,7 @@ const MeditacionAutoconocimiento = () => {
     
     // Actualizar la duración total en la sesión
     if (currentSession && user) {
-      meditationService.updateSession(user.id, VIDEO_ID, {
+      meditationService.updateSession(user.id, VIDEO_ID, VIDEO_TITLE, {
         total_duration: videoDuration
       })
     }
@@ -117,7 +117,7 @@ const MeditacionAutoconocimiento = () => {
       setHasStarted(true)
       
       // Actualizar la sesión con el inicio
-      await meditationService.updateSession(user.id, VIDEO_ID, {
+      await meditationService.updateSession(user.id, VIDEO_ID, VIDEO_TITLE, {
         started_at: new Date().toISOString()
       })
     }
@@ -173,7 +173,7 @@ const MeditacionAutoconocimiento = () => {
         updates.completed_at = new Date().toISOString()
       }
 
-      const updatedSession = await meditationService.updateSession(user.id, VIDEO_ID, updates)
+      const updatedSession = await meditationService.updateSession(user.id, VIDEO_ID, VIDEO_TITLE, updates)
       if (updatedSession) {
         setCurrentSession(updatedSession)
       }
@@ -216,7 +216,7 @@ const MeditacionAutoconocimiento = () => {
 
     setSaving(true)
     try {
-      const updatedSession = await meditationService.updateSession(user.id, VIDEO_ID, {
+      const updatedSession = await meditationService.updateSession(user.id, VIDEO_ID, VIDEO_TITLE, {
         reflection_text: reflectionText.trim()
       })
       

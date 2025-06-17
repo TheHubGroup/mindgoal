@@ -74,7 +74,7 @@ export const meditationService = {
   },
 
   // Actualizar la sesión única (UPSERT)
-  async updateSession(userId: string, videoId: string, updates: Partial<MeditationSession>): Promise<MeditationSession | null> {
+  async updateSession(userId: string, videoId: string, videoTitle: string, updates: Partial<MeditationSession>): Promise<MeditationSession | null> {
     if (!supabase) {
       console.warn('Supabase not configured')
       return null
@@ -86,6 +86,7 @@ export const meditationService = {
         .upsert({
           user_id: userId,
           video_id: videoId,
+          video_title: videoTitle,
           ...updates,
           updated_at: new Date().toISOString()
         }, {
