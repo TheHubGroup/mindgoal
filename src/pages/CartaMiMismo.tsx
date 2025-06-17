@@ -290,7 +290,7 @@ const CartaMiMismo = () => {
             </div>
 
             <NotebookPaper className="min-h-96 shadow-2xl">
-              <div className="handwriting-font text-lg leading-10 text-blue-900">
+              <div className="handwriting-text text-lg leading-10 text-blue-900">
                 <HandwritingEffect
                   text={previewText}
                   speed={30}
@@ -333,8 +333,7 @@ const CartaMiMismo = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ej: Carta para mi yo de 18 años"
-                className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:border-amber-500 focus:outline-none text-lg"
-                style={{ fontFamily: 'Comic Neue' }}
+                className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:border-amber-500 focus:outline-none text-lg handwriting-text"
               />
             </div>
 
@@ -343,9 +342,8 @@ const CartaMiMismo = () => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Querido yo del futuro..."
-                className="w-full h-80 bg-transparent border-none outline-none resize-none text-lg leading-10 text-blue-900 handwriting-font"
+                className="w-full h-80 bg-transparent border-none outline-none resize-none text-lg leading-10 text-blue-900 handwriting-text"
                 style={{ 
-                  fontFamily: 'Comic Neue',
                   lineHeight: '40px'
                 }}
               />
@@ -364,9 +362,26 @@ const CartaMiMismo = () => {
       </div>
 
       <style jsx>{`
-        .handwriting-font {
-          font-family: 'Comic Neue', cursive;
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Caveat:wght@400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap');
+        
+        .handwriting-text {
+          font-family: 'Kalam', 'Caveat', 'Dancing Script', cursive;
           font-weight: 400;
+          letter-spacing: 0.5px;
+          transform: rotate(-0.5deg);
+          text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
+          line-height: 1.6;
+        }
+        
+        .handwriting-text::placeholder {
+          font-family: 'Kalam', 'Caveat', cursive;
+          color: #94a3b8;
+          font-style: italic;
+        }
+        
+        .handwriting-text:focus {
+          transform: rotate(0deg);
+          transition: transform 0.3s ease;
         }
         
         .line-clamp-3 {
@@ -374,6 +389,27 @@ const CartaMiMismo = () => {
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+
+        /* Efecto de tinta ligeramente irregular */
+        .handwriting-text {
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(59, 130, 246, 0.02) 50%,
+            transparent 100%
+          );
+        }
+
+        /* Animación sutil de escritura */
+        @keyframes handwriting {
+          0% { opacity: 0.8; }
+          50% { opacity: 1; }
+          100% { opacity: 0.8; }
+        }
+
+        .handwriting-text:focus {
+          animation: handwriting 2s ease-in-out infinite;
         }
       `}</style>
     </div>
