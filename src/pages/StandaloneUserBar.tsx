@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
-import { User, LogOut, Edit, Trophy, Settings, ExternalLink } from 'lucide-react'
+import { User, LogOut, Trophy, Settings, ExternalLink } from 'lucide-react'
 import { userResponsesService } from '../lib/userResponsesService'
 import { timelineService } from '../lib/timelineService'
 
@@ -99,12 +99,6 @@ const StandaloneUserBar = () => {
       console.error('Error signing out:', error)
       setIsSigningOut(false)
     }
-  }
-
-  const handleEditProfile = () => {
-    // Abrir perfil en ventana padre
-    window.parent.postMessage({ type: 'NAVIGATE_TO_PROFILE' }, '*')
-    setShowDropdown(false)
   }
 
   const getDisplayName = () => {
@@ -215,19 +209,8 @@ const StandaloneUserBar = () => {
           <div className="absolute bottom-0 left-2 text-yellow-200 text-xs animate-bounce" style={{ animationDelay: '0.5s' }}>⭐</div>
         </div>
 
-        {/* Botones de acción directos */}
+        {/* Botón Cerrar Sesión */}
         <div className="flex items-center gap-2">
-          {/* Botón Editar Perfil */}
-          <button
-            onClick={handleEditProfile}
-            disabled={isSigningOut}
-            className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full transition-all transform hover:scale-105 group disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Editar Perfil"
-          >
-            <Edit size={18} className="text-white group-hover:text-yellow-200" />
-          </button>
-
-          {/* Botón Cerrar Sesión */}
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
