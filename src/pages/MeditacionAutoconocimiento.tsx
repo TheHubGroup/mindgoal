@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
-import VimeoPlayer from '../components/VimeoPlayer'
+import VimeoPlayer, { VimeoPlayerRef } from '../components/VimeoPlayer'
 import { meditationService, MeditationSession } from '../lib/meditationService'
 import { 
   ArrowLeft, 
@@ -25,7 +25,7 @@ import {
 const MeditacionAutoconocimiento = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const playerRef = useRef<any>(null)
+  const playerRef = useRef<VimeoPlayerRef>(null)
   
   // Video configuration
   const VIDEO_ID = '1094217297'
@@ -100,7 +100,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handlePlayerReady = (videoDuration: number) => {
-    console.log('Player ready with duration:', videoDuration)
+    console.log('🎬 Player ready with duration:', videoDuration)
     setDuration(videoDuration)
     
     // Actualizar la duración total en la sesión
@@ -112,7 +112,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handlePlay = async () => {
-    console.log('Play event triggered')
+    console.log('▶️ Play event triggered')
     setIsPlaying(true)
     
     if (!hasStarted && user && currentSession) {
@@ -126,7 +126,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handlePause = () => {
-    console.log('Pause event triggered')
+    console.log('⏸️ Pause event triggered')
     setIsPlaying(false)
     updateSessionProgress()
   }
@@ -139,7 +139,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handleSeek = async (fromTime: number, toTime: number) => {
-    console.log('Seek detected:', fromTime, '->', toTime)
+    console.log('🎯 Seek detected:', fromTime, '->', toTime)
     // Detectar skip forward (salto hacia adelante)
     if (toTime > fromTime + 2) {
       setSkipCount(prev => prev + 1)
@@ -154,7 +154,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handleEnded = () => {
-    console.log('Video ended')
+    console.log('🏁 Video ended')
     setIsPlaying(false)
     setHasCompleted(true)
     updateSessionProgress(true)
@@ -191,17 +191,14 @@ const MeditacionAutoconocimiento = () => {
     if (!user) return
 
     try {
-      console.log('Restarting video...')
+      console.log('🔄 Starting video restart process...')
       
-      // Reiniciar el reproductor usando la referencia
-      if (playerRef.current && playerRef.current.restart) {
-        await playerRef.current.restart()
-      }
-      
-      // Reiniciar la sesión en la base de datos
+      // Primero reiniciar la sesión en la base de datos
       const success = await meditationService.restartSession(user.id, VIDEO_ID)
       
       if (success) {
+        console.log('✅ Database session restarted')
+        
         // Reiniciar el estado local
         setCurrentTime(0)
         setMaxWatchedTime(0)
@@ -210,16 +207,24 @@ const MeditacionAutoconocimiento = () => {
         setIsPlaying(false)
         setShowReflection(false)
         
+        // Reiniciar el reproductor usando la referencia
+        if (playerRef.current) {
+          console.log('🎬 Restarting video player...')
+          await playerRef.current.restart()
+        }
+        
         // Recargar la sesión actualizada
         await loadUserSession()
         
         setSaveMessage('¡Video reiniciado! Puedes verlo nuevamente.')
         setTimeout(() => setSaveMessage(''), 3000)
         
-        console.log('Video restart completed successfully')
+        console.log('✅ Video restart completed successfully')
+      } else {
+        throw new Error('Failed to restart session in database')
       }
     } catch (error) {
-      console.error('Error restarting video:', error)
+      console.error('❌ Error restarting video:', error)
       setSaveMessage('Error al reiniciar el video')
       setTimeout(() => setSaveMessage(''), 3000)
     }

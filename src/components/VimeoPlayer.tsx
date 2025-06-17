@@ -11,7 +11,7 @@ interface VimeoPlayerProps {
   className?: string
 }
 
-interface VimeoPlayerRef {
+export interface VimeoPlayerRef {
   restart: () => Promise<void>
   getCurrentTime: () => Promise<number>
   getDuration: () => Promise<number>
@@ -39,23 +39,26 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
   const playerRef = useRef<any>(null)
   const [isPlayerReady, setIsPlayerReady] = useState(false)
   const [lastTime, setLastTime] = useState(0)
-  const [key, setKey] = useState(0) // Para forzar re-render si es necesario
+  const [isInitialized, setIsInitialized] = useState(false)
 
   // Exponer métodos públicos a través de ref
   useImperativeHandle(ref, () => ({
     restart: async () => {
-      if (playerRef.current) {
+      console.log('🔄 Restart method called')
+      if (playerRef.current && isPlayerReady) {
         try {
           await playerRef.current.setCurrentTime(0)
           setLastTime(0)
-          console.log('Video restarted successfully')
+          console.log('✅ Video restarted to position 0')
         } catch (error) {
-          console.error('Error restarting video:', error)
+          console.error('❌ Error restarting video:', error)
         }
+      } else {
+        console.warn('⚠️ Player not ready for restart')
       }
     },
     getCurrentTime: async () => {
-      if (playerRef.current) {
+      if (playerRef.current && isPlayerReady) {
         try {
           return await playerRef.current.getCurrentTime()
         } catch (error) {
@@ -66,7 +69,7 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
       return 0
     },
     getDuration: async () => {
-      if (playerRef.current) {
+      if (playerRef.current && isPlayerReady) {
         try {
           return await playerRef.current.getDuration()
         } catch (error) {
@@ -77,7 +80,7 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
       return 0
     },
     play: async () => {
-      if (playerRef.current) {
+      if (playerRef.current && isPlayerReady) {
         try {
           await playerRef.current.play()
         } catch (error) {
@@ -86,7 +89,7 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
       }
     },
     pause: async () => {
-      if (playerRef.current) {
+      if (playerRef.current && isPlayerReady) {
         try {
           await playerRef.current.pause()
         } catch (error) {
@@ -94,23 +97,19 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
         }
       }
     }
-  }), [])
+  }), [isPlayerReady])
 
   useEffect(() => {
-    // Cargar el script de Vimeo Player si no está cargado
-    if (!window.Vimeo) {
-      const script = document.createElement('script')
-      script.src = 'https://player.vimeo.com/api/player.js'
-      script.onload = initializePlayer
-      document.head.appendChild(script)
-    } else {
-      initializePlayer()
+    if (!isInitialized) {
+      initializeVimeoPlayer()
+      setIsInitialized(true)
     }
 
     return () => {
-      // Solo destruir el player si el componente se desmonta completamente
+      // Solo limpiar cuando el componente se desmonte completamente
       if (playerRef.current) {
         try {
+          console.log('🧹 Cleaning up Vimeo player')
           playerRef.current.destroy()
           playerRef.current = null
         } catch (error) {
@@ -118,43 +117,71 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
         }
       }
     }
-  }, [videoId, key]) // Incluir key para re-inicializar si es necesario
+  }, [videoId]) // Solo re-inicializar si cambia el videoId
 
-  const initializePlayer = () => {
-    if (!iframeRef.current || !window.Vimeo) return
+  const initializeVimeoPlayer = () => {
+    console.log('🎬 Initializing Vimeo player...')
+    
+    // Cargar el script de Vimeo Player si no está cargado
+    if (!window.Vimeo) {
+      const script = document.createElement('script')
+      script.src = 'https://player.vimeo.com/api/player.js'
+      script.onload = () => {
+        console.log('📜 Vimeo script loaded')
+        createPlayer()
+      }
+      script.onerror = () => {
+        console.error('❌ Failed to load Vimeo script')
+      }
+      document.head.appendChild(script)
+    } else {
+      createPlayer()
+    }
+  }
+
+  const createPlayer = () => {
+    if (!iframeRef.current || !window.Vimeo) {
+      console.warn('⚠️ Cannot create player: missing iframe or Vimeo')
+      return
+    }
 
     try {
+      console.log('🎯 Creating Vimeo player instance')
+      
       // Destruir player anterior si existe
       if (playerRef.current) {
         playerRef.current.destroy()
+        playerRef.current = null
       }
 
+      // Crear nuevo player
       playerRef.current = new window.Vimeo.Player(iframeRef.current)
 
       // Configurar eventos
       playerRef.current.on('loaded', async () => {
+        console.log('✅ Player loaded successfully')
         setIsPlayerReady(true)
         try {
           const duration = await playerRef.current.getDuration()
+          console.log('⏱️ Video duration:', duration)
           onReady?.(duration)
-          console.log('Player loaded, duration:', duration)
         } catch (error) {
           console.error('Error getting duration:', error)
         }
       })
 
       playerRef.current.on('play', () => {
-        console.log('Video playing')
+        console.log('▶️ Video playing')
         onPlay?.()
       })
 
       playerRef.current.on('pause', () => {
-        console.log('Video paused')
+        console.log('⏸️ Video paused')
         onPause?.()
       })
 
       playerRef.current.on('ended', () => {
-        console.log('Video ended')
+        console.log('🏁 Video ended')
         onEnded?.()
       })
 
@@ -165,7 +192,7 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
           
           // Detectar skip forward (salto hacia adelante de más de 2 segundos)
           if (currentTime > lastTime + 2 && lastTime > 0) {
-            console.log('Skip detected:', lastTime, '->', currentTime)
+            console.log('⏭️ Skip detected:', lastTime, '->', currentTime)
             onSeek?.(lastTime, currentTime)
           }
           
@@ -181,7 +208,7 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
         try {
           const currentTime = data.seconds
           if (Math.abs(currentTime - lastTime) > 1) {
-            console.log('Manual seek detected:', lastTime, '->', currentTime)
+            console.log('🎯 Manual seek detected:', lastTime, '->', currentTime)
             onSeek?.(lastTime, currentTime)
           }
           setLastTime(currentTime)
@@ -191,11 +218,11 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
       })
 
       playerRef.current.on('error', (error: any) => {
-        console.error('Vimeo player error:', error)
+        console.error('❌ Vimeo player error:', error)
       })
 
     } catch (error) {
-      console.error('Error initializing Vimeo player:', error)
+      console.error('❌ Error creating Vimeo player:', error)
     }
   }
 
@@ -203,7 +230,6 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
     <div className={`relative ${className}`} style={{ paddingBottom: '56.25%', height: 0 }}>
       <iframe
         ref={iframeRef}
-        key={`vimeo-${videoId}-${key}`} // Key único para forzar re-render si es necesario
         src={`https://player.vimeo.com/video/${videoId}?badge=0&autopause=0&player_id=0&app_id=58479`}
         frameBorder="0"
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
