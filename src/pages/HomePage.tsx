@@ -5,14 +5,9 @@ import { useProfile } from '../hooks/useProfile'
 import UserMenu from '../components/UserMenu'
 import { 
   Clock, 
-  BookOpen, 
-  Calculator, 
-  Palette, 
-  Globe, 
-  Music,
+  Heart,
   Sparkles,
-  Star,
-  Heart
+  Star
 } from 'lucide-react'
 
 const HomePage = () => {
@@ -38,46 +33,6 @@ const HomePage = () => {
       color: 'from-green-500 to-blue-500',
       available: true,
       route: '/actividad/cuentame-quien-eres'
-    },
-    {
-      id: 'lectura',
-      title: 'Aventuras de Lectura',
-      description: 'Descubre historias increíbles y mejora tu comprensión',
-      icon: BookOpen,
-      color: 'from-blue-500 to-cyan-500',
-      available: false
-    },
-    {
-      id: 'matematicas',
-      title: 'Matemáticas Divertidas',
-      description: 'Resuelve problemas y juega con números',
-      icon: Calculator,
-      color: 'from-green-500 to-emerald-500',
-      available: false
-    },
-    {
-      id: 'arte',
-      title: 'Taller de Arte',
-      description: 'Expresa tu creatividad con colores y formas',
-      icon: Palette,
-      color: 'from-orange-500 to-red-500',
-      available: false
-    },
-    {
-      id: 'geografia',
-      title: 'Explorador Mundial',
-      description: 'Viaja por el mundo y aprende sobre diferentes países',
-      icon: Globe,
-      color: 'from-indigo-500 to-purple-500',
-      available: false
-    },
-    {
-      id: 'musica',
-      title: 'Ritmos y Melodías',
-      description: 'Crea música y aprende sobre diferentes instrumentos',
-      icon: Music,
-      color: 'from-pink-500 to-rose-500',
-      available: false
     }
   ]
 
@@ -117,7 +72,7 @@ const HomePage = () => {
         </div>
 
         {/* Activities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = activity.icon
             return (
