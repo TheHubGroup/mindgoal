@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
@@ -16,12 +16,16 @@ import {
   Save,
   Eye,
   BarChart3,
-  MessageCircle
+  MessageCircle,
+  RotateCcw,
+  FastForward,
+  AlertTriangle
 } from 'lucide-react'
 
 const MeditacionAutoconocimiento = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const playerRef = useRef<any>(null)
   
   // Video configuration
   const VIDEO_ID = '1094217297'
@@ -37,7 +41,7 @@ const MeditacionAutoconocimiento = () => {
   
   // Session state
   const [currentSession, setCurrentSession] = useState<MeditationSession | null>(null)
-  const [previousSessions, setPreviousSessions] = useState<MeditationSession[]>([])
+  const [allSessions, setAllSessions] = useState<MeditationSession[]>([])
   const [isLoading, setIsLoading] = useState(true)
   
   // Reflection state
@@ -46,9 +50,13 @@ const MeditacionAutoconocimiento = () => {
   const [isSaving, setSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
 
+  // Skip tracking
+  const [skipCount, setSkipCount] = useState(0)
+  const [showSkipWarning, setShowSkipWarning] = useState(false)
+
   useEffect(() => {
     if (user) {
-      loadUserSessions()
+      loadUserSession()
     }
   }, [user])
 
@@ -59,26 +67,33 @@ const MeditacionAutoconocimiento = () => {
     }
   }, [currentTime, maxWatchedTime])
 
-  const loadUserSessions = async () => {
+  const loadUserSession = async () => {
     if (!user) return
     
     setIsLoading(true)
     try {
-      const sessions = await meditationService.getSessions(user.id)
-      setPreviousSessions(sessions)
-      
-      // Buscar sesión existente para este video
-      const lastSession = await meditationService.getLastSessionForVideo(user.id, VIDEO_ID)
-      if (lastSession) {
-        setCurrentSession(lastSession)
-        setMaxWatchedTime(lastSession.watch_duration)
-        setReflectionText(lastSession.reflection_text || '')
-        if (lastSession.completed_at) {
+      // Obtener o crear la sesión única para este video
+      const session = await meditationService.getOrCreateSession(user.id, VIDEO_ID, VIDEO_TITLE)
+      if (session) {
+        setCurrentSession(session)
+        setMaxWatchedTime(session.watch_duration)
+        setReflectionText(session.reflection_text || '')
+        setSkipCount(session.skip_count || 0)
+        
+        if (session.completed_at) {
           setHasCompleted(true)
         }
+        
+        if (session.started_at) {
+          setHasStarted(true)
+        }
       }
+
+      // Obtener todas las sesiones para estadísticas
+      const sessions = await meditationService.getAllSessions(user.id)
+      setAllSessions(sessions)
     } catch (error) {
-      console.error('Error loading sessions:', error)
+      console.error('Error loading session:', error)
     } finally {
       setIsLoading(false)
     }
@@ -86,34 +101,25 @@ const MeditacionAutoconocimiento = () => {
 
   const handlePlayerReady = (videoDuration: number) => {
     setDuration(videoDuration)
+    
+    // Actualizar la duración total en la sesión
+    if (currentSession && user) {
+      meditationService.updateSession(user.id, VIDEO_ID, {
+        total_duration: videoDuration
+      })
+    }
   }
 
   const handlePlay = async () => {
     setIsPlaying(true)
     
-    if (!hasStarted && user) {
+    if (!hasStarted && user && currentSession) {
       setHasStarted(true)
       
-      // Crear nueva sesión si no existe
-      if (!currentSession) {
-        try {
-          const newSession = await meditationService.createSession({
-            user_id: user.id,
-            video_id: VIDEO_ID,
-            video_title: VIDEO_TITLE,
-            started_at: new Date().toISOString(),
-            watch_duration: 0,
-            total_duration: duration,
-            completion_percentage: 0
-          })
-          
-          if (newSession) {
-            setCurrentSession(newSession)
-          }
-        } catch (error) {
-          console.error('Error creating session:', error)
-        }
-      }
+      // Actualizar la sesión con el inicio
+      await meditationService.updateSession(user.id, VIDEO_ID, {
+        started_at: new Date().toISOString()
+      })
     }
   }
 
@@ -129,6 +135,20 @@ const MeditacionAutoconocimiento = () => {
     }
   }
 
+  const handleSeek = async (fromTime: number, toTime: number) => {
+    // Detectar skip forward (salto hacia adelante)
+    if (toTime > fromTime + 2) {
+      setSkipCount(prev => prev + 1)
+      setShowSkipWarning(true)
+      setTimeout(() => setShowSkipWarning(false), 3000)
+      
+      // Registrar el skip en la base de datos
+      if (user) {
+        await meditationService.recordSkip(user.id, VIDEO_ID)
+      }
+    }
+  }
+
   const handleEnded = () => {
     setIsPlaying(false)
     setHasCompleted(true)
@@ -137,7 +157,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const updateSessionProgress = async (completed = false) => {
-    if (!currentSession || !user) return
+    if (!user) return
 
     try {
       const completionPercentage = duration > 0 ? Math.round((maxWatchedTime / duration) * 100) : 0
@@ -145,14 +165,15 @@ const MeditacionAutoconocimiento = () => {
       const updates: Partial<MeditationSession> = {
         watch_duration: maxWatchedTime,
         completion_percentage: completionPercentage,
-        total_duration: duration
+        total_duration: duration,
+        last_position: currentTime
       }
 
       if (completed) {
         updates.completed_at = new Date().toISOString()
       }
 
-      const updatedSession = await meditationService.updateSession(currentSession.id!, updates)
+      const updatedSession = await meditationService.updateSession(user.id, VIDEO_ID, updates)
       if (updatedSession) {
         setCurrentSession(updatedSession)
       }
@@ -161,12 +182,41 @@ const MeditacionAutoconocimiento = () => {
     }
   }
 
+  const handleRestartVideo = async () => {
+    if (!user) return
+
+    try {
+      // Reiniciar la sesión en la base de datos
+      const success = await meditationService.restartSession(user.id, VIDEO_ID)
+      
+      if (success) {
+        // Reiniciar el estado local
+        setCurrentTime(0)
+        setMaxWatchedTime(0)
+        setHasStarted(false)
+        setHasCompleted(false)
+        setIsPlaying(false)
+        setShowReflection(false)
+        
+        // Recargar la sesión actualizada
+        await loadUserSession()
+        
+        setSaveMessage('¡Video reiniciado! Puedes verlo nuevamente.')
+        setTimeout(() => setSaveMessage(''), 3000)
+      }
+    } catch (error) {
+      console.error('Error restarting video:', error)
+      setSaveMessage('Error al reiniciar el video')
+      setTimeout(() => setSaveMessage(''), 3000)
+    }
+  }
+
   const handleSaveReflection = async () => {
-    if (!currentSession || !user) return
+    if (!user) return
 
     setSaving(true)
     try {
-      const updatedSession = await meditationService.updateSession(currentSession.id!, {
+      const updatedSession = await meditationService.updateSession(user.id, VIDEO_ID, {
         reflection_text: reflectionText.trim()
       })
       
@@ -228,11 +278,19 @@ const MeditacionAutoconocimiento = () => {
         </div>
       </div>
 
-      {/* Mensaje de estado */}
+      {/* Mensajes de estado */}
       {saveMessage && (
         <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
           <CheckCircle size={20} className="text-green-500" />
           <span className="font-medium text-gray-800">{saveMessage}</span>
+        </div>
+      )}
+
+      {/* Warning de Skip */}
+      {showSkipWarning && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2 bg-orange-500 text-white rounded-lg shadow-lg p-4">
+          <FastForward size={20} />
+          <span className="font-medium">¡Detectamos que adelantaste el video!</span>
         </div>
       )}
 
@@ -243,17 +301,31 @@ const MeditacionAutoconocimiento = () => {
             {/* Video Player */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-3xl shadow-2xl p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
-                  🧘‍♀️ Sesión de Meditación
-                </h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold text-gray-800" style={{ fontFamily: 'Fredoka' }}>
+                    🧘‍♀️ Sesión de Meditación
+                  </h2>
+                  
+                  {(hasCompleted || hasStarted) && (
+                    <button
+                      onClick={handleRestartVideo}
+                      className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      <RotateCcw size={16} />
+                      Reiniciar
+                    </button>
+                  )}
+                </div>
                 
                 <VimeoPlayer
+                  ref={playerRef}
                   videoId={VIDEO_ID}
                   onPlay={handlePlay}
                   onPause={handlePause}
                   onEnded={handleEnded}
                   onTimeUpdate={handleTimeUpdate}
                   onReady={handlePlayerReady}
+                  onSeek={handleSeek}
                   className="mb-4"
                 />
 
@@ -288,6 +360,13 @@ const MeditacionAutoconocimiento = () => {
                       <span>¡Completado!</span>
                     </div>
                   )}
+
+                  {skipCount > 0 && (
+                    <div className="flex items-center gap-2 text-orange-600">
+                      <FastForward size={16} />
+                      <span>Skips: {skipCount}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -313,6 +392,18 @@ const MeditacionAutoconocimiento = () => {
                   </div>
                   
                   <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Veces visto:</span>
+                    <span className="font-bold text-purple-600">{currentSession?.view_count || 0}</span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Adelantos:</span>
+                    <span className={`font-bold ${skipCount > 0 ? 'text-orange-600' : 'text-green-600'}`}>
+                      {skipCount}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
                     <span className="text-gray-600">Estado:</span>
                     <span className={`font-bold ${hasCompleted ? 'text-green-600' : hasStarted ? 'text-blue-600' : 'text-gray-500'}`}>
                       {hasCompleted ? 'Completado' : hasStarted ? 'En progreso' : 'No iniciado'}
@@ -326,7 +417,7 @@ const MeditacionAutoconocimiento = () => {
                     className="w-full mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                   >
                     <MessageCircle size={20} />
-                    Escribir Reflexión
+                    {currentSession?.reflection_text ? 'Ver/Editar Reflexión' : 'Escribir Reflexión'}
                   </button>
                 )}
               </div>
@@ -341,28 +432,37 @@ const MeditacionAutoconocimiento = () => {
                   <p>• Encuentra un lugar cómodo y silencioso</p>
                   <p>• Usa auriculares para una mejor experiencia</p>
                   <p>• Sigue las instrucciones del video</p>
+                  <p>• Evita adelantar el video para mejor experiencia</p>
                   <p>• Al finalizar, reflexiona sobre tu experiencia</p>
                 </div>
               </div>
 
-              {/* Previous Sessions */}
-              {previousSessions.length > 0 && (
+              {/* Skip Warning */}
+              {skipCount > 3 && (
+                <div className="bg-orange-100 border-l-4 border-orange-500 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle size={20} className="text-orange-600" />
+                    <h4 className="font-bold text-orange-800">Recomendación</h4>
+                  </div>
+                  <p className="text-orange-700 text-sm">
+                    Has adelantado el video {skipCount} veces. Para una mejor experiencia de meditación, 
+                    te recomendamos ver el video completo sin adelantar.
+                  </p>
+                </div>
+              )}
+
+              {/* Previous Sessions Summary */}
+              {allSessions.length > 1 && (
                 <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
                     <Clock size={20} className="text-blue-600" />
-                    Sesiones Anteriores
+                    Historial
                   </h3>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {previousSessions.slice(0, 5).map((session) => (
-                      <div key={session.id} className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">
-                          {new Date(session.created_at || '').toLocaleDateString()}
-                        </span>
-                        <span className="font-medium text-indigo-600">
-                          {session.completion_percentage}%
-                        </span>
-                      </div>
-                    ))}
+                  <div className="text-sm text-gray-600">
+                    <p>Total de sesiones: <span className="font-bold">{allSessions.length}</span></p>
+                    <p>Sesiones completadas: <span className="font-bold text-green-600">
+                      {allSessions.filter(s => s.completed_at).length}
+                    </span></p>
                   </div>
                 </div>
               )}

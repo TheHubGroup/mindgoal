@@ -7,6 +7,7 @@ interface VimeoPlayerProps {
   onEnded?: () => void
   onTimeUpdate?: (currentTime: number, duration: number) => void
   onReady?: (duration: number) => void
+  onSeek?: (fromTime: number, toTime: number) => void
   className?: string
 }
 
@@ -23,11 +24,13 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
   onEnded,
   onTimeUpdate,
   onReady,
+  onSeek,
   className = ''
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const playerRef = useRef<any>(null)
   const [isPlayerReady, setIsPlayerReady] = useState(false)
+  const [lastTime, setLastTime] = useState(0)
 
   useEffect(() => {
     // Cargar el script de Vimeo Player si no está cargado
@@ -79,9 +82,30 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
       playerRef.current.on('timeupdate', async (data: any) => {
         try {
           const duration = await playerRef.current.getDuration()
-          onTimeUpdate?.(data.seconds, duration)
+          const currentTime = data.seconds
+          
+          // Detectar skip forward (salto hacia adelante de más de 2 segundos)
+          if (currentTime > lastTime + 2 && lastTime > 0) {
+            onSeek?.(lastTime, currentTime)
+          }
+          
+          setLastTime(currentTime)
+          onTimeUpdate?.(currentTime, duration)
         } catch (error) {
           console.error('Error in timeupdate:', error)
+        }
+      })
+
+      // Detectar cuando el usuario busca manualmente en el video
+      playerRef.current.on('seeked', async (data: any) => {
+        try {
+          const currentTime = data.seconds
+          if (Math.abs(currentTime - lastTime) > 1) {
+            onSeek?.(lastTime, currentTime)
+          }
+          setLastTime(currentTime)
+        } catch (error) {
+          console.error('Error in seeked:', error)
         }
       })
 
@@ -89,6 +113,25 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
       console.error('Error initializing Vimeo player:', error)
     }
   }
+
+  // Método público para reiniciar el video
+  const restart = async () => {
+    if (playerRef.current) {
+      try {
+        await playerRef.current.setCurrentTime(0)
+        setLastTime(0)
+      } catch (error) {
+        console.error('Error restarting video:', error)
+      }
+    }
+  }
+
+  // Exponer el método restart
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.restart = restart
+    }
+  }, [isPlayerReady])
 
   return (
     <div className={`relative ${className}`} style={{ paddingBottom: '56.25%', height: 0 }}>
