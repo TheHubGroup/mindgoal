@@ -100,6 +100,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handlePlayerReady = (videoDuration: number) => {
+    console.log('Player ready with duration:', videoDuration)
     setDuration(videoDuration)
     
     // Actualizar la duración total en la sesión
@@ -111,6 +112,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handlePlay = async () => {
+    console.log('Play event triggered')
     setIsPlaying(true)
     
     if (!hasStarted && user && currentSession) {
@@ -124,6 +126,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handlePause = () => {
+    console.log('Pause event triggered')
     setIsPlaying(false)
     updateSessionProgress()
   }
@@ -136,6 +139,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handleSeek = async (fromTime: number, toTime: number) => {
+    console.log('Seek detected:', fromTime, '->', toTime)
     // Detectar skip forward (salto hacia adelante)
     if (toTime > fromTime + 2) {
       setSkipCount(prev => prev + 1)
@@ -150,6 +154,7 @@ const MeditacionAutoconocimiento = () => {
   }
 
   const handleEnded = () => {
+    console.log('Video ended')
     setIsPlaying(false)
     setHasCompleted(true)
     updateSessionProgress(true)
@@ -186,6 +191,13 @@ const MeditacionAutoconocimiento = () => {
     if (!user) return
 
     try {
+      console.log('Restarting video...')
+      
+      // Reiniciar el reproductor usando la referencia
+      if (playerRef.current && playerRef.current.restart) {
+        await playerRef.current.restart()
+      }
+      
       // Reiniciar la sesión en la base de datos
       const success = await meditationService.restartSession(user.id, VIDEO_ID)
       
@@ -203,6 +215,8 @@ const MeditacionAutoconocimiento = () => {
         
         setSaveMessage('¡Video reiniciado! Puedes verlo nuevamente.')
         setTimeout(() => setSaveMessage(''), 3000)
+        
+        console.log('Video restart completed successfully')
       }
     } catch (error) {
       console.error('Error restarting video:', error)

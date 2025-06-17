@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react'
 
 interface VimeoPlayerProps {
   videoId: string
@@ -11,13 +11,21 @@ interface VimeoPlayerProps {
   className?: string
 }
 
+interface VimeoPlayerRef {
+  restart: () => Promise<void>
+  getCurrentTime: () => Promise<number>
+  getDuration: () => Promise<number>
+  play: () => Promise<void>
+  pause: () => Promise<void>
+}
+
 declare global {
   interface Window {
     Vimeo: any
   }
 }
 
-const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
+const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
   videoId,
   onPlay,
   onPause,
@@ -26,11 +34,67 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
   onReady,
   onSeek,
   className = ''
-}) => {
+}, ref) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const playerRef = useRef<any>(null)
   const [isPlayerReady, setIsPlayerReady] = useState(false)
   const [lastTime, setLastTime] = useState(0)
+  const [key, setKey] = useState(0) // Para forzar re-render si es necesario
+
+  // Exponer métodos públicos a través de ref
+  useImperativeHandle(ref, () => ({
+    restart: async () => {
+      if (playerRef.current) {
+        try {
+          await playerRef.current.setCurrentTime(0)
+          setLastTime(0)
+          console.log('Video restarted successfully')
+        } catch (error) {
+          console.error('Error restarting video:', error)
+        }
+      }
+    },
+    getCurrentTime: async () => {
+      if (playerRef.current) {
+        try {
+          return await playerRef.current.getCurrentTime()
+        } catch (error) {
+          console.error('Error getting current time:', error)
+          return 0
+        }
+      }
+      return 0
+    },
+    getDuration: async () => {
+      if (playerRef.current) {
+        try {
+          return await playerRef.current.getDuration()
+        } catch (error) {
+          console.error('Error getting duration:', error)
+          return 0
+        }
+      }
+      return 0
+    },
+    play: async () => {
+      if (playerRef.current) {
+        try {
+          await playerRef.current.play()
+        } catch (error) {
+          console.error('Error playing video:', error)
+        }
+      }
+    },
+    pause: async () => {
+      if (playerRef.current) {
+        try {
+          await playerRef.current.pause()
+        } catch (error) {
+          console.error('Error pausing video:', error)
+        }
+      }
+    }
+  }), [])
 
   useEffect(() => {
     // Cargar el script de Vimeo Player si no está cargado
@@ -44,16 +108,27 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
     }
 
     return () => {
+      // Solo destruir el player si el componente se desmonta completamente
       if (playerRef.current) {
-        playerRef.current.destroy()
+        try {
+          playerRef.current.destroy()
+          playerRef.current = null
+        } catch (error) {
+          console.error('Error destroying player:', error)
+        }
       }
     }
-  }, [videoId])
+  }, [videoId, key]) // Incluir key para re-inicializar si es necesario
 
   const initializePlayer = () => {
     if (!iframeRef.current || !window.Vimeo) return
 
     try {
+      // Destruir player anterior si existe
+      if (playerRef.current) {
+        playerRef.current.destroy()
+      }
+
       playerRef.current = new window.Vimeo.Player(iframeRef.current)
 
       // Configurar eventos
@@ -62,20 +137,24 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
         try {
           const duration = await playerRef.current.getDuration()
           onReady?.(duration)
+          console.log('Player loaded, duration:', duration)
         } catch (error) {
           console.error('Error getting duration:', error)
         }
       })
 
       playerRef.current.on('play', () => {
+        console.log('Video playing')
         onPlay?.()
       })
 
       playerRef.current.on('pause', () => {
+        console.log('Video paused')
         onPause?.()
       })
 
       playerRef.current.on('ended', () => {
+        console.log('Video ended')
         onEnded?.()
       })
 
@@ -86,6 +165,7 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
           
           // Detectar skip forward (salto hacia adelante de más de 2 segundos)
           if (currentTime > lastTime + 2 && lastTime > 0) {
+            console.log('Skip detected:', lastTime, '->', currentTime)
             onSeek?.(lastTime, currentTime)
           }
           
@@ -101,6 +181,7 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
         try {
           const currentTime = data.seconds
           if (Math.abs(currentTime - lastTime) > 1) {
+            console.log('Manual seek detected:', lastTime, '->', currentTime)
             onSeek?.(lastTime, currentTime)
           }
           setLastTime(currentTime)
@@ -109,34 +190,20 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
         }
       })
 
+      playerRef.current.on('error', (error: any) => {
+        console.error('Vimeo player error:', error)
+      })
+
     } catch (error) {
       console.error('Error initializing Vimeo player:', error)
     }
   }
 
-  // Método público para reiniciar el video
-  const restart = async () => {
-    if (playerRef.current) {
-      try {
-        await playerRef.current.setCurrentTime(0)
-        setLastTime(0)
-      } catch (error) {
-        console.error('Error restarting video:', error)
-      }
-    }
-  }
-
-  // Exponer el método restart
-  useEffect(() => {
-    if (playerRef.current) {
-      playerRef.current.restart = restart
-    }
-  }, [isPlayerReady])
-
   return (
     <div className={`relative ${className}`} style={{ paddingBottom: '56.25%', height: 0 }}>
       <iframe
         ref={iframeRef}
+        key={`vimeo-${videoId}-${key}`} // Key único para forzar re-render si es necesario
         src={`https://player.vimeo.com/video/${videoId}?badge=0&autopause=0&player_id=0&app_id=58479`}
         frameBorder="0"
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
@@ -154,6 +221,8 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
       />
     </div>
   )
-}
+})
+
+VimeoPlayer.displayName = 'VimeoPlayer'
 
 export default VimeoPlayer
