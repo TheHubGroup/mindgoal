@@ -7,6 +7,7 @@ import {
   Clock, 
   Heart,
   Mail,
+  Brain,
   Sparkles,
   Star
 } from 'lucide-react'
@@ -43,6 +44,15 @@ const HomePage = () => {
       color: 'from-amber-500 to-orange-500',
       available: true,
       route: '/actividad/carta-mi-mismo'
+    },
+    {
+      id: 'meditacion-autoconocimiento',
+      title: 'Meditación del Autoconocimiento',
+      description: 'Practica mindfulness y reflexiona sobre tu experiencia interior',
+      icon: Brain,
+      color: 'from-indigo-500 to-purple-500',
+      available: true,
+      route: '/actividad/meditacion-autoconocimiento'
     }
   ]
 
@@ -82,7 +92,7 @@ const HomePage = () => {
         </div>
 
         {/* Activities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = activity.icon
             return (
@@ -144,7 +154,7 @@ const HomePage = () => {
         {/* Footer Message */}
         <div className="text-center mt-12">
           <p className="text-white text-opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-            ¡Más actividades emocionantes llegarán pronto! 🌟
+            ¡Explora cada actividad y descubre nuevas formas de conocerte mejor! 🌟
           </p>
         </div>
       </div>

@@ -9,6 +9,7 @@ import ProfilePage from './pages/ProfilePage'
 import TimelineActivity from './pages/TimelineActivity'
 import CuentameQuienEres from './pages/CuentameQuienEres'
 import CartaMiMismo from './pages/CartaMiMismo'
+import MeditacionAutoconocimiento from './pages/MeditacionAutoconocimiento'
 import UserBarPage from './pages/UserBarPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
@@ -85,6 +86,11 @@ function App() {
             <Route path="/actividad/carta-mi-mismo" element={
               <ProtectedRoute>
                 <CartaMiMismo />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/meditacion-autoconocimiento" element={
+              <ProtectedRoute>
+                <MeditacionAutoconocimiento />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={
