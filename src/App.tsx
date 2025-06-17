@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
 import TimelineActivity from './pages/TimelineActivity'
 import CuentameQuienEres from './pages/CuentameQuienEres'
+import CartaMiMismo from './pages/CartaMiMismo'
 import UserBarPage from './pages/UserBarPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
@@ -79,6 +80,11 @@ function App() {
             <Route path="/actividad/cuentame-quien-eres" element={
               <ProtectedRoute>
                 <CuentameQuienEres />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/carta-mi-mismo" element={
+              <ProtectedRoute>
+                <CartaMiMismo />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={

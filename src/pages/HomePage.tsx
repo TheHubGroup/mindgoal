@@ -6,6 +6,7 @@ import UserMenu from '../components/UserMenu'
 import { 
   Clock, 
   Heart,
+  Mail,
   Sparkles,
   Star
 } from 'lucide-react'
@@ -33,6 +34,15 @@ const HomePage = () => {
       color: 'from-green-500 to-blue-500',
       available: true,
       route: '/actividad/cuentame-quien-eres'
+    },
+    {
+      id: 'carta-mi-mismo',
+      title: 'Carta a mi mismo',
+      description: 'Escribe cartas reflexivas para diferentes momentos de tu vida',
+      icon: Mail,
+      color: 'from-orange-500 to-red-500',
+      available: true,
+      route: '/actividad/carta-mi-mismo'
     }
   ]
 
@@ -72,7 +82,7 @@ const HomePage = () => {
         </div>
 
         {/* Activities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = activity.icon
             return (
