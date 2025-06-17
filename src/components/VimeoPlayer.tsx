@@ -97,6 +97,9 @@ const VimeoPlayer: React.FC<VimeoPlayerProps> = ({
         src={`https://player.vimeo.com/video/${videoId}?badge=0&autopause=0&player_id=0&app_id=58479`}
         frameBorder="0"
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+        allowFullScreen
+        webkitAllowFullScreen
+        mozAllowFullScreen
         style={{
           position: 'absolute',
           top: 0,
