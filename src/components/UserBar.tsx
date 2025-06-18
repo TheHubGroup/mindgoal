@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { User, LogOut, Edit, Trophy, Settings } from 'lucide-react'
 import { userResponsesService } from '../lib/userResponsesService'
 import { timelineService } from '../lib/timelineService'
+import { letterService } from '../lib/letterService'
+import { meditationService } from '../lib/meditationService'
 
 interface UserBarProps {
   className?: string
@@ -43,6 +45,39 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
         totalCharacters += note.text.length
       })
 
+      // Obtener cartas de "Carta a mí mismo"
+      const letters = await letterService.getLetters(user.id)
+      letters.forEach(letter => {
+        totalCharacters += letter.title.length + letter.content.length
+      })
+
+      // Obtener sesiones de meditación y reflexiones
+      const meditationSessions = await meditationService.getAllSessions(user.id)
+      meditationSessions.forEach(session => {
+        // Puntos por tiempo de meditación (1 punto por minuto visto)
+        totalCharacters += Math.floor(session.watch_duration / 60) * 50 // 50 caracteres equivalentes por minuto
+        
+        // Puntos por completar la meditación
+        if (session.completed_at) {
+          totalCharacters += 200 // Bonus por completar
+        }
+        
+        // Puntos por reflexión escrita
+        if (session.reflection_text) {
+          totalCharacters += session.reflection_text.length
+        }
+        
+        // Bonus por múltiples visualizaciones (dedicación)
+        if (session.view_count > 1) {
+          totalCharacters += (session.view_count - 1) * 100
+        }
+        
+        // Penalización leve por muchos skips (para fomentar la práctica completa)
+        if (session.skip_count > 5) {
+          totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
+        }
+      })
+
       setScore(totalCharacters)
     } catch (error) {
       console.error('Error calculating score:', error)
@@ -77,13 +112,14 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
   }
 
   const getScoreColor = () => {
-    if (score >= 1000) return 'text-purple-600'
-    if (score >= 500) return 'text-blue-600'
-    if (score >= 200) return 'text-green-600'
+    if (score >= 2000) return 'text-purple-600'
+    if (score >= 1000) return 'text-blue-600'
+    if (score >= 500) return 'text-green-600'
     return 'text-gray-600'
   }
 
   const getScoreLevel = () => {
+    if (score >= 2000) return 'Maestro'
     if (score >= 1000) return 'Experto'
     if (score >= 500) return 'Avanzado'
     if (score >= 200) return 'Intermedio'
@@ -162,23 +198,25 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
               onClick={() => setShowDropdown(false)}
             />
             
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-white border-opacity-30 py-2 z-20">
+            <div className="absolute right-0 top-full mt-2 w-56 bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-white border-opacity-30 py-2 z-20">
               {/* Score Details */}
               <div className="px-4 py-3 border-b border-white border-opacity-30">
                 <div className="text-sm font-medium text-gray-800">Tu Progreso</div>
                 <div className="flex items-center gap-2 mt-1">
                   <Trophy size={16} className={getScoreColor()} />
                   <span className={`font-bold ${getScoreColor()}`}>
-                    {score.toLocaleString()} caracteres
+                    {score.toLocaleString()} puntos
                   </span>
                 </div>
                 <div className="text-xs text-gray-600 mt-1">
                   {getScoreLevel()}
                 </div>
+                <div className="text-xs text-gray-500 mt-2">
+                  Incluye: Línea del tiempo, Cuéntame quien eres, Cartas personales y Meditación
+                </div>
               </div>
 
               {/* Menu Items */}
-
               <button
                 onClick={handleEditProfile}
                 className="w-full px-4 py-2 text-left text-gray-800 hover:bg-white hover:bg-opacity-50 flex items-center gap-3 transition-colors"

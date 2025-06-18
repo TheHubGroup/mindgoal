@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
-import { User, LogOut, Trophy, Settings, ExternalLink } from 'lucide-react'
+import { User, LogOut, Trophy, Settings } from 'lucide-react'
 import { userResponsesService } from '../lib/userResponsesService'
 import { timelineService } from '../lib/timelineService'
+import { letterService } from '../lib/letterService'
+import { meditationService } from '../lib/meditationService'
 
 const StandaloneUserBar = () => {
   const { user, signOut } = useAuth()
@@ -72,6 +74,39 @@ const StandaloneUserBar = () => {
         totalCharacters += note.text.length
       })
 
+      // Obtener cartas de "Carta a mí mismo"
+      const letters = await letterService.getLetters(user.id)
+      letters.forEach(letter => {
+        totalCharacters += letter.title.length + letter.content.length
+      })
+
+      // Obtener sesiones de meditación y reflexiones
+      const meditationSessions = await meditationService.getAllSessions(user.id)
+      meditationSessions.forEach(session => {
+        // Puntos por tiempo de meditación (1 punto por minuto visto)
+        totalCharacters += Math.floor(session.watch_duration / 60) * 50 // 50 caracteres equivalentes por minuto
+        
+        // Puntos por completar la meditación
+        if (session.completed_at) {
+          totalCharacters += 200 // Bonus por completar
+        }
+        
+        // Puntos por reflexión escrita
+        if (session.reflection_text) {
+          totalCharacters += session.reflection_text.length
+        }
+        
+        // Bonus por múltiples visualizaciones (dedicación)
+        if (session.view_count > 1) {
+          totalCharacters += (session.view_count - 1) * 100
+        }
+        
+        // Penalización leve por muchos skips (para fomentar la práctica completa)
+        if (session.skip_count > 5) {
+          totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
+        }
+      })
+
       setScore(totalCharacters)
     } catch (error) {
       console.error('Error calculating score:', error)
@@ -112,13 +147,14 @@ const StandaloneUserBar = () => {
   }
 
   const getScoreColor = () => {
-    if (score >= 1000) return 'text-purple-600'
-    if (score >= 500) return 'text-blue-600'
-    if (score >= 200) return 'text-green-600'
+    if (score >= 2000) return 'text-purple-600'
+    if (score >= 1000) return 'text-blue-600'
+    if (score >= 500) return 'text-green-600'
     return 'text-gray-600'
   }
 
   const getScoreLevel = () => {
+    if (score >= 2000) return 'Maestro'
     if (score >= 1000) return 'Experto'
     if (score >= 500) return 'Avanzado'
     if (score >= 200) return 'Intermedio'

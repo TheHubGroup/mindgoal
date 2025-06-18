@@ -56,7 +56,7 @@ const UserBarPage = () => {
               Score Dinámico
             </h3>
             <p className="text-white text-opacity-80 text-sm" style={{ fontFamily: 'Comic Neue' }}>
-              Tu puntuación se calcula automáticamente basada en todos los caracteres que has escrito en las actividades.
+              Tu puntuación se calcula automáticamente basada en todas las actividades que has completado.
             </p>
           </div>
 
@@ -68,7 +68,7 @@ const UserBarPage = () => {
               Niveles de Progreso
             </h3>
             <p className="text-white text-opacity-80 text-sm" style={{ fontFamily: 'Comic Neue' }}>
-              Avanza desde Principiante hasta Experto según tu participación en las actividades.
+              Avanza desde Principiante hasta Maestro según tu participación en las actividades.
             </p>
           </div>
 
@@ -77,10 +77,10 @@ const UserBarPage = () => {
               <Award size={32} className="text-white" />
             </div>
             <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: 'Fredoka' }}>
-              Gestión de Perfil
+              Múltiples Actividades
             </h3>
             <p className="text-white text-opacity-80 text-sm" style={{ fontFamily: 'Comic Neue' }}>
-              Edita tu información personal, cambia tu foto y personaliza tu experiencia.
+              Incluye línea del tiempo, preferencias, cartas personales y sesiones de meditación.
             </p>
           </div>
 
@@ -103,11 +103,11 @@ const UserBarPage = () => {
             Niveles de Progreso
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-gray-300 mb-2">0-199</div>
               <div className="text-white font-medium">Principiante</div>
-              <div className="text-white text-opacity-70 text-sm mt-1">¡Empezando la aventura!</div>
+              <div className="text-white text-opacity-70 text-sm mt-1">¡Empezando!</div>
             </div>
             
             <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
@@ -119,13 +119,48 @@ const UserBarPage = () => {
             <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-blue-300 mb-2">500-999</div>
               <div className="text-white font-medium">Avanzado</div>
-              <div className="text-white text-opacity-70 text-sm mt-1">¡Excelente trabajo!</div>
+              <div className="text-white text-opacity-70 text-sm mt-1">¡Excelente!</div>
             </div>
             
             <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-purple-300 mb-2">1000+</div>
+              <div className="text-2xl font-bold text-purple-300 mb-2">1000-1999</div>
               <div className="text-white font-medium">Experto</div>
-              <div className="text-white text-opacity-70 text-sm mt-1">¡Eres increíble!</div>
+              <div className="text-white text-opacity-70 text-sm mt-1">¡Increíble!</div>
+            </div>
+            
+            <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold text-yellow-300 mb-2">2000+</div>
+              <div className="text-white font-medium">Maestro</div>
+              <div className="text-white text-opacity-70 text-sm mt-1">¡Eres genial!</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Score Calculation Details */}
+        <div className="mt-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
+          <h3 className="text-xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
+            ¿Cómo se calcula tu score? 🧮
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
+            <div>
+              <h4 className="font-bold text-white mb-2">📝 Actividades de Escritura:</h4>
+              <ul className="space-y-1 text-sm">
+                <li>• Línea del tiempo: 1 punto por carácter</li>
+                <li>• Cuéntame quien eres: 1 punto por carácter</li>
+                <li>• Cartas personales: 1 punto por carácter</li>
+                <li>• Reflexiones de meditación: 1 punto por carácter</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-bold text-white mb-2">🧘‍♀️ Meditación:</h4>
+              <ul className="space-y-1 text-sm">
+                <li>• 50 puntos por minuto de meditación</li>
+                <li>• 200 puntos bonus por completar</li>
+                <li>• 100 puntos por cada re-visualización</li>
+                <li>• Penalización por muchos skips</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -160,9 +195,8 @@ const UserBarPage = () => {
             </div>
             
             <div className="text-white text-opacity-90 space-y-2" style={{ fontFamily: 'Comic Neue' }}>
-              <p>• Haz clic en el ícono de configuración para ver el menú</p>
               <p>• Tu score se actualiza automáticamente cuando participas en actividades</p>
-              <p>• Puedes editar tu perfil en cualquier momento</p>
+              <p>• Incluye todas las actividades: línea del tiempo, preferencias, cartas y meditación</p>
               <p>• El nivel cambia según tu progreso total</p>
               <p>• La versión iframe es perfecta para incrustar en otras páginas</p>
             </div>
