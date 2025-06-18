@@ -165,10 +165,21 @@ const TimelineActivityV2 = () => {
 
   if (loading || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 flex items-center justify-center">
-        <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl p-8 text-center">
+      <div 
+        className="min-h-screen flex items-center justify-center relative"
+        style={{
+          backgroundImage: 'url(/cuadricula-prueba.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Overlay para mejorar legibilidad */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        
+        <div className="relative z-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl p-8 text-center border border-white border-opacity-30">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+          <p className="text-xl font-bold text-white drop-shadow-lg" style={{ fontFamily: 'Fredoka' }}>
             Cargando tu línea del tiempo...
           </p>
         </div>
@@ -177,114 +188,128 @@ const TimelineActivityV2 = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400">
-      {/* Header con nuevo diseño */}
-      <div className="bg-white bg-opacity-15 backdrop-blur-md border-b border-white border-opacity-20">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="text-white hover:text-gray-200 transition-colors bg-white bg-opacity-20 rounded-full p-2 hover:bg-opacity-30"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Clock size={36} className="text-white drop-shadow-lg" />
-                <Sparkles size={16} className="absolute -top-1 -right-1 text-yellow-300 animate-pulse" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white drop-shadow-lg" style={{ fontFamily: 'Fredoka' }}>
-                  Mi Línea del Tiempo v2
-                </h1>
-                <div className="flex items-center gap-2 text-white text-opacity-80">
-                  <Palette size={16} />
-                  <span className="text-sm" style={{ fontFamily: 'Comic Neue' }}>
-                    Versión de diseño experimental
-                  </span>
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: 'url(/cuadricula-prueba.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Overlay para mejorar legibilidad y mantener el estilo */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 from-opacity-60 via-purple-900 via-opacity-50 to-pink-900 to-opacity-60"></div>
+      
+      {/* Todo el contenido con z-index relativo */}
+      <div className="relative z-10">
+        {/* Header con nuevo diseño */}
+        <div className="bg-white bg-opacity-15 backdrop-blur-md border-b border-white border-opacity-20">
+          <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/')}
+                className="text-white hover:text-gray-200 transition-colors bg-white bg-opacity-20 rounded-full p-2 hover:bg-opacity-30"
+              >
+                <ArrowLeft size={24} />
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Clock size={36} className="text-white drop-shadow-lg" />
+                  <Sparkles size={16} className="absolute -top-1 -right-1 text-yellow-300 animate-pulse" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white drop-shadow-lg" style={{ fontFamily: 'Fredoka' }}>
+                    Mi Línea del Tiempo v2
+                  </h1>
+                  <div className="flex items-center gap-2 text-white text-opacity-80">
+                    <Palette size={16} />
+                    <span className="text-sm" style={{ fontFamily: 'Comic Neue' }}>
+                      Versión de diseño experimental
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+            <div className="flex items-center gap-4">
+              {/* Botón de Guardar con nuevo estilo */}
+              <button
+                onClick={handleSaveAll}
+                disabled={isSaving || !hasUnsavedChanges}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 ${
+                  hasUnsavedChanges 
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white animate-pulse shadow-lg' 
+                    : 'bg-gradient-to-r from-green-400 to-emerald-400 text-white shadow-lg'
+                } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <Save size={20} />
+                {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
+              </button>
+              <UserMenu />
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            {/* Botón de Guardar con nuevo estilo */}
-            <button
-              onClick={handleSaveAll}
-              disabled={isSaving || !hasUnsavedChanges}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 ${
-                hasUnsavedChanges 
-                  ? 'bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white animate-pulse shadow-lg' 
-                  : 'bg-gradient-to-r from-green-400 to-emerald-400 text-white shadow-lg'
-              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <Save size={20} />
-              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
-            </button>
-            <UserMenu />
+        </div>
+
+        {/* Mensaje de estado con nuevo diseño */}
+        {saveMessage && (
+          <div className="fixed top-24 right-4 z-50 flex items-center gap-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl shadow-2xl p-4 border border-white border-opacity-30 backdrop-blur-sm">
+            <CheckCircle size={24} />
+            <span className="font-bold text-lg" style={{ fontFamily: 'Fredoka' }}>{saveMessage}</span>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Mensaje de estado con nuevo diseño */}
-      {saveMessage && (
-        <div className="fixed top-24 right-4 z-50 flex items-center gap-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl shadow-2xl p-4 border border-white border-opacity-30 backdrop-blur-sm">
-          <CheckCircle size={24} />
-          <span className="font-bold text-lg" style={{ fontFamily: 'Fredoka' }}>{saveMessage}</span>
-        </div>
-      )}
+        {/* Main Content con nuevo diseño */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Timeline Sections con espaciado mejorado */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {timelineSections.map((section) => (
+              <div key={section.id} className="transform hover:scale-105 transition-all duration-300">
+                <TimelineSection
+                  title={section.title}
+                  section={section.id as 'pasado' | 'presente' | 'futuro'}
+                  notes={getSectionNotes(section.id)}
+                  onAddNote={handleAddNote}
+                  onEditNote={handleEditNote}
+                  onDeleteNote={handleDeleteNote}
+                  onDragNote={handleDragNote}
+                  bgColor={section.color}
+                  icon={section.icon}
+                />
+              </div>
+            ))}
+          </div>
 
-      {/* Main Content con nuevo diseño */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Timeline Sections con espaciado mejorado */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {timelineSections.map((section) => (
-            <div key={section.id} className="transform hover:scale-105 transition-all duration-300">
-              <TimelineSection
-                title={section.title}
-                section={section.id as 'pasado' | 'presente' | 'futuro'}
-                notes={getSectionNotes(section.id)}
-                onAddNote={handleAddNote}
-                onEditNote={handleEditNote}
-                onDeleteNote={handleDeleteNote}
-                onDragNote={handleDragNote}
-                bgColor={section.color}
-                icon={section.icon}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Estadísticas con nuevo diseño */}
-        <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-white from-opacity-10 to-white to-opacity-5 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border border-white border-opacity-20 shadow-2xl">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Star size={32} className="text-yellow-300" />
-              <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-                📊 Tu Progreso Creativo
-              </h3>
-              <Star size={32} className="text-yellow-300" />
-            </div>
-            <div className="grid grid-cols-3 gap-8 text-white">
-              <div className="bg-white bg-opacity-10 rounded-2xl p-6 backdrop-blur-sm border border-white border-opacity-20">
-                <div className="text-4xl font-bold text-blue-300 mb-2">{getSectionNotes('pasado').length}</div>
-                <div className="text-lg font-medium opacity-90">Recuerdos</div>
-                <div className="text-sm opacity-70 mt-1">del pasado</div>
+          {/* Estadísticas con nuevo diseño */}
+          <div className="mt-12 text-center">
+            <div className="bg-gradient-to-r from-white from-opacity-10 to-white to-opacity-5 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border border-white border-opacity-20 shadow-2xl">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <Star size={32} className="text-yellow-300" />
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg" style={{ fontFamily: 'Fredoka' }}>
+                  📊 Tu Progreso Creativo
+                </h3>
+                <Star size={32} className="text-yellow-300" />
               </div>
-              <div className="bg-white bg-opacity-10 rounded-2xl p-6 backdrop-blur-sm border border-white border-opacity-20">
-                <div className="text-4xl font-bold text-green-300 mb-2">{getSectionNotes('presente').length}</div>
-                <div className="text-lg font-medium opacity-90">Actualidad</div>
-                <div className="text-sm opacity-70 mt-1">viviendo ahora</div>
+              <div className="grid grid-cols-3 gap-8 text-white">
+                <div className="bg-white bg-opacity-10 rounded-2xl p-6 backdrop-blur-sm border border-white border-opacity-20">
+                  <div className="text-4xl font-bold text-blue-300 mb-2 drop-shadow-lg">{getSectionNotes('pasado').length}</div>
+                  <div className="text-lg font-medium opacity-90">Recuerdos</div>
+                  <div className="text-sm opacity-70 mt-1">del pasado</div>
+                </div>
+                <div className="bg-white bg-opacity-10 rounded-2xl p-6 backdrop-blur-sm border border-white border-opacity-20">
+                  <div className="text-4xl font-bold text-green-300 mb-2 drop-shadow-lg">{getSectionNotes('presente').length}</div>
+                  <div className="text-lg font-medium opacity-90">Actualidad</div>
+                  <div className="text-sm opacity-70 mt-1">viviendo ahora</div>
+                </div>
+                <div className="bg-white bg-opacity-10 rounded-2xl p-6 backdrop-blur-sm border border-white border-opacity-20">
+                  <div className="text-4xl font-bold text-purple-300 mb-2 drop-shadow-lg">{getSectionNotes('futuro').length}</div>
+                  <div className="text-lg font-medium opacity-90">Sueños</div>
+                  <div className="text-sm opacity-70 mt-1">por cumplir</div>
+                </div>
               </div>
-              <div className="bg-white bg-opacity-10 rounded-2xl p-6 backdrop-blur-sm border border-white border-opacity-20">
-                <div className="text-4xl font-bold text-purple-300 mb-2">{getSectionNotes('futuro').length}</div>
-                <div className="text-lg font-medium opacity-90">Sueños</div>
-                <div className="text-sm opacity-70 mt-1">por cumplir</div>
+              <div className="mt-6 text-white text-opacity-80" style={{ fontFamily: 'Comic Neue' }}>
+                <p className="text-lg drop-shadow-lg">
+                  Total de notas creadas: <span className="font-bold text-yellow-300">{notes.length}</span>
+                </p>
               </div>
-            </div>
-            <div className="mt-6 text-white text-opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-              <p className="text-lg">
-                Total de notas creadas: <span className="font-bold text-yellow-300">{notes.length}</span>
-              </p>
             </div>
           </div>
         </div>
