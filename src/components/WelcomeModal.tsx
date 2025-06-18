@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { X, Sparkles, Heart, Star } from 'lucide-react'
+import { Sparkles, Heart, Star } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 
 interface WelcomeModalProps {
@@ -50,14 +50,6 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
         }}
       >
-        {/* Botón de cerrar */}
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 z-10 bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 transform hover:scale-110 group"
-        >
-          <X size={24} className="text-white group-hover:text-gray-200" />
-        </button>
-
         {/* Efectos de fondo animados */}
         <div className="absolute inset-0 overflow-hidden rounded-3xl">
           {/* Círculos flotantes */}
@@ -115,7 +107,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
             >
               Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>. 
               <br />
-              Comienza tu aventura cerrando esta ventana en la X
+              Comienza tu aventura haciendo clic en cualquier lugar para continuar
             </div>
           </div>
 
