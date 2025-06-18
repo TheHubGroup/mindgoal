@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
 import UserMenu from '../components/UserMenu'
+import WelcomeModal from '../components/WelcomeModal'
 import { 
   Clock, 
   Heart,
@@ -16,6 +17,19 @@ const HomePage = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { profile, loading: profileLoading } = useProfile()
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+
+  // Mostrar modal de bienvenida cuando el usuario inicia sesión
+  useEffect(() => {
+    if (user && !profileLoading) {
+      // Verificar si es la primera vez que ve la página en esta sesión
+      const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome')
+      if (!hasSeenWelcome) {
+        setShowWelcomeModal(true)
+        sessionStorage.setItem('hasSeenWelcome', 'true')
+      }
+    }
+  }, [user, profileLoading])
 
   const activities = [
     {
@@ -62,8 +76,18 @@ const HomePage = () => {
     }
   }
 
+  const handleCloseWelcome = () => {
+    setShowWelcomeModal(false)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
+      {/* Welcome Modal */}
+      <WelcomeModal 
+        isOpen={showWelcomeModal} 
+        onClose={handleCloseWelcome} 
+      />
+
       {/* Header */}
       <div className="bg-white bg-opacity-10 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
