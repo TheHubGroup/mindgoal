@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage'
 import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
 import TimelineActivity from './pages/TimelineActivity'
+import TimelineActivityV2 from './pages/TimelineActivityV2'
 import CuentameQuienEres from './pages/CuentameQuienEres'
 import CartaMiMismo from './pages/CartaMiMismo'
 import MeditacionAutoconocimiento from './pages/MeditacionAutoconocimiento'
@@ -76,6 +77,11 @@ function App() {
             <Route path="/actividad/linea-tiempo" element={
               <ProtectedRoute>
                 <TimelineActivity />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/linea-tiempo-v2" element={
+              <ProtectedRoute>
+                <TimelineActivityV2 />
               </ProtectedRoute>
             } />
             <Route path="/actividad/cuentame-quien-eres" element={

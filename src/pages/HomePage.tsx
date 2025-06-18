@@ -10,7 +10,8 @@ import {
   Mail,
   Brain,
   Sparkles,
-  Star
+  Star,
+  Palette
 } from 'lucide-react'
 
 const HomePage = () => {
@@ -37,6 +38,16 @@ const HomePage = () => {
       color: 'from-purple-500 to-pink-500',
       available: true,
       route: '/actividad/linea-tiempo'
+    },
+    {
+      id: 'linea-tiempo-v2',
+      title: 'Línea del Tiempo v2',
+      description: 'Versión experimental con nuevo diseño y efectos visuales',
+      icon: Palette,
+      color: 'from-indigo-500 to-purple-500',
+      available: true,
+      route: '/actividad/linea-tiempo-v2',
+      isExperimental: true
     },
     {
       id: 'cuentame-quien-eres',
@@ -128,6 +139,14 @@ const HomePage = () => {
                   }
                 `}
               >
+                {/* Experimental Badge */}
+                {activity.isExperimental && (
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Palette size={12} />
+                    Experimental
+                  </div>
+                )}
+
                 {/* Availability Badge */}
                 {!activity.available && (
                   <div className="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold">
@@ -136,7 +155,7 @@ const HomePage = () => {
                 )}
 
                 {/* Available Badge */}
-                {activity.available && (
+                {activity.available && !activity.isExperimental && (
                   <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
                     <Star size={14} />
                     Disponible
