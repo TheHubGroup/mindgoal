@@ -198,7 +198,7 @@ const TimelineActivityV2 = () => {
       }}
     >
       {/* Overlay muy sutil para mantener la cuadrícula visible */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-900 from-opacity-10 via-yellow-900 via-opacity-5 to-amber-900 to-opacity-15"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-900 from-opacity-0 via-yellow-900 via-opacity-0 to-amber-900 to-opacity-0"></div>
       
       {/* Todo el contenido con z-index relativo */}
       <div className="relative z-10">
