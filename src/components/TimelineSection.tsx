@@ -27,7 +27,7 @@ export default function TimelineSection({
   icon
 }: TimelineSectionProps) {
   return (
-    <div className={`${bgColor} rounded-3xl p-4 shadow-xl border-4 border-white relative min-h-96 overflow-hidden`}>
+    <div className={`${bgColor} rounded-3xl p-4 shadow-xl border-4 border-black relative min-h-96 overflow-hidden`}>
       <div className="text-center mb-4">
         <div className="text-4xl mb-1">{icon}</div>
         <h2 className="text-xl font-bold text-white drop-shadow-lg" style={{ fontFamily: 'Fredoka' }}>
