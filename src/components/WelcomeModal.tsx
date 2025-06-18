@@ -27,14 +27,8 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
     return 'Estudiante'
   }
 
-  const handleModalClick = (e: React.MouseEvent) => {
-    // Solo cerrar si se hace clic en el overlay o en el contenido del modal
-    // No cerrar si se hace clic en elementos específicos que no queremos que cierren
-    onClose()
-  }
-
   const handleCloseClick = (e: React.MouseEvent) => {
-    e.stopPropagation() // Evitar que se propague al modal
+    e.stopPropagation() // Evitar que se propague
     onClose()
   }
 
@@ -42,25 +36,23 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* Overlay con efecto de desenfoque - CLICKEABLE para cerrar */}
+      {/* Overlay con efecto de desenfoque */}
       <div 
-        className={`absolute inset-0 bg-black transition-opacity duration-500 cursor-pointer ${
+        className={`absolute inset-0 bg-black transition-opacity duration-500 ${
           showContent ? 'bg-opacity-60' : 'bg-opacity-0'
         }`}
         style={{ backdropFilter: 'blur(8px)' }}
-        onClick={handleModalClick}
       />
       
-      {/* Modal Content - TAMBIÉN CLICKEABLE para cerrar */}
+      {/* Modal Content */}
       <div 
-        className={`relative w-full max-w-4xl h-[80vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 cursor-pointer ${
+        className={`relative w-full max-w-4xl h-[80vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 ${
           showContent ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
         }}
-        onClick={handleModalClick}
       >
         {/* Botón X para cerrar - VISIBLE y destacado */}
         <button
