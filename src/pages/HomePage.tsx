@@ -22,12 +22,9 @@ const HomePage = () => {
   // Mostrar modal de bienvenida cuando el usuario inicia sesión
   useEffect(() => {
     if (user && !profileLoading) {
-      // Verificar si es la primera vez que ve la página en esta sesión
-      const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome')
-      if (!hasSeenWelcome) {
-        setShowWelcomeModal(true)
-        sessionStorage.setItem('hasSeenWelcome', 'true')
-      }
+      // Mostrar el modal siempre que el usuario esté autenticado
+      // El modal se mantendrá hasta que el usuario haga clic
+      setShowWelcomeModal(true)
     }
   }, [user, profileLoading])
 
@@ -82,7 +79,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
-      {/* Welcome Modal */}
+      {/* Welcome Modal - Se mantiene hasta que el usuario haga clic */}
       <WelcomeModal 
         isOpen={showWelcomeModal} 
         onClose={handleCloseWelcome} 
@@ -94,7 +91,7 @@ const HomePage = () => {
           <div className="flex items-center gap-3">
             <Sparkles size={32} className="text-white" />
             <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-              Plataforma de Actividades
+              Mind Goal
             </h1>
           </div>
           <div className="flex items-center gap-4">

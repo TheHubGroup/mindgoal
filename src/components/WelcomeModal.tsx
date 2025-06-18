@@ -27,31 +27,38 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
     return 'Estudiante'
   }
 
+  const handleModalClick = (e: React.MouseEvent) => {
+    // Solo cerrar si se hace clic en el overlay o en el contenido del modal
+    // No cerrar si se hace clic en elementos específicos que no queremos que cierren
+    onClose()
+  }
+
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* Overlay con efecto de desenfoque */}
+      {/* Overlay con efecto de desenfoque - CLICKEABLE para cerrar */}
       <div 
-        className={`absolute inset-0 bg-black transition-opacity duration-500 ${
+        className={`absolute inset-0 bg-black transition-opacity duration-500 cursor-pointer ${
           showContent ? 'bg-opacity-60' : 'bg-opacity-0'
         }`}
         style={{ backdropFilter: 'blur(8px)' }}
-        onClick={onClose}
+        onClick={handleModalClick}
       />
       
-      {/* Modal Content */}
+      {/* Modal Content - TAMBIÉN CLICKEABLE para cerrar */}
       <div 
-        className={`relative w-full max-w-4xl h-[80vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 ${
+        className={`relative w-full max-w-4xl h-[80vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 cursor-pointer ${
           showContent ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
         }}
+        onClick={handleModalClick}
       >
         {/* Efectos de fondo animados */}
-        <div className="absolute inset-0 overflow-hidden rounded-3xl">
+        <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
           {/* Círculos flotantes */}
           <div className="absolute top-10 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full animate-pulse" />
           <div className="absolute top-32 right-20 w-16 h-16 bg-yellow-300 bg-opacity-20 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }} />
@@ -74,7 +81,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Contenido principal */}
-        <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-12">
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-12 pointer-events-none">
           {/* Emoji de saludo animado */}
           <div className="mb-8 text-8xl animate-bounce">
             👋
@@ -107,7 +114,9 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
             >
               Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>. 
               <br />
-              Comienza tu aventura haciendo clic en cualquier lugar para continuar
+              <span className="text-lg md:text-xl lg:text-2xl text-yellow-200 font-semibold animate-pulse">
+                Haz clic en cualquier lugar para continuar
+              </span>
             </div>
           </div>
 
@@ -142,10 +151,23 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
           >
             ✨ Explora actividades increíbles diseñadas especialmente para ti ✨
           </div>
+
+          {/* Indicador visual de que es clickeable */}
+          <div 
+            className={`mt-8 text-white text-opacity-60 text-xs md:text-sm transform transition-all duration-1000 animate-bounce ${
+              showContent ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            }`}
+            style={{ 
+              fontFamily: 'Comic Neue',
+              animationDelay: '1s'
+            }}
+          >
+            👆 Toca la pantalla para empezar
+          </div>
         </div>
 
         {/* Efecto de brillo en los bordes */}
-        <div className="absolute inset-0 rounded-3xl">
+        <div className="absolute inset-0 rounded-3xl pointer-events-none">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white to-transparent opacity-10 transform -skew-x-12 animate-pulse" />
         </div>
       </div>
