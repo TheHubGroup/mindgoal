@@ -12,8 +12,7 @@ import {
   Save,
   CheckCircle,
   AlertCircle,
-  Palette,
-  Brush
+  Palette
 } from 'lucide-react'
 import { timelineService, TimelineNote } from '../lib/timelineService'
 
@@ -236,28 +235,6 @@ const TimelineActivityV2 = () => {
 
       {/* Main Content con nuevo diseño */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Instrucciones con nuevo estilo */}
-        <div className="text-center mb-12">
-          <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-8 border border-white border-opacity-20 shadow-2xl">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Brush size={32} className="text-yellow-300" />
-              <h2 className="text-4xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-                ¡Crea tu línea del tiempo personal! ✨
-              </h2>
-              <Brush size={32} className="text-yellow-300" />
-            </div>
-            <p className="text-xl text-white text-opacity-90 max-w-4xl mx-auto leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
-              Esta es la versión experimental con nuevo diseño. Agrega notas sobre tu pasado, presente y futuro. 
-              Puedes arrastrarlas, editarlas y personalizarlas como quieras.
-            </p>
-            <div className="mt-6 flex justify-center">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full text-sm font-bold">
-                🎨 Versión de Diseño Experimental
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Timeline Sections con espaciado mejorado */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {timelineSections.map((section) => (
