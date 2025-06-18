@@ -38,6 +38,7 @@ const MeditacionAutoconocimiento = () => {
   const [hasStarted, setHasStarted] = useState(false)
   const [hasCompleted, setHasCompleted] = useState(false)
   const [maxWatchedTime, setMaxWatchedTime] = useState(0)
+  const [playerKey, setPlayerKey] = useState(0) // Para forzar re-render del player
   
   // Session state
   const [currentSession, setCurrentSession] = useState<MeditationSession | null>(null)
@@ -207,11 +208,16 @@ const MeditacionAutoconocimiento = () => {
         setIsPlaying(false)
         setShowReflection(false)
         
-        // Reiniciar el reproductor usando la referencia
-        if (playerRef.current) {
-          console.log('🎬 Restarting video player...')
-          await playerRef.current.restart()
-        }
+        // Forzar re-render del player para asegurar que aparezca
+        setPlayerKey(prev => prev + 1)
+        
+        // Esperar un poco antes de reiniciar el reproductor
+        setTimeout(async () => {
+          if (playerRef.current) {
+            console.log('🎬 Restarting video player...')
+            await playerRef.current.restart()
+          }
+        }, 500)
         
         // Recargar la sesión actualizada
         await loadUserSession()
@@ -336,17 +342,20 @@ const MeditacionAutoconocimiento = () => {
                   )}
                 </div>
                 
-                <VimeoPlayer
-                  ref={playerRef}
-                  videoId={VIDEO_ID}
-                  onPlay={handlePlay}
-                  onPause={handlePause}
-                  onEnded={handleEnded}
-                  onTimeUpdate={handleTimeUpdate}
-                  onReady={handlePlayerReady}
-                  onSeek={handleSeek}
-                  className="mb-4"
-                />
+                {/* Player Container con key para forzar re-render */}
+                <div key={`player-${playerKey}`}>
+                  <VimeoPlayer
+                    ref={playerRef}
+                    videoId={VIDEO_ID}
+                    onPlay={handlePlay}
+                    onPause={handlePause}
+                    onEnded={handleEnded}
+                    onTimeUpdate={handleTimeUpdate}
+                    onReady={handlePlayerReady}
+                    onSeek={handleSeek}
+                    className="mb-4"
+                  />
+                </div>
 
                 {/* Progress Bar */}
                 <div className="mb-4">

@@ -35,11 +35,11 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
   onSeek,
   className = ''
 }, ref) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<any>(null)
   const [isPlayerReady, setIsPlayerReady] = useState(false)
   const [lastTime, setLastTime] = useState(0)
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false)
 
   // Exponer métodos públicos a través de ref
   useImperativeHandle(ref, () => ({
@@ -99,63 +99,79 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
     }
   }), [isPlayerReady])
 
+  // Cargar script de Vimeo
   useEffect(() => {
-    if (!isInitialized) {
-      initializeVimeoPlayer()
-      setIsInitialized(true)
-    }
-
-    return () => {
-      // Solo limpiar cuando el componente se desmonte completamente
-      if (playerRef.current) {
-        try {
-          console.log('🧹 Cleaning up Vimeo player')
-          playerRef.current.destroy()
-          playerRef.current = null
-        } catch (error) {
-          console.error('Error destroying player:', error)
-        }
+    const loadVimeoScript = () => {
+      if (window.Vimeo) {
+        setIsScriptLoaded(true)
+        return
       }
-    }
-  }, [videoId]) // Solo re-inicializar si cambia el videoId
 
-  const initializeVimeoPlayer = () => {
-    console.log('🎬 Initializing Vimeo player...')
-    
-    // Cargar el script de Vimeo Player si no está cargado
-    if (!window.Vimeo) {
       const script = document.createElement('script')
       script.src = 'https://player.vimeo.com/api/player.js'
       script.onload = () => {
         console.log('📜 Vimeo script loaded')
-        createPlayer()
+        setIsScriptLoaded(true)
       }
       script.onerror = () => {
         console.error('❌ Failed to load Vimeo script')
       }
       document.head.appendChild(script)
-    } else {
-      createPlayer()
     }
-  }
 
-  const createPlayer = () => {
-    if (!iframeRef.current || !window.Vimeo) {
-      console.warn('⚠️ Cannot create player: missing iframe or Vimeo')
+    loadVimeoScript()
+  }, [])
+
+  // Inicializar player cuando el script esté cargado
+  useEffect(() => {
+    if (isScriptLoaded && containerRef.current && !playerRef.current) {
+      initializePlayer()
+    }
+
+    return () => {
+      if (playerRef.current) {
+        try {
+          console.log('🧹 Cleaning up Vimeo player')
+          playerRef.current.destroy()
+          playerRef.current = null
+          setIsPlayerReady(false)
+        } catch (error) {
+          console.error('Error destroying player:', error)
+        }
+      }
+    }
+  }, [isScriptLoaded, videoId])
+
+  const initializePlayer = () => {
+    if (!containerRef.current || !window.Vimeo) {
+      console.warn('⚠️ Cannot create player: missing container or Vimeo')
       return
     }
 
     try {
       console.log('🎯 Creating Vimeo player instance')
       
-      // Destruir player anterior si existe
-      if (playerRef.current) {
-        playerRef.current.destroy()
-        playerRef.current = null
-      }
+      // Limpiar contenedor
+      containerRef.current.innerHTML = ''
+      
+      // Crear iframe manualmente
+      const iframe = document.createElement('iframe')
+      iframe.src = `https://player.vimeo.com/video/${videoId}?badge=0&autopause=0&player_id=vimeo-player-${videoId}`
+      iframe.width = '100%'
+      iframe.height = '100%'
+      iframe.frameBorder = '0'
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share'
+      iframe.allowFullscreen = true
+      iframe.style.position = 'absolute'
+      iframe.style.top = '0'
+      iframe.style.left = '0'
+      iframe.style.width = '100%'
+      iframe.style.height = '100%'
+      
+      containerRef.current.appendChild(iframe)
 
-      // Crear nuevo player
-      playerRef.current = new window.Vimeo.Player(iframeRef.current)
+      // Crear player con el iframe
+      playerRef.current = new window.Vimeo.Player(iframe)
 
       // Configurar eventos
       playerRef.current.on('loaded', async () => {
@@ -228,23 +244,53 @@ const VimeoPlayer = forwardRef<VimeoPlayerRef, VimeoPlayerProps>(({
 
   return (
     <div className={`relative ${className}`} style={{ paddingBottom: '56.25%', height: 0 }}>
-      <iframe
-        ref={iframeRef}
-        src={`https://player.vimeo.com/video/${videoId}?badge=0&autopause=0&player_id=0&app_id=58479`}
-        frameBorder="0"
-        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-        allowFullScreen
-        webkitAllowFullScreen
-        mozAllowFullScreen
+      <div
+        ref={containerRef}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
-          height: '100%'
+          height: '100%',
+          backgroundColor: '#000'
         }}
-        title="Meditación del Autoconocimiento"
       />
+      
+      {/* Loading indicator */}
+      {!isPlayerReady && (
+        <div 
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'white',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            zIndex: 10
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              border: '4px solid rgba(255,255,255,0.3)',
+              borderTop: '4px solid white',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 10px'
+            }} />
+            Cargando video...
+          </div>
+        </div>
+      )}
+      
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 })
