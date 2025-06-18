@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Sparkles, Heart, Star, X } from 'lucide-react'
+import { Sparkles, Heart, Star } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 
 interface WelcomeModalProps {
@@ -27,8 +27,8 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
     return 'Estudiante'
   }
 
-  const handleCloseClick = (e: React.MouseEvent) => {
-    e.stopPropagation() // Evitar que se propague
+  const handleModalClick = (e: React.MouseEvent) => {
+    // Cerrar el modal al hacer clic en cualquier parte
     onClose()
   }
 
@@ -46,28 +46,15 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
       
       {/* Modal Content */}
       <div 
-        className={`relative w-full max-w-4xl h-[80vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 ${
+        className={`relative w-full max-w-4xl h-[80vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 cursor-pointer ${
           showContent ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
         }}
+        onClick={handleModalClick}
       >
-        {/* Botón X para cerrar - VISIBLE y destacado */}
-        <button
-          onClick={handleCloseClick}
-          className={`absolute top-6 right-6 z-10 bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 transform hover:scale-110 ${
-            showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-          style={{ 
-            animationDelay: '0.8s',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
-          }}
-        >
-          <X size={24} className="text-white drop-shadow-lg" />
-        </button>
-
         {/* Efectos de fondo animados */}
         <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
           {/* Círculos flotantes */}
@@ -92,7 +79,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Contenido principal */}
-        <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-12 pointer-events-none">
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-12">
           {/* Emoji de saludo animado */}
           <div className="mb-8 text-8xl animate-bounce">
             👋
@@ -126,7 +113,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
               Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>. 
               <br />
               <span className="text-lg md:text-xl lg:text-2xl text-yellow-200 font-semibold animate-pulse">
-                Para continuar haz clic en la X
+                Haz clic en cualquier lugar para continuar
               </span>
             </div>
           </div>
@@ -161,22 +148,6 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
             }}
           >
             ✨ Explora actividades increíbles diseñadas especialmente para ti ✨
-          </div>
-
-          {/* Flecha apuntando hacia la X */}
-          <div 
-            className={`absolute top-8 right-20 text-white text-opacity-80 transform transition-all duration-1000 animate-bounce ${
-              showContent ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-            }`}
-            style={{ 
-              fontFamily: 'Comic Neue',
-              animationDelay: '1.2s'
-            }}
-          >
-            <div className="flex flex-col items-center">
-              <span className="text-2xl">👆</span>
-              <span className="text-xs mt-1 font-semibold">¡Aquí!</span>
-            </div>
           </div>
         </div>
 
