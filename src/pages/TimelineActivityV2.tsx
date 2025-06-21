@@ -12,7 +12,10 @@ import {
   Save,
   CheckCircle,
   AlertCircle,
-  Palette
+  Palette,
+  Lightbulb,
+  Zap,
+  Heart
 } from 'lucide-react'
 import { timelineService, TimelineNote } from '../lib/timelineService'
 
@@ -79,7 +82,6 @@ const TimelineActivityV2 = () => {
       let savedNote: TimelineNote | null = null
 
       if (editingNote && editingNote.id) {
-        // Actualizar nota existente
         savedNote = await timelineService.updateNote(editingNote.id, noteWithUser)
         if (savedNote) {
           setNotes(prev => prev.map(note => 
@@ -88,7 +90,6 @@ const TimelineActivityV2 = () => {
           setSaveMessage('¡Nota actualizada correctamente!')
         }
       } else {
-        // Crear nueva nota
         savedNote = await timelineService.createNote(noteWithUser)
         if (savedNote) {
           setNotes(prev => [...prev, savedNote!])
@@ -136,15 +137,12 @@ const TimelineActivityV2 = () => {
   }
 
   const handleDragNote = async (id: string, x: number, y: number) => {
-    // Actualizar posición localmente de inmediato
     setNotes(prev => prev.map(note => 
       note.id === id ? { ...note, position_x: x, position_y: y } : note
     ))
     
-    // Marcar como cambios no guardados
     setHasUnsavedChanges(true)
     
-    // Guardar en la base de datos
     try {
       await timelineService.updateNotePosition(id, x, y)
       setHasUnsavedChanges(false)
@@ -166,12 +164,29 @@ const TimelineActivityV2 = () => {
   if (loading || isLoading) {
     return (
       <div 
-        className="min-h-screen flex items-center justify-center"
+        className="min-h-screen flex items-center justify-center relative overflow-hidden"
         style={{
-          backgroundColor: '#F9D000'
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
         }}
       >
-        <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl p-8 text-center border-4 border-black shadow-2xl">
+        {/* Grid Background */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '30px 30px'
+          }}
+        />
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-20 w-16 h-16 bg-yellow-400 rounded-full animate-bounce opacity-80" />
+        <div className="absolute top-40 right-32 w-12 h-12 bg-pink-400 rounded-lg rotate-45 animate-pulse opacity-80" />
+        <div className="absolute bottom-32 left-40 w-20 h-20 bg-blue-400 rounded-full animate-bounce opacity-80" style={{ animationDelay: '0.5s' }} />
+        
+        <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl p-8 text-center border-4 border-black shadow-2xl relative z-10">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-black mx-auto mb-4"></div>
           <p className="text-xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
             Cargando tu línea del tiempo...
@@ -183,25 +198,57 @@ const TimelineActivityV2 = () => {
 
   return (
     <div 
-      className="min-h-screen"
+      className="min-h-screen relative overflow-hidden"
       style={{
-        backgroundColor: '#F9D000'
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
       }}
     >
+      {/* Grid Background */}
+      <div 
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '30px 30px'
+        }}
+      />
+
+      {/* Floating Decorative Elements */}
+      <div className="absolute top-20 left-20 w-16 h-16 bg-yellow-400 rounded-full animate-bounce opacity-80 shadow-lg" />
+      <div className="absolute top-40 right-32 w-12 h-12 bg-pink-400 rounded-lg rotate-45 animate-pulse opacity-80 shadow-lg" />
+      <div className="absolute bottom-32 left-40 w-20 h-20 bg-blue-400 rounded-full animate-bounce opacity-80 shadow-lg" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute top-60 left-1/2 w-8 h-8 bg-green-400 rounded-full animate-ping opacity-60" />
+      <div className="absolute bottom-40 right-20 w-14 h-14 bg-purple-400 rounded-lg rotate-12 animate-pulse opacity-80 shadow-lg" style={{ animationDelay: '1s' }} />
+      
+      {/* Floating Icons */}
+      <div className="absolute top-32 right-1/4 text-4xl animate-bounce opacity-80" style={{ animationDelay: '0.3s' }}>
+        <Lightbulb className="text-yellow-300 drop-shadow-lg" size={32} />
+      </div>
+      <div className="absolute bottom-60 left-1/4 text-4xl animate-pulse opacity-80" style={{ animationDelay: '0.8s' }}>
+        <Zap className="text-orange-300 drop-shadow-lg" size={28} />
+      </div>
+      <div className="absolute top-1/2 right-16 text-4xl animate-bounce opacity-80" style={{ animationDelay: '1.2s' }}>
+        <Heart className="text-red-300 drop-shadow-lg" size={24} />
+      </div>
+
       {/* Header */}
-      <div className="bg-white bg-opacity-80 backdrop-blur-md border-b-4 border-black shadow-lg">
+      <div className="bg-white bg-opacity-95 backdrop-blur-md border-b-4 border-black shadow-lg relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/')}
-              className="text-black hover:text-gray-700 transition-colors bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-80 border-2 border-black"
+              className="text-black hover:text-gray-700 transition-colors bg-white bg-opacity-80 rounded-full p-3 hover:bg-opacity-100 border-3 border-black shadow-lg transform hover:scale-105"
             >
               <ArrowLeft size={24} />
             </button>
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Clock size={36} className="text-black" />
-                <Sparkles size={16} className="absolute -top-1 -right-1 text-orange-600 animate-pulse" />
+                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
+                  <Clock size={24} className="text-black" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-pink-400 rounded-full animate-ping" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
@@ -209,7 +256,7 @@ const TimelineActivityV2 = () => {
                 </h1>
                 <div className="flex items-center gap-2 text-gray-800">
                   <Palette size={16} />
-                  <span className="text-sm" style={{ fontFamily: 'Comic Neue' }}>
+                  <span className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent" style={{ fontFamily: 'Comic Neue' }}>
                     Versión de diseño experimental
                   </span>
                 </div>
@@ -237,23 +284,39 @@ const TimelineActivityV2 = () => {
 
       {/* Mensaje de estado */}
       {saveMessage && (
-        <div className="fixed top-24 right-4 z-50 flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl shadow-2xl p-4 border-4 border-black">
+        <div className="fixed top-24 right-4 z-50 flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl shadow-2xl p-4 border-4 border-black transform animate-bounce">
           <CheckCircle size={24} />
           <span className="font-bold text-lg" style={{ fontFamily: 'Fredoka' }}>{saveMessage}</span>
         </div>
       )}
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
         {/* Instrucciones */}
         <div className="text-center mb-8">
-          <div className="bg-white bg-opacity-85 backdrop-blur-sm rounded-3xl p-6 max-w-4xl mx-auto border-4 border-black shadow-xl">
-            <h2 className="text-3xl font-bold text-black mb-4" style={{ fontFamily: 'Fredoka' }}>
-              ✨ ¡Crea tu línea del tiempo personal! ✨
-            </h2>
-            <p className="text-xl text-gray-800 max-w-3xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
-              Agrega notas sobre tu pasado, presente y futuro. Puedes arrastrarlas, editarlas y personalizarlas como quieras.
-            </p>
+          <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl relative overflow-hidden">
+            {/* Decorative elements inside the card */}
+            <div className="absolute top-4 left-4 w-6 h-6 bg-yellow-400 rounded-full animate-pulse" />
+            <div className="absolute top-4 right-4 w-4 h-4 bg-pink-400 rounded-full animate-bounce" />
+            <div className="absolute bottom-4 left-8 w-5 h-5 bg-blue-400 rounded-full animate-ping" />
+            <div className="absolute bottom-4 right-8 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
+                  <Sparkles size={24} className="text-black" />
+                </div>
+                <h2 className="text-3xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
+                  ¡Crea tu línea del tiempo personal!
+                </h2>
+                <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
+                  <Star size={24} className="text-black" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-800 max-w-3xl mx-auto font-medium" style={{ fontFamily: 'Comic Neue' }}>
+                Agrega notas sobre tu pasado, presente y futuro. Puedes arrastrarlas, editarlas y personalizarlas como quieras.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -278,35 +341,49 @@ const TimelineActivityV2 = () => {
 
         {/* Estadísticas */}
         <div className="mt-12 text-center">
-          <div className="bg-white bg-opacity-85 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Star size={32} className="text-orange-600" />
-              <h3 className="text-2xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
-                📊 Tu Progreso Creativo
-              </h3>
-              <Star size={32} className="text-orange-600" />
+          <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl relative overflow-hidden">
+            {/* Decorative background elements */}
+            <div className="absolute top-0 left-0 w-full h-full opacity-10">
+              <div className="absolute top-4 left-4 w-8 h-8 bg-yellow-400 rounded-full" />
+              <div className="absolute top-8 right-8 w-6 h-6 bg-pink-400 rounded-lg rotate-45" />
+              <div className="absolute bottom-4 left-8 w-10 h-10 bg-blue-400 rounded-full" />
+              <div className="absolute bottom-8 right-4 w-7 h-7 bg-green-400 rounded-lg" />
             </div>
-            <div className="grid grid-cols-3 gap-8">
-              <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 border-4 border-black shadow-lg">
-                <div className="text-4xl font-bold text-blue-700 mb-2">{getSectionNotes('pasado').length}</div>
-                <div className="text-lg font-medium text-blue-800">Recuerdos</div>
-                <div className="text-sm text-blue-600 mt-1">del pasado</div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
+                  <Star size={24} className="text-black" />
+                </div>
+                <h3 className="text-2xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
+                  📊 Tu Progreso Creativo
+                </h3>
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
+                  <Sparkles size={24} className="text-black" />
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 border-4 border-black shadow-lg">
-                <div className="text-4xl font-bold text-green-700 mb-2">{getSectionNotes('presente').length}</div>
-                <div className="text-lg font-medium text-green-800">Actualidad</div>
-                <div className="text-sm text-green-600 mt-1">viviendo ahora</div>
+              <div className="grid grid-cols-3 gap-8">
+                <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
+                  <div className="text-4xl font-bold text-blue-700 mb-2">{getSectionNotes('pasado').length}</div>
+                  <div className="text-lg font-medium text-blue-800">Recuerdos</div>
+                  <div className="text-sm text-blue-600 mt-1">del pasado</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
+                  <div className="text-4xl font-bold text-green-700 mb-2">{getSectionNotes('presente').length}</div>
+                  <div className="text-lg font-medium text-green-800">Actualidad</div>
+                  <div className="text-sm text-green-600 mt-1">viviendo ahora</div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
+                  <div className="text-4xl font-bold text-purple-700 mb-2">{getSectionNotes('futuro').length}</div>
+                  <div className="text-lg font-medium text-purple-800">Sueños</div>
+                  <div className="text-sm text-purple-600 mt-1">por cumplir</div>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 border-4 border-black shadow-lg">
-                <div className="text-4xl font-bold text-purple-700 mb-2">{getSectionNotes('futuro').length}</div>
-                <div className="text-lg font-medium text-purple-800">Sueños</div>
-                <div className="text-sm text-purple-600 mt-1">por cumplir</div>
+              <div className="mt-6 text-black" style={{ fontFamily: 'Comic Neue' }}>
+                <p className="text-lg font-medium">
+                  Total de notas creadas: <span className="font-bold text-orange-700 text-xl bg-yellow-200 px-3 py-1 rounded-full border-2 border-black">{notes.length}</span>
+                </p>
               </div>
-            </div>
-            <div className="mt-6 text-black" style={{ fontFamily: 'Comic Neue' }}>
-              <p className="text-lg">
-                Total de notas creadas: <span className="font-bold text-orange-700 text-xl">{notes.length}</span>
-              </p>
             </div>
           </div>
         </div>
