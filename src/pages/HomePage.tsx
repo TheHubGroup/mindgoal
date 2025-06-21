@@ -11,23 +11,101 @@ import {
   Brain,
   Sparkles,
   Star,
-  Palette
+  Palette,
+  CheckCircle,
+  AlertCircle,
+  BarChart3
 } from 'lucide-react'
+import { timelineService } from '../lib/timelineService'
+import { userResponsesService } from '../lib/userResponsesService'
+import { letterService } from '../lib/letterService'
+import { meditationService } from '../lib/meditationService'
+
+interface ActivityStatus {
+  hasData: boolean
+  count: number
+  lastActivity?: string
+}
 
 const HomePage = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { profile, loading: profileLoading } = useProfile()
   const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+  const [activityStatuses, setActivityStatuses] = useState<Record<string, ActivityStatus>>({})
+  const [isLoadingStatuses, setIsLoadingStatuses] = useState(true)
 
   // Mostrar modal de bienvenida cuando el usuario inicia sesión
   useEffect(() => {
     if (user && !profileLoading) {
-      // Mostrar el modal siempre que el usuario esté autenticado
-      // El modal se mantendrá hasta que el usuario haga clic
       setShowWelcomeModal(true)
     }
   }, [user, profileLoading])
+
+  // Cargar estados de actividades
+  useEffect(() => {
+    if (user) {
+      loadActivityStatuses()
+    }
+  }, [user])
+
+  const loadActivityStatuses = async () => {
+    if (!user) return
+
+    setIsLoadingStatuses(true)
+    try {
+      const statuses: Record<string, ActivityStatus> = {}
+
+      // Timeline Activity
+      const timelineNotes = await timelineService.getNotes(user.id)
+      statuses['linea-tiempo'] = {
+        hasData: timelineNotes.length > 0,
+        count: timelineNotes.length,
+        lastActivity: timelineNotes.length > 0 ? 'Última nota creada' : undefined
+      }
+
+      // Timeline Activity V2 (same data)
+      statuses['linea-tiempo-v2'] = {
+        hasData: timelineNotes.length > 0,
+        count: timelineNotes.length,
+        lastActivity: timelineNotes.length > 0 ? 'Última nota creada' : undefined
+      }
+
+      // Cuéntame quien eres
+      const responses = await userResponsesService.getResponses(user.id, 'cuentame_quien_eres')
+      statuses['cuentame-quien-eres'] = {
+        hasData: responses.length > 0,
+        count: responses.length,
+        lastActivity: responses.length > 0 ? 'Preferencias guardadas' : undefined
+      }
+
+      // Carta a mí mismo
+      const letters = await letterService.getLetters(user.id)
+      statuses['carta-mi-mismo'] = {
+        hasData: letters.length > 0,
+        count: letters.length,
+        lastActivity: letters.length > 0 ? `${letters.length} carta${letters.length > 1 ? 's' : ''} escrita${letters.length > 1 ? 's' : ''}` : undefined
+      }
+
+      // Meditación del Autoconocimiento
+      const meditationSessions = await meditationService.getAllSessions(user.id)
+      const completedSessions = meditationSessions.filter(s => s.completed_at)
+      statuses['meditacion-autoconocimiento'] = {
+        hasData: meditationSessions.length > 0,
+        count: completedSessions.length,
+        lastActivity: meditationSessions.length > 0 ? 
+          completedSessions.length > 0 ? 
+            `${completedSessions.length} sesión${completedSessions.length > 1 ? 'es' : ''} completada${completedSessions.length > 1 ? 's' : ''}` :
+            'Sesión iniciada' : undefined
+      }
+
+      setActivityStatuses(statuses)
+    } catch (error) {
+      console.error('Error loading activity statuses:', error)
+    } finally {
+      setIsLoadingStatuses(false)
+    }
+  }
 
   const activities = [
     {
@@ -86,6 +164,58 @@ const HomePage = () => {
 
   const handleCloseWelcome = () => {
     setShowWelcomeModal(false)
+  }
+
+  const getActivityStatusBadge = (activityId: string) => {
+    if (isLoadingStatuses) {
+      return (
+        <div className="absolute top-4 right-4 bg-gray-400 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+          <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
+          Cargando...
+        </div>
+      )
+    }
+
+    const status = activityStatuses[activityId]
+    
+    if (!status || !status.hasData) {
+      return (
+        <div className="absolute top-4 right-4 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+          <AlertCircle size={14} />
+          Sin datos
+        </div>
+      )
+    }
+
+    return (
+      <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+        <CheckCircle size={14} />
+        Con datos
+      </div>
+    )
+  }
+
+  const getActivityProgress = (activityId: string) => {
+    if (isLoadingStatuses) return null
+
+    const status = activityStatuses[activityId]
+    if (!status || !status.hasData) return null
+
+    return (
+      <div className="mt-4 p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+        <div className="flex items-center gap-2 text-green-700">
+          <BarChart3 size={16} />
+          <span className="font-medium text-sm">
+            {status.lastActivity}
+          </span>
+        </div>
+        {status.count > 0 && (
+          <div className="text-green-600 text-xs mt-1">
+            {status.count} elemento{status.count > 1 ? 's' : ''} guardado{status.count > 1 ? 's' : ''}
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -147,20 +277,8 @@ const HomePage = () => {
                   </div>
                 )}
 
-                {/* Availability Badge */}
-                {!activity.available && (
-                  <div className="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    Próximamente
-                  </div>
-                )}
-
-                {/* Available Badge */}
-                {activity.available && !activity.isExperimental && (
-                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                    <Star size={14} />
-                    Disponible
-                  </div>
-                )}
+                {/* Status Badge */}
+                {getActivityStatusBadge(activity.id)}
 
                 {/* Icon */}
                 <div className={`w-20 h-20 rounded-full bg-gradient-to-r ${activity.color} flex items-center justify-center mb-6 mx-auto`}>
@@ -177,11 +295,14 @@ const HomePage = () => {
                   </p>
                 </div>
 
+                {/* Progress Info */}
+                {getActivityProgress(activity.id)}
+
                 {/* Action Button */}
                 {activity.available && (
                   <div className="mt-6 text-center">
                     <div className={`inline-flex items-center gap-2 bg-gradient-to-r ${activity.color} text-white px-6 py-3 rounded-full font-bold transition-all hover:shadow-lg`}>
-                      ¡Empezar!
+                      {activityStatuses[activity.id]?.hasData ? '¡Continuar!' : '¡Empezar!'}
                       <Sparkles size={16} />
                     </div>
                   </div>
@@ -191,6 +312,31 @@ const HomePage = () => {
           })}
         </div>
 
+        {/* Summary Stats */}
+        {!isLoadingStatuses && (
+          <div className="mt-12 text-center">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto">
+              <h3 className="text-xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
+                📊 Tu Progreso General
+              </h3>
+              <div className="grid grid-cols-2 gap-4 text-white">
+                <div>
+                  <div className="text-2xl font-bold text-green-300">
+                    {Object.values(activityStatuses).filter(s => s.hasData).length}
+                  </div>
+                  <div className="text-sm opacity-80">Actividades con datos</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-blue-300">
+                    {Object.values(activityStatuses).reduce((total, s) => total + s.count, 0)}
+                  </div>
+                  <div className="text-sm opacity-80">Total de elementos</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Footer Message */}
         <div className="text-center mt-12">
           <p className="text-white text-opacity-80" style={{ fontFamily: 'Comic Neue' }}>
@@ -198,7 +344,6 @@ const HomePage = () => {
           </p>
         </div>
       </div>
-
     </div>
   )
 }
