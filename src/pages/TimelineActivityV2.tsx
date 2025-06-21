@@ -188,8 +188,8 @@ const TimelineActivityV2 = () => {
         
         <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl p-8 text-center border-4 border-black shadow-2xl relative z-10">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-black mx-auto mb-4"></div>
-          <p className="text-xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
-            Cargando tu línea del tiempo...
+          <p className="text-2xl font-black text-black tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+            CARGANDO TU LÍNEA DEL TIEMPO...
           </p>
         </div>
       </div>
@@ -251,13 +251,13 @@ const TimelineActivityV2 = () => {
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-pink-400 rounded-full animate-ping" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
-                  Mi Línea del Tiempo v2
+                <h1 className="text-4xl font-black text-black tracking-tight leading-none" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+                  MI LÍNEA DEL TIEMPO V2
                 </h1>
                 <div className="flex items-center gap-2 text-gray-800">
                   <Palette size={16} />
-                  <span className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent" style={{ fontFamily: 'Comic Neue' }}>
-                    Versión de diseño experimental
+                  <span className="text-sm font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+                    VERSIÓN EXPERIMENTAL
                   </span>
                 </div>
               </div>
@@ -268,14 +268,15 @@ const TimelineActivityV2 = () => {
             <button
               onClick={handleSaveAll}
               disabled={isSaving || !hasUnsavedChanges}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 shadow-lg border-4 border-black ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-full font-black transition-all transform hover:scale-105 shadow-lg border-4 border-black tracking-wide ${
                 hasUnsavedChanges 
                   ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white animate-pulse' 
                   : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
               } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+              style={{ fontFamily: 'Fredoka', fontWeight: '900' }}
             >
               <Save size={20} />
-              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
+              {isSaving ? 'GUARDANDO...' : hasUnsavedChanges ? 'GUARDAR CAMBIOS' : 'TODO GUARDADO'}
             </button>
             <UserMenu />
           </div>
@@ -286,7 +287,7 @@ const TimelineActivityV2 = () => {
       {saveMessage && (
         <div className="fixed top-24 right-4 z-50 flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl shadow-2xl p-4 border-4 border-black transform animate-bounce">
           <CheckCircle size={24} />
-          <span className="font-bold text-lg" style={{ fontFamily: 'Fredoka' }}>{saveMessage}</span>
+          <span className="font-black text-lg tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{saveMessage.toUpperCase()}</span>
         </div>
       )}
 
@@ -306,15 +307,15 @@ const TimelineActivityV2 = () => {
                 <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
                   <Sparkles size={24} className="text-black" />
                 </div>
-                <h2 className="text-3xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
-                  ¡Crea tu línea del tiempo personal!
+                <h2 className="text-4xl font-black text-black tracking-tight leading-none" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+                  ¡CREA TU LÍNEA DEL TIEMPO PERSONAL!
                 </h2>
                 <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
                   <Star size={24} className="text-black" />
                 </div>
               </div>
-              <p className="text-xl text-gray-800 max-w-3xl mx-auto font-medium" style={{ fontFamily: 'Comic Neue' }}>
-                Agrega notas sobre tu pasado, presente y futuro. Puedes arrastrarlas, editarlas y personalizarlas como quieras.
+              <p className="text-xl text-gray-800 max-w-3xl mx-auto font-bold tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>
+                AGREGA NOTAS SOBRE TU PASADO, PRESENTE Y FUTURO. PUEDES ARRASTRARLAS, EDITARLAS Y PERSONALIZARLAS COMO QUIERAS.
               </p>
             </div>
           </div>
@@ -355,8 +356,8 @@ const TimelineActivityV2 = () => {
                 <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
                   <Star size={24} className="text-black" />
                 </div>
-                <h3 className="text-2xl font-bold text-black" style={{ fontFamily: 'Fredoka' }}>
-                  📊 Tu Progreso Creativo
+                <h3 className="text-3xl font-black text-black tracking-tight" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+                  📊 TU PROGRESO CREATIVO
                 </h3>
                 <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
                   <Sparkles size={24} className="text-black" />
@@ -364,24 +365,24 @@ const TimelineActivityV2 = () => {
               </div>
               <div className="grid grid-cols-3 gap-8">
                 <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-4xl font-bold text-blue-700 mb-2">{getSectionNotes('pasado').length}</div>
-                  <div className="text-lg font-medium text-blue-800">Recuerdos</div>
-                  <div className="text-sm text-blue-600 mt-1">del pasado</div>
+                  <div className="text-5xl font-black text-blue-700 mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('pasado').length}</div>
+                  <div className="text-xl font-black text-blue-800 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>RECUERDOS</div>
+                  <div className="text-sm font-bold text-blue-600 mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>DEL PASADO</div>
                 </div>
                 <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-4xl font-bold text-green-700 mb-2">{getSectionNotes('presente').length}</div>
-                  <div className="text-lg font-medium text-green-800">Actualidad</div>
-                  <div className="text-sm text-green-600 mt-1">viviendo ahora</div>
+                  <div className="text-5xl font-black text-green-700 mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('presente').length}</div>
+                  <div className="text-xl font-black text-green-800 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>ACTUALIDAD</div>
+                  <div className="text-sm font-bold text-green-600 mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>VIVIENDO AHORA</div>
                 </div>
                 <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-4xl font-bold text-purple-700 mb-2">{getSectionNotes('futuro').length}</div>
-                  <div className="text-lg font-medium text-purple-800">Sueños</div>
-                  <div className="text-sm text-purple-600 mt-1">por cumplir</div>
+                  <div className="text-5xl font-black text-purple-700 mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('futuro').length}</div>
+                  <div className="text-xl font-black text-purple-800 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>SUEÑOS</div>
+                  <div className="text-sm font-bold text-purple-600 mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>POR CUMPLIR</div>
                 </div>
               </div>
-              <div className="mt-6 text-black" style={{ fontFamily: 'Comic Neue' }}>
-                <p className="text-lg font-medium">
-                  Total de notas creadas: <span className="font-bold text-orange-700 text-xl bg-yellow-200 px-3 py-1 rounded-full border-2 border-black">{notes.length}</span>
+              <div className="mt-6 text-black">
+                <p className="text-xl font-black tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+                  TOTAL DE NOTAS CREADAS: <span className="font-black text-orange-700 text-2xl bg-yellow-200 px-4 py-2 rounded-full border-3 border-black shadow-lg">{notes.length}</span>
                 </p>
               </div>
             </div>
