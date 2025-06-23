@@ -32,9 +32,9 @@ const TimelineActivityV2 = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   const timelineSections = [
-    { id: 'pasado', title: 'Pasado', color: 'bg-gradient-to-br from-blue-500 to-cyan-500', icon: '📚' },
-    { id: 'presente', title: 'Presente', color: 'bg-gradient-to-br from-green-500 to-emerald-500', icon: '⭐' },
-    { id: 'futuro', title: 'Futuro', color: 'bg-gradient-to-br from-purple-500 to-pink-500', icon: '🚀' }
+    { id: 'pasado', title: 'Pasado', color: 'bg-[#8dba90]', icon: '📚' },
+    { id: 'presente', title: 'Presente', color: 'bg-[#e2ae74]', icon: '⭐' },
+    { id: 'futuro', title: 'Futuro', color: 'bg-[#8270a9]', icon: '🚀' }
   ]
 
   useEffect(() => {
@@ -307,7 +307,7 @@ const TimelineActivityV2 = () => {
       <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
         {/* Instrucciones */}
         <div className="text-center mb-8">
-          <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl relative overflow-hidden">
+          <div className="bg-[#f4e3d1] backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl relative overflow-hidden">
             {/* Decorative elements inside the card */}
             <div className="absolute top-4 left-4 w-6 h-6 bg-yellow-400 rounded-full animate-pulse" />
             <div className="absolute top-4 right-4 w-4 h-4 bg-pink-400 rounded-full animate-bounce" />
@@ -354,7 +354,7 @@ const TimelineActivityV2 = () => {
 
         {/* Estadísticas */}
         <div className="mt-12 text-center">
-          <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl relative overflow-hidden">
+          <div className="bg-[#f4e3d1] backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl relative overflow-hidden">
             {/* Decorative background elements */}
             <div className="absolute top-0 left-0 w-full h-full opacity-10">
               <div className="absolute top-4 left-4 w-8 h-8 bg-yellow-400 rounded-full" />
@@ -376,25 +376,25 @@ const TimelineActivityV2 = () => {
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-8">
-                <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-5xl font-black text-blue-700 mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('pasado').length}</div>
-                  <div className="text-xl font-black text-blue-800 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>RECUERDOS</div>
-                  <div className="text-sm font-bold text-blue-600 mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>DEL PASADO</div>
+                <div className="bg-[#8dba90] rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
+                  <div className="text-5xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('pasado').length}</div>
+                  <div className="text-xl font-black text-white tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>RECUERDOS</div>
+                  <div className="text-sm font-bold text-white mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>DEL PASADO</div>
                 </div>
-                <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-5xl font-black text-green-700 mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('presente').length}</div>
-                  <div className="text-xl font-black text-green-800 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>ACTUALIDAD</div>
-                  <div className="text-sm font-bold text-green-600 mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>VIVIENDO AHORA</div>
+                <div className="bg-[#e2ae74] rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
+                  <div className="text-5xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('presente').length}</div>
+                  <div className="text-xl font-black text-white tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>ACTUALIDAD</div>
+                  <div className="text-sm font-bold text-white mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>VIVIENDO AHORA</div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-5xl font-black text-purple-700 mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('futuro').length}</div>
-                  <div className="text-xl font-black text-purple-800 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>SUEÑOS</div>
-                  <div className="text-sm font-bold text-purple-600 mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>POR CUMPLIR</div>
+                <div className="bg-[#8270a9] rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
+                  <div className="text-5xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('futuro').length}</div>
+                  <div className="text-xl font-black text-white tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>SUEÑOS</div>
+                  <div className="text-sm font-bold text-white mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>POR CUMPLIR</div>
                 </div>
               </div>
               <div className="mt-6 text-black">
                 <p className="text-xl font-black tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
-                  TOTAL DE NOTAS CREADAS: <span className="font-black text-orange-700 text-2xl bg-yellow-200 px-4 py-2 rounded-full border-3 border-black shadow-lg">{notes.length}</span>
+                  TOTAL DE NOTAS CREADAS: <span className="font-black text-black text-2xl bg-yellow-200 px-4 py-2 rounded-full border-3 border-black shadow-lg">{notes.length}</span>
                 </p>
               </div>
             </div>
