@@ -166,7 +166,7 @@ const TimelineActivityV2 = () => {
       <div 
         className="min-h-screen flex items-center justify-center relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 100%)'
         }}
       >
         {/* Grid Background - Más fuerte */}
@@ -246,7 +246,7 @@ const TimelineActivityV2 = () => {
       </div>
 
       {/* Header */}
-      <div className="bg-f4e3d1 bg-opacity-95 backdrop-blur-md border-b-4 border-black shadow-lg relative z-10">
+      <div className="bg-white bg-opacity-95 backdrop-blur-md border-b-4 border-black shadow-lg relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <button
