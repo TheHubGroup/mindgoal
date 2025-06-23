@@ -208,7 +208,7 @@ const TimelineActivityV2 = () => {
         className="absolute inset-0 opacity-100"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.9) 2px, transparent 2px),
+            linear-gradient(rgba(255,255,255,0.9) 10px, transparent 10px),
             linear-gradient(90deg, rgba(255,255,255,0.9) 2px, transparent 2px)
           `,
           backgroundSize: '30px 30px'
