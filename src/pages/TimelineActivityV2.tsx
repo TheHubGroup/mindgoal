@@ -208,8 +208,8 @@ const TimelineActivityV2 = () => {
         className="absolute inset-0 opacity-100"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.9) 10px, white 10px),
-            linear-gradient(90deg, rgba(255,255,255,0.9) 2px, transparent 2px)
+            linear-gradient(rgba(255,255,255,0.4) 2px, transparent 2px),
+            linear-gradient(90deg, rgba(255,255,255,0.4) 2px, transparent 2px)
           `,
           backgroundSize: '30px 30px'
         }}
@@ -251,7 +251,7 @@ const TimelineActivityV2 = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/')}
-              className="text-black hover:text-gray-700 transition-colors bg-white bg-opacity-80 rounded-full p-3 hover:bg-opacity-100 border-3 border-black shadow-lg transform hover:scale-105"
+              className="text-black hover:text-gray-700 transition-colors bg-f4e3d1 bg-opacity-80 rounded-full p-3 hover:bg-opacity-100 border-3 border-black shadow-lg transform hover:scale-105"
             >
               <ArrowLeft size={24} />
             </button>
