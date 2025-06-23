@@ -246,7 +246,7 @@ const TimelineActivityV2 = () => {
       </div>
 
       {/* Header */}
-      <div className="bg-white bg-opacity-95 backdrop-blur-md border-b-4 border-black shadow-lg relative z-10">
+      <div className="bg-#f4e3d1 bg-opacity-95 backdrop-blur-md border-b-4 border-black shadow-lg relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <button
