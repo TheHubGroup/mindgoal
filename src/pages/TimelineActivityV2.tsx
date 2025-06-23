@@ -326,7 +326,7 @@ const TimelineActivityV2 = () => {
                   <Star size={24} className="text-black" />
                 </div>
               </div>
-              <p className="text-xl text-gray-800 max-w-3xl mx-auto font-bold tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '350' }}>
+              <p className="text-xl text-gray-800 max-w-3xl mx-auto font-bold tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '400' }}>
                 AGREGA NOTAS SOBRE TU PASADO, PRESENTE Y FUTURO. PUEDES ARRASTRARLAS, EDITARLAS Y PERSONALIZARLAS COMO QUIERAS.
               </p>
             </div>
