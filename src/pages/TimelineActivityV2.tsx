@@ -169,13 +169,13 @@ const TimelineActivityV2 = () => {
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
         }}
       >
-        {/* Grid Background */}
+        {/* Grid Background - Más fuerte */}
         <div 
-          className="absolute inset-50 opacity-20"
+          className="absolute inset-0 opacity-60"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+              linear-gradient(rgba(255,255,255,0.4) 2px, transparent 2px),
+              linear-gradient(90deg, rgba(255,255,255,0.4) 2px, transparent 2px)
             `,
             backgroundSize: '30px 30px'
           }}
@@ -203,15 +203,27 @@ const TimelineActivityV2 = () => {
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
       }}
     >
-      {/* Grid Background */}
+      {/* Grid Background - Mucho más fuerte y visible */}
       <div 
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-60"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+            linear-gradient(rgba(255,255,255,0.4) 2px, transparent 2px),
+            linear-gradient(90deg, rgba(255,255,255,0.4) 2px, transparent 2px)
           `,
           backgroundSize: '30px 30px'
+        }}
+      />
+
+      {/* Grid adicional con líneas más gruesas para mayor impacto */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px'
         }}
       />
 
