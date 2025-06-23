@@ -205,7 +205,7 @@ const TimelineActivityV2 = () => {
     >
       {/* Grid Background - Mucho más fuerte y visible */}
       <div 
-        className="absolute inset-0 opacity-100"
+        className="absolute inset-0 opacity-50"
         style={{
           backgroundImage: `
             linear-gradient(rgba(255,255,255,0.4) 2px, transparent 2px),
