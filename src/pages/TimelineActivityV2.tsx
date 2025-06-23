@@ -251,7 +251,7 @@ const TimelineActivityV2 = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/')}
-              className="text-black hover:text-gray-700 transition-colors bg-black bg-opacity-80 rounded-full p-3 hover:bg-opacity-100 border-3 border-black shadow-lg transform hover:scale-105"
+              className="text-black hover:text-gray-700 transition-colors bg-white bg-opacity-80 rounded-full p-3 hover:bg-opacity-100 border-3 border-black shadow-lg transform hover:scale-105"
             >
               <ArrowLeft size={24} />
             </button>
