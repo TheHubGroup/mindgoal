@@ -14,7 +14,8 @@ import {
   Palette,
   CheckCircle,
   AlertCircle,
-  BarChart3
+  BarChart3,
+  Trophy
 } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
 import { userResponsesService } from '../lib/userResponsesService'
@@ -236,6 +237,14 @@ const HomePage = () => {
             </h1>
           </div>
           <div className="flex items-center gap-4">
+            {/* Botón Leaderboard */}
+            <button
+              onClick={() => navigate('/leaderboard')}
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
+            >
+              <Trophy size={20} />
+              <span style={{ fontFamily: 'Fredoka' }}>Leaderboard</span>
+            </button>
             <UserMenu />
           </div>
         </div>

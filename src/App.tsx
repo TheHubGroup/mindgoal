@@ -14,6 +14,7 @@ import MeditacionAutoconocimiento from './pages/MeditacionAutoconocimiento'
 import UserBarPage from './pages/UserBarPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
+import LeaderboardPage from './pages/LeaderboardPage'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -72,6 +73,11 @@ function App() {
             <Route path="/profile" element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/leaderboard" element={
+              <ProtectedRoute>
+                <LeaderboardPage />
               </ProtectedRoute>
             } />
             <Route path="/actividad/linea-tiempo" element={
