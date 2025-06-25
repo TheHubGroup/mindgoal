@@ -342,7 +342,7 @@ const RegisterPage = () => {
                 <option value="3°">3° Primaria</option>
                 <option value="4°">4° Primaria</option>
                 <option value="5°">5° Primaria</option>
-                <option value="6°">6° Secundaria</option>
+                <option value="6°">6° Primaria</option>
                 <option value="7°">7° Secundaria</option>
                 <option value="8°">8° Secundaria</option>
                 <option value="9°">9° Secundaria</option>
