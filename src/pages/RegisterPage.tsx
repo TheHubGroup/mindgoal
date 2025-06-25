@@ -18,7 +18,7 @@ const RegisterPage = () => {
   const [grado, setGrado] = useState('')
   const [nombreColegio, setNombreColegio] = useState('')
   const [ciudad, setCiudad] = useState('')
-  const [pais, setPais] = useState('Colombia')
+  const [pais, setPais] = useState('Venezuela')
   const [edad, setEdad] = useState<number | ''>('')
   const [sexo, setSexo] = useState('')
   
