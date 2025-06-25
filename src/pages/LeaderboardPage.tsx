@@ -31,12 +31,6 @@ interface LeaderboardUser {
   score: number
   level: string
   position: number
-  activities: {
-    timeline: number
-    preferences: number
-    letters: number
-    meditation: number
-  }
 }
 
 const LeaderboardPage = () => {
@@ -84,7 +78,6 @@ const LeaderboardPage = () => {
       const usersWithScores = await Promise.all(
         profiles.map(async (profile) => {
           const score = await calculateUserScore(profile.id)
-          const activities = await getUserActivities(profile.id)
           
           return {
             id: profile.id,
@@ -95,8 +88,7 @@ const LeaderboardPage = () => {
             email: profile.email,
             score,
             level: getScoreLevel(score),
-            position: 0, // Se asignará después del ordenamiento
-            activities
+            position: 0 // Se asignará después del ordenamiento
           }
         })
       )
@@ -171,26 +163,6 @@ const LeaderboardPage = () => {
     }
   }
 
-  const getUserActivities = async (userId: string) => {
-    try {
-      const [responses, timelineNotes, letters, meditationSessions] = await Promise.all([
-        userResponsesService.getResponses(userId, 'cuentame_quien_eres'),
-        timelineService.getNotes(userId),
-        letterService.getLetters(userId),
-        meditationService.getAllSessions(userId)
-      ])
-
-      return {
-        timeline: timelineNotes.length,
-        preferences: responses.length,
-        letters: letters.length,
-        meditation: meditationSessions.filter(s => s.completed_at).length
-      }
-    } catch (error) {
-      return { timeline: 0, preferences: 0, letters: 0, meditation: 0 }
-    }
-  }
-
   const getScoreLevel = (score: number): string => {
     if (score >= 2000) return 'Maestro'
     if (score >= 1000) return 'Experto'
@@ -228,7 +200,6 @@ const LeaderboardPage = () => {
   }
 
   const topThree = users.slice(0, 3)
-  const restOfUsers = users.slice(3)
 
   if (isLoading) {
     return (
@@ -334,8 +305,8 @@ const LeaderboardPage = () => {
                     <h3 className="font-black text-white text-lg" style={{ fontFamily: 'Fredoka' }}>
                       {topThree[1].nombre} {topThree[1].apellido}
                     </h3>
-                    <p className="text-gray-300 text-sm">{topThree[1].grado}</p>
-                    <div className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-4 py-2 rounded-full font-bold text-lg mt-2">
+                    <p className="text-gray-300 text-sm font-medium">{topThree[1].grado}</p>
+                    <div className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
                       {topThree[1].score.toLocaleString()}
                     </div>
                   </div>
@@ -402,8 +373,8 @@ const LeaderboardPage = () => {
                     <h3 className="font-black text-white text-lg" style={{ fontFamily: 'Fredoka' }}>
                       {topThree[2].nombre} {topThree[2].apellido}
                     </h3>
-                    <p className="text-amber-300 text-sm">{topThree[2].grado}</p>
-                    <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white px-4 py-2 rounded-full font-bold text-lg mt-2">
+                    <p className="text-amber-300 text-sm font-medium">{topThree[2].grado}</p>
+                    <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
                       {topThree[2].score.toLocaleString()}
                     </div>
                   </div>
@@ -468,7 +439,7 @@ const LeaderboardPage = () => {
                     {/* Información del usuario */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-black text-white text-lg truncate" style={{ fontFamily: 'Fredoka' }}>
+                        <h3 className="font-black text-white text-xl truncate" style={{ fontFamily: 'Fredoka' }}>
                           {user.nombre} {user.apellido}
                         </h3>
                         {user.id === user?.id && (
@@ -477,31 +448,17 @@ const LeaderboardPage = () => {
                           </div>
                         )}
                       </div>
-                      <p className="text-white text-opacity-70 text-sm mb-2">{user.grado}</p>
-                      
-                      {/* Actividades */}
-                      <div className="flex gap-2 flex-wrap">
-                        <div className="bg-blue-500 bg-opacity-30 text-blue-200 px-2 py-1 rounded-lg text-xs font-medium">
-                          📚 {user.activities.timeline} notas
-                        </div>
-                        <div className="bg-green-500 bg-opacity-30 text-green-200 px-2 py-1 rounded-lg text-xs font-medium">
-                          ❤️ {user.activities.preferences} preferencias
-                        </div>
-                        <div className="bg-purple-500 bg-opacity-30 text-purple-200 px-2 py-1 rounded-lg text-xs font-medium">
-                          ✉️ {user.activities.letters} cartas
-                        </div>
-                        <div className="bg-indigo-500 bg-opacity-30 text-indigo-200 px-2 py-1 rounded-lg text-xs font-medium">
-                          🧘 {user.activities.meditation} meditaciones
-                        </div>
-                      </div>
+                      <p className="text-white text-opacity-80 text-lg font-medium" style={{ fontFamily: 'Comic Neue' }}>
+                        {user.grado}
+                      </p>
                     </div>
 
                     {/* Score y nivel */}
                     <div className="flex-shrink-0 text-right">
-                      <div className={`bg-gradient-to-r ${getLevelColor(user.level)} text-white px-4 py-2 rounded-full font-black text-lg mb-2 shadow-lg`}>
+                      <div className={`bg-gradient-to-r ${getLevelColor(user.level)} text-white px-6 py-3 rounded-full font-black text-xl mb-2 shadow-lg`}>
                         {user.score.toLocaleString()}
                       </div>
-                      <div className="text-white text-opacity-80 text-sm font-bold">
+                      <div className="text-white text-opacity-90 text-sm font-bold">
                         {user.level}
                       </div>
                     </div>
