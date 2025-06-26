@@ -27,7 +27,9 @@ const EmotionImageCard: React.FC<EmotionImageCardProps> = ({
   }
 
   const handleImageClick = (e: React.MouseEvent) => {
+    e.preventDefault()
     e.stopPropagation()
+    console.log('Image clicked:', emotion.name) // Debug log
     onImageClick(emotion)
   }
 
@@ -50,19 +52,28 @@ const EmotionImageCard: React.FC<EmotionImageCardProps> = ({
           alt={`Niño/a mostrando ${emotion.name}`}
           className="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-110"
           onClick={handleImageClick}
+          draggable={false}
           onError={(e) => {
             // Fallback en caso de error de imagen
             const target = e.target as HTMLImageElement
             target.style.display = 'none'
             const parent = target.parentElement
             if (parent) {
-              parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-4xl cursor-pointer" onclick="handleImageClick">${emotion.emoji}</div>`
+              parent.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center text-4xl cursor-pointer bg-gray-200 rounded-lg" 
+                     onclick="this.parentElement.parentElement.parentElement.querySelector('img').click()">
+                  ${emotion.emoji}
+                </div>
+              `
             }
           }}
         />
         
         {/* Overlay para indicar que se puede hacer click */}
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+        <div 
+          className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center cursor-pointer"
+          onClick={handleImageClick}
+        >
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-90 rounded-full p-2">
             <Eye size={16} className="text-gray-700" />
           </div>

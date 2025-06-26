@@ -15,7 +15,8 @@ import {
   Target,
   Sparkles,
   X,
-  ThumbsUp
+  ThumbsUp,
+  ZoomIn
 } from 'lucide-react'
 
 interface Emotion {
@@ -141,6 +142,7 @@ const NombraTusEmociones = () => {
   }
 
   const handleImageClick = (emotion: Emotion) => {
+    console.log('handleImageClick called with:', emotion.name) // Debug log
     setShowImageModal(emotion)
   }
 
@@ -270,10 +272,15 @@ const NombraTusEmociones = () => {
           <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
             ¡Conecta cada imagen con su emoción! 🎯
           </h2>
-          <p className="text-xl text-white text-opacity-90 max-w-3xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
-            Arrastra las imágenes de los niños hacia el nombre de la emoción que están mostrando. 
-            <span className="font-bold"> Haz click en las imágenes para verlas más grandes.</span>
-          </p>
+          <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-4 max-w-4xl mx-auto">
+            <p className="text-lg text-white text-opacity-95 mb-2" style={{ fontFamily: 'Comic Neue' }}>
+              Arrastra las imágenes de los niños hacia el nombre de la emoción que están mostrando.
+            </p>
+            <div className="flex items-center justify-center gap-2 text-yellow-300 font-bold">
+              <ZoomIn size={20} />
+              <span style={{ fontFamily: 'Fredoka' }}>¡Haz click en las imágenes para verlas más grandes!</span>
+            </div>
+          </div>
         </div>
 
         {/* Área de juego */}
@@ -345,24 +352,35 @@ const NombraTusEmociones = () => {
         )}
       </div>
 
-      {/* Modal de imagen ampliada */}
+      {/* Modal de imagen ampliada - MEJORADO */}
       {showImageModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full border-4 border-purple-500 relative">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[9999] p-4"
+          onClick={() => setShowImageModal(null)}
+        >
+          <div 
+            className="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full border-4 border-purple-500 relative transform transition-all duration-300 scale-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botón de cerrar */}
             <button
               onClick={() => setShowImageModal(null)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 bg-gray-100 rounded-full p-2 transition-colors"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full p-3 transition-all transform hover:scale-110 z-10"
             >
-              <X size={20} />
+              <X size={24} />
             </button>
             
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-purple-600 mb-4" style={{ fontFamily: 'Fredoka' }}>
-                Observa la Emoción
-              </h3>
+              {/* Título */}
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <ZoomIn size={32} className="text-purple-600" />
+                <h3 className="text-3xl font-bold text-purple-600" style={{ fontFamily: 'Fredoka' }}>
+                  Observa la Emoción
+                </h3>
+              </div>
               
               {/* Imagen grande */}
-              <div className="w-full h-64 rounded-2xl overflow-hidden mb-4 bg-gray-100">
+              <div className="w-full max-w-md mx-auto h-80 rounded-2xl overflow-hidden mb-6 bg-gray-100 shadow-lg border-4 border-purple-200">
                 <img
                   src={showImageModal.imageUrl}
                   alt={`Niño/a mostrando ${showImageModal.name}`}
@@ -372,19 +390,38 @@ const NombraTusEmociones = () => {
                     target.style.display = 'none'
                     const parent = target.parentElement
                     if (parent) {
-                      parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-8xl">${showImageModal.emoji}</div>`
+                      parent.innerHTML = `
+                        <div class="w-full h-full flex items-center justify-center text-9xl bg-gradient-to-br from-purple-100 to-pink-100">
+                          ${showImageModal.emoji}
+                        </div>
+                      `
                     }
                   }}
                 />
               </div>
               
-              <div className="text-6xl mb-4">{showImageModal.emoji}</div>
+              {/* Emoji grande */}
+              <div className="text-8xl mb-6 animate-bounce">{showImageModal.emoji}</div>
               
-              <p className="text-gray-700 text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
-                ¿Qué emoción crees que está mostrando este niño/a? 
-                <br />
-                <span className="font-bold text-purple-600">¡Arrastra la imagen hacia el nombre correcto!</span>
-              </p>
+              {/* Instrucciones */}
+              <div className="bg-purple-50 rounded-2xl p-6 border-2 border-purple-200">
+                <p className="text-gray-700 text-xl leading-relaxed mb-4" style={{ fontFamily: 'Comic Neue' }}>
+                  ¿Qué emoción crees que está mostrando este niño/a?
+                </p>
+                <div className="flex items-center justify-center gap-2 text-purple-600 font-bold text-lg">
+                  <Target size={24} />
+                  <span style={{ fontFamily: 'Fredoka' }}>¡Arrastra la imagen hacia el nombre correcto!</span>
+                </div>
+              </div>
+              
+              {/* Botón para cerrar */}
+              <button
+                onClick={() => setShowImageModal(null)}
+                className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-all transform hover:scale-105"
+                style={{ fontFamily: 'Fredoka' }}
+              >
+                ¡Entendido!
+              </button>
             </div>
           </div>
         </div>
