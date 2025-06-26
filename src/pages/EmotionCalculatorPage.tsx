@@ -18,7 +18,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
-  Zap
+  Zap,
+  X
 } from 'lucide-react'
 
 interface Emotion {
