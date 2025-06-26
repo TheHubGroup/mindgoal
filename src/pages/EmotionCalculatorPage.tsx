@@ -293,7 +293,7 @@ const EmotionCalculatorPage = () => {
         {/* Título principal */}
         <div className="text-center mb-12">
           <h2 className="text-5xl font-black text-white mb-6 tracking-tight" style={{ fontFamily: 'Fredoka' }}>
-            ¿CÓMO TE SIENTES HOY?
+            ¿CÓMO TE HAZ SENTIDO EN LA ÚLTIMA SEMANA?
           </h2>
           <div className="flex items-center justify-center gap-3 text-2xl text-white text-opacity-90 max-w-3xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
             <Heart size={32} className="text-red-400" />
@@ -517,7 +517,7 @@ const EmotionCalculatorPage = () => {
                     Registro Regular
                   </h4>
                   <p className="text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
-                    Registra tus emociones diariamente para tener un mejor seguimiento de tus patrones emocionales.
+                    Registra tus emociones con frecuencia para tener un mejor seguimiento de tus patrones emocionales.
                   </p>
                 </div>
               </div>
