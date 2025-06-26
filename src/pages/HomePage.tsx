@@ -17,7 +17,8 @@ import {
   BarChart3,
   Trophy,
   Smile,
-  Calculator
+  Calculator,
+  Flame
 } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
 import { userResponsesService } from '../lib/userResponsesService'
@@ -25,6 +26,7 @@ import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
 import { emotionMatchService } from '../lib/emotionMatchService'
 import { emotionLogService } from '../lib/emotionLogService'
+import { angerManagementService } from '../lib/angerManagementService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -40,14 +42,14 @@ const HomePage = () => {
   const [activityStatuses, setActivityStatuses] = useState<Record<string, ActivityStatus>>({})
   const [isLoadingStatuses, setIsLoadingStatuses] = useState(true)
 
-  // Mostrar modal de bienvenida cuando el usuario inicia sesión
+  // Show welcome modal when user logs in
   useEffect(() => {
     if (user && !profileLoading) {
       setShowWelcomeModal(true)
     }
   }, [user, profileLoading])
 
-  // Cargar estados de actividades
+  // Load activity statuses
   useEffect(() => {
     if (user) {
       loadActivityStatuses()
@@ -119,6 +121,18 @@ const HomePage = () => {
         hasData: !!lastEmotionLog,
         count: 0, // Count can be added later if needed, e.g., total logs
         lastActivity: lastEmotionLog ? `Último registro: ${new Date(lastEmotionLog).toLocaleDateString('es-ES')}` : undefined
+      }
+
+      // Menú de la Ira
+      const angerSessions = await angerManagementService.getAllSessions(user.id)
+      const completedAngerSessions = angerSessions.filter(s => s.completed_at)
+      statuses['menu-de-la-ira'] = {
+        hasData: angerSessions.length > 0,
+        count: completedAngerSessions.length,
+        lastActivity: angerSessions.length > 0 ? 
+          completedAngerSessions.length > 0 ? 
+            `${completedAngerSessions.length} sesión${completedAngerSessions.length > 1 ? 'es' : ''} completada${completedAngerSessions.length > 1 ? 's' : ''}` :
+            'Sesión iniciada' : undefined
       }
 
       setActivityStatuses(statuses)
@@ -195,6 +209,16 @@ const HomePage = () => {
       available: true,
       route: '/actividad/nombra-tus-emociones',
       isNew: true
+    },
+    {
+      id: 'menu-de-la-ira',
+      title: 'Menú de la Ira',
+      description: 'Aprende diferentes técnicas para manejar la ira de forma saludable',
+      icon: Flame,
+      color: 'from-red-600 to-orange-500',
+      available: true,
+      route: '/actividad/menu-de-la-ira',
+      isNew: true
     }
   ]
 
@@ -262,7 +286,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
-      {/* Welcome Modal - Se mantiene hasta que el usuario haga clic */}
+      {/* Welcome Modal - Stays until user clicks */}
       <WelcomeModal 
         isOpen={showWelcomeModal} 
         onClose={handleCloseWelcome} 
@@ -278,7 +302,7 @@ const HomePage = () => {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            {/* Botón Leaderboard */}
+            {/* Leaderboard Button */}
             <button
               onClick={() => navigate('/leaderboard')}
               className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"

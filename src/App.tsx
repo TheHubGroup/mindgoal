@@ -13,6 +13,7 @@ import CartaMiMismo from './pages/CartaMiMismo'
 import MeditacionAutoconocimiento from './pages/MeditacionAutoconocimiento'
 import NombraTusEmociones from './pages/NombraTusEmociones'
 import EmotionCalculatorPage from './pages/EmotionCalculatorPage'
+import MenuDeLaIra from './pages/MenuDeLaIra'
 import UserBarPage from './pages/UserBarPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
@@ -115,6 +116,11 @@ function App() {
             <Route path="/actividad/calculadora-emociones" element={
               <ProtectedRoute>
                 <EmotionCalculatorPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/menu-de-la-ira" element={
+              <ProtectedRoute>
+                <MenuDeLaIra />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={
