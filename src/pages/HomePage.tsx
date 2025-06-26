@@ -15,12 +15,14 @@ import {
   CheckCircle,
   AlertCircle,
   BarChart3,
-  Trophy
+  Trophy,
+  Smile
 } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
 import { userResponsesService } from '../lib/userResponsesService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
+import { emotionMatchService } from '../lib/emotionMatchService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -100,6 +102,15 @@ const HomePage = () => {
             'Sesión iniciada' : undefined
       }
 
+      // Nombra tus Emociones
+      const emotionStats = await emotionMatchService.getUserStats(user.id)
+      statuses['nombra-tus-emociones'] = {
+        hasData: emotionStats.totalAttempts > 0,
+        count: emotionStats.completedEmotions.length,
+        lastActivity: emotionStats.totalAttempts > 0 ? 
+          `${emotionStats.completedEmotions.length}/10 emociones completadas` : undefined
+      }
+
       setActivityStatuses(statuses)
     } catch (error) {
       console.error('Error loading activity statuses:', error)
@@ -154,6 +165,16 @@ const HomePage = () => {
       color: 'from-indigo-500 to-purple-500',
       available: true,
       route: '/actividad/meditacion-autoconocimiento'
+    },
+    {
+      id: 'nombra-tus-emociones',
+      title: 'Nombra tus Emociones',
+      description: 'Juego de matching para aprender a identificar diferentes emociones',
+      icon: Smile,
+      color: 'from-pink-500 to-rose-500',
+      available: true,
+      route: '/actividad/nombra-tus-emociones',
+      isNew: true
     }
   ]
 
@@ -263,7 +284,7 @@ const HomePage = () => {
         </div>
 
         {/* Activities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = activity.icon
             return (
@@ -283,6 +304,14 @@ const HomePage = () => {
                   <div className="absolute top-4 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                     <Palette size={12} />
                     Experimental
+                  </div>
+                )}
+
+                {/* New Badge */}
+                {activity.isNew && (
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Star size={12} />
+                    ¡Nuevo!
                   </div>
                 )}
 

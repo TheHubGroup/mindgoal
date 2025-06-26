@@ -11,6 +11,7 @@ import TimelineActivityV2 from './pages/TimelineActivityV2'
 import CuentameQuienEres from './pages/CuentameQuienEres'
 import CartaMiMismo from './pages/CartaMiMismo'
 import MeditacionAutoconocimiento from './pages/MeditacionAutoconocimiento'
+import NombraTusEmociones from './pages/NombraTusEmociones'
 import UserBarPage from './pages/UserBarPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
@@ -103,6 +104,11 @@ function App() {
             <Route path="/actividad/meditacion-autoconocimiento" element={
               <ProtectedRoute>
                 <MeditacionAutoconocimiento />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/nombra-tus-emociones" element={
+              <ProtectedRoute>
+                <NombraTusEmociones />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={
