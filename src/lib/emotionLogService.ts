@@ -93,9 +93,9 @@ export const emotionLogService = {
         .eq('user_id', userId)
         .order('felt_at', { ascending: false })
         .limit(1)
-        .single()
+        .maybeSingle()
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+      if (error) {
         console.error('Error fetching last emotion log date:', error)
         return null
       }
