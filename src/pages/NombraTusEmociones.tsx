@@ -13,7 +13,9 @@ import {
   RotateCcw,
   CheckCircle,
   Target,
-  Sparkles
+  Sparkles,
+  X,
+  ThumbsUp
 } from 'lucide-react'
 
 interface Emotion {
@@ -94,6 +96,8 @@ const NombraTusEmociones = () => {
   const [matchedEmotions, setMatchedEmotions] = useState<Set<string>>(new Set())
   const [currentDraggedEmotion, setCurrentDraggedEmotion] = useState<string | null>(null)
   const [showExplanation, setShowExplanation] = useState<{emotion: Emotion, show: boolean} | null>(null)
+  const [showImageModal, setShowImageModal] = useState<Emotion | null>(null)
+  const [showEncouragement, setShowEncouragement] = useState<{show: boolean, droppedEmotion: string, targetEmotion: string} | null>(null)
   const [shuffledEmotions, setShuffledEmotions] = useState<Emotion[]>([])
   const [shuffledNames, setShuffledNames] = useState<string[]>([])
   const [gameStats, setGameStats] = useState({
@@ -136,6 +140,10 @@ const NombraTusEmociones = () => {
     setCurrentDraggedEmotion(emotionName)
   }
 
+  const handleImageClick = (emotion: Emotion) => {
+    setShowImageModal(emotion)
+  }
+
   const handleDrop = async (droppedEmotion: string, targetEmotion: string) => {
     const isCorrect = droppedEmotion === targetEmotion
     
@@ -163,6 +171,18 @@ const NombraTusEmociones = () => {
           setShowExplanation(null)
         }, 4000)
       }
+    } else {
+      // Match incorrecto - mostrar mensaje de aliento
+      setShowEncouragement({
+        show: true,
+        droppedEmotion,
+        targetEmotion
+      })
+      
+      // Ocultar mensaje de aliento después de 3 segundos
+      setTimeout(() => {
+        setShowEncouragement(null)
+      }, 3000)
     }
 
     // Actualizar estadísticas
@@ -251,7 +271,8 @@ const NombraTusEmociones = () => {
             ¡Conecta cada imagen con su emoción! 🎯
           </h2>
           <p className="text-xl text-white text-opacity-90 max-w-3xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
-            Arrastra las imágenes de los niños hacia el nombre de la emoción que están mostrando.
+            Arrastra las imágenes de los niños hacia el nombre de la emoción que están mostrando. 
+            <span className="font-bold"> Haz click en las imágenes para verlas más grandes.</span>
           </p>
         </div>
 
@@ -270,6 +291,7 @@ const NombraTusEmociones = () => {
                     key={emotion.name}
                     emotion={emotion}
                     onDragStart={handleDragStart}
+                    onImageClick={handleImageClick}
                     isMatched={matchedEmotions.has(emotion.name)}
                   />
                 ))}
@@ -323,6 +345,51 @@ const NombraTusEmociones = () => {
         )}
       </div>
 
+      {/* Modal de imagen ampliada */}
+      {showImageModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full border-4 border-purple-500 relative">
+            <button
+              onClick={() => setShowImageModal(null)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 bg-gray-100 rounded-full p-2 transition-colors"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-purple-600 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                Observa la Emoción
+              </h3>
+              
+              {/* Imagen grande */}
+              <div className="w-full h-64 rounded-2xl overflow-hidden mb-4 bg-gray-100">
+                <img
+                  src={showImageModal.imageUrl}
+                  alt={`Niño/a mostrando ${showImageModal.name}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                    const parent = target.parentElement
+                    if (parent) {
+                      parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-8xl">${showImageModal.emoji}</div>`
+                    }
+                  }}
+                />
+              </div>
+              
+              <div className="text-6xl mb-4">{showImageModal.emoji}</div>
+              
+              <p className="text-gray-700 text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                ¿Qué emoción crees que está mostrando este niño/a? 
+                <br />
+                <span className="font-bold text-purple-600">¡Arrastra la imagen hacia el nombre correcto!</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal de explicación */}
       {showExplanation && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -357,6 +424,45 @@ const NombraTusEmociones = () => {
                 <span className="animate-bounce">🎉</span>
                 <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>⭐</span>
                 <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>🎊</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de aliento para respuestas incorrectas */}
+      {showEncouragement && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border-4 border-orange-400 relative">
+            <button
+              onClick={() => setShowEncouragement(null)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+            
+            <div className="text-center">
+              <div className="w-20 h-20 bg-orange-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ThumbsUp size={40} className="text-white" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-orange-600 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                ¡Estuviste Cerca!
+              </h3>
+              
+              <p className="text-gray-700 leading-relaxed mb-4" style={{ fontFamily: 'Comic Neue' }}>
+                No era <span className="font-bold text-orange-600">{showEncouragement.targetEmotion}</span>, 
+                pero <span className="font-bold text-purple-600">{showEncouragement.droppedEmotion}</span> también es una emoción importante.
+              </p>
+              
+              <p className="text-lg font-bold text-gray-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                ¡Inténtalo de nuevo! 💪
+              </p>
+              
+              <div className="flex justify-center gap-4 text-3xl">
+                <span className="animate-pulse">🌟</span>
+                <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>💪</span>
+                <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>🎯</span>
               </div>
             </div>
           </div>
