@@ -12,6 +12,7 @@ import CuentameQuienEres from './pages/CuentameQuienEres'
 import CartaMiMismo from './pages/CartaMiMismo'
 import MeditacionAutoconocimiento from './pages/MeditacionAutoconocimiento'
 import NombraTusEmociones from './pages/NombraTusEmociones'
+import EmotionCalculatorPage from './pages/EmotionCalculatorPage'
 import UserBarPage from './pages/UserBarPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
@@ -109,6 +110,11 @@ function App() {
             <Route path="/actividad/nombra-tus-emociones" element={
               <ProtectedRoute>
                 <NombraTusEmociones />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/calculadora-emociones" element={
+              <ProtectedRoute>
+                <EmotionCalculatorPage />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={

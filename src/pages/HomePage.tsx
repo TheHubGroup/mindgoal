@@ -16,13 +16,15 @@ import {
   AlertCircle,
   BarChart3,
   Trophy,
-  Smile
+  Smile,
+  Calculator
 } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
 import { userResponsesService } from '../lib/userResponsesService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
 import { emotionMatchService } from '../lib/emotionMatchService'
+import { emotionLogService } from '../lib/emotionLogService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -111,6 +113,14 @@ const HomePage = () => {
           `${emotionStats.completedEmotions.length}/10 emociones completadas` : undefined
       }
 
+      // Calculadora de Emociones
+      const lastEmotionLog = await emotionLogService.getLastEmotionLogDate(user.id)
+      statuses['calculadora-emociones'] = {
+        hasData: !!lastEmotionLog,
+        count: 0, // Count can be added later if needed, e.g., total logs
+        lastActivity: lastEmotionLog ? `Último registro: ${new Date(lastEmotionLog).toLocaleDateString('es-ES')}` : undefined
+      }
+
       setActivityStatuses(statuses)
     } catch (error) {
       console.error('Error loading activity statuses:', error)
@@ -165,6 +175,16 @@ const HomePage = () => {
       color: 'from-indigo-500 to-purple-500',
       available: true,
       route: '/actividad/meditacion-autoconocimiento'
+    },
+    {
+      id: 'calculadora-emociones',
+      title: 'Calculadora de Emociones',
+      description: 'Registra y lleva un historial de las emociones que sientes cada día.',
+      icon: Calculator,
+      color: 'from-blue-500 to-green-500',
+      available: true,
+      route: '/actividad/calculadora-emociones',
+      isNew: true
     },
     {
       id: 'nombra-tus-emociones',
