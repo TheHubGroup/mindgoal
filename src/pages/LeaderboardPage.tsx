@@ -14,7 +14,8 @@ import {
   TrendingUp,
   Users,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Clock
 } from 'lucide-react'
 import { leaderboardService, LeaderboardUser } from '../lib/leaderboardService'
 
@@ -27,6 +28,7 @@ const LeaderboardPage = () => {
   const [currentUserPosition, setCurrentUserPosition] = useState<number | null>(null)
   const [animationPhase, setAnimationPhase] = useState(0)
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
+  const [updateAllInProgress, setUpdateAllInProgress] = useState(false)
 
   useEffect(() => {
     loadLeaderboard()
@@ -57,7 +59,12 @@ const LeaderboardPage = () => {
       }
 
       // Establecer la fecha de última actualización
-      setLastUpdated(new Date().toLocaleString())
+      if (leaderboardUsers.length > 0 && leaderboardUsers[0].last_updated) {
+        const lastUpdateDate = new Date(leaderboardUsers[0].last_updated);
+        setLastUpdated(lastUpdateDate.toLocaleString());
+      } else {
+        setLastUpdated(new Date().toLocaleString());
+      }
     } catch (error) {
       console.error('Error loading leaderboard:', error)
     } finally {
@@ -82,6 +89,18 @@ const LeaderboardPage = () => {
       console.error('Error updating user score:', error)
     } finally {
       setIsUpdating(false)
+    }
+  }
+
+  const updateAllScores = async () => {
+    setUpdateAllInProgress(true)
+    try {
+      await leaderboardService.updateAllPublicScores()
+      await loadLeaderboard()
+    } catch (error) {
+      console.error('Error updating all scores:', error)
+    } finally {
+      setUpdateAllInProgress(false)
     }
   }
 
@@ -200,13 +219,27 @@ const LeaderboardPage = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
         {/* Información de última actualización */}
-        {lastUpdated && (
-          <div className="text-center mb-4">
-            <p className="text-white text-opacity-70 text-sm">
-              Última actualización: {lastUpdated}
-            </p>
+        <div className="flex justify-between items-center mb-6">
+          <div className="text-white text-opacity-70 text-sm flex items-center gap-2">
+            <Clock size={16} />
+            <span>Última actualización: {lastUpdated || 'Desconocida'}</span>
           </div>
-        )}
+          
+          {user && (
+            <button
+              onClick={updateAllScores}
+              disabled={updateAllInProgress}
+              className="flex items-center gap-2 bg-white bg-opacity-10 hover:bg-opacity-20 text-white px-4 py-2 rounded-full text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {updateAllInProgress ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <RefreshCw size={16} />
+              )}
+              Actualizar Todos los Scores
+            </button>
+          )}
+        </div>
 
         {/* Podio de los 3 primeros */}
         {topThree.length > 0 && (

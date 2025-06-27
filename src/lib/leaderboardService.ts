@@ -17,6 +17,7 @@ export interface LeaderboardUser {
   score: number
   level: string
   position: number
+  last_updated?: string
 }
 
 export const leaderboardService = {
@@ -219,7 +220,8 @@ export const leaderboardService = {
           email: profile.email || '',
           score: score.score,
           level: score.level,
-          position: index + 1
+          position: index + 1,
+          last_updated: score.last_updated
         }
       })
 
@@ -282,6 +284,29 @@ export const leaderboardService = {
     } catch (error) {
       console.error('Error in getUserPosition:', error)
       return null
+    }
+  },
+
+  // Actualizar los puntajes de todos los usuarios (función administrativa)
+  async updateAllPublicScores(): Promise<boolean> {
+    if (!supabase) {
+      console.warn('Supabase not configured')
+      return false
+    }
+
+    try {
+      // Llamar a la función RPC que actualiza todos los puntajes
+      const { error } = await supabase.rpc('update_all_public_scores')
+
+      if (error) {
+        console.error('Error updating all public scores:', error)
+        return false
+      }
+
+      return true
+    } catch (error) {
+      console.error('Error in updateAllPublicScores:', error)
+      return false
     }
   }
 }

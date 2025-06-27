@@ -28,12 +28,20 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
 
     setIsLoading(true)
     try {
-      // Calcular el puntaje del usuario
-      const userScore = await leaderboardService.calculateUserScore(user.id)
-      setScore(userScore)
+      // Primero intentar obtener el puntaje de la tabla pública
+      const publicScore = await leaderboardService.getUserPublicScore(user.id)
       
-      // Actualizar el puntaje en la tabla pública
-      await leaderboardService.updatePublicScore(user.id, userScore)
+      if (publicScore) {
+        // Si ya existe un puntaje público, usarlo
+        setScore(publicScore.score)
+      } else {
+        // Si no existe, calcularlo y guardarlo
+        const userScore = await leaderboardService.calculateUserScore(user.id)
+        setScore(userScore)
+        
+        // Actualizar el puntaje en la tabla pública
+        await leaderboardService.updatePublicScore(user.id, userScore)
+      }
     } catch (error) {
       console.error('Error calculating score:', error)
       setScore(0)

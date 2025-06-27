@@ -9,6 +9,7 @@ export const useLeaderboard = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   useEffect(() => {
     loadLeaderboard()
@@ -41,7 +42,7 @@ export const useLeaderboard = () => {
   const updateCurrentUserScore = async () => {
     if (!user) return
     
-    setLoading(true)
+    setIsUpdating(true)
     try {
       // Calcular el puntaje actual del usuario
       const score = await leaderboardService.calculateUserScore(user.id)
@@ -55,7 +56,20 @@ export const useLeaderboard = () => {
       console.error('Error updating user score:', err)
       setError('Error al actualizar tu puntaje')
     } finally {
-      setLoading(false)
+      setIsUpdating(false)
+    }
+  }
+
+  const updateAllScores = async () => {
+    setIsUpdating(true)
+    try {
+      await leaderboardService.updateAllPublicScores()
+      await loadLeaderboard()
+    } catch (err) {
+      console.error('Error updating all scores:', err)
+      setError('Error al actualizar todos los puntajes')
+    } finally {
+      setIsUpdating(false)
     }
   }
 
@@ -65,7 +79,9 @@ export const useLeaderboard = () => {
     loading,
     error,
     lastUpdated,
+    isUpdating,
     loadLeaderboard,
-    updateCurrentUserScore
+    updateCurrentUserScore,
+    updateAllScores
   }
 }

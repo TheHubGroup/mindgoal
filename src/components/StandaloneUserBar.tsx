@@ -82,23 +82,27 @@ const StandaloneUserBar = () => {
     try {
       let hasNewData = false
 
-      // Calcular el puntaje del usuario
-      const userScore = await leaderboardService.calculateUserScore(user.id)
+      // Primero intentar obtener el puntaje de la tabla pública
+      const publicScore = await leaderboardService.getUserPublicScore(user.id)
       
-      // Verificar si hay cambios en el score
-      if (userScore !== score) {
-        hasNewData = true
-        setScore(userScore)
+      if (publicScore) {
+        // Si ya existe un puntaje público, usarlo
+        if (publicScore.score !== score) {
+          hasNewData = true
+          setScore(publicScore.score)
+        }
+      } else {
+        // Si no existe, calcularlo y guardarlo
+        const userScore = await leaderboardService.calculateUserScore(user.id)
         
-        // Actualizar el puntaje en la tabla pública
-        await leaderboardService.updatePublicScore(user.id, userScore)
-        
-        // Notificar al padre sobre la actualización del score
-        window.parent.postMessage({ 
-          type: 'SCORE_UPDATED', 
-          score: userScore,
-          timestamp: Date.now()
-        }, '*')
+        // Verificar si hay cambios en el score
+        if (userScore !== score) {
+          hasNewData = true
+          setScore(userScore)
+          
+          // Actualizar el puntaje en la tabla pública
+          await leaderboardService.updatePublicScore(user.id, userScore)
+        }
       }
 
       // Actualizar timestamp de última actualización
@@ -114,6 +118,13 @@ const StandaloneUserBar = () => {
             scoreElement.classList.remove('score-updated')
           }, 1000)
         }
+        
+        // Notificar al padre sobre la actualización del score
+        window.parent.postMessage({ 
+          type: 'SCORE_UPDATED', 
+          score: score,
+          timestamp: Date.now()
+        }, '*')
       }
 
     } catch (error) {
