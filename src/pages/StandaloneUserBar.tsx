@@ -6,6 +6,7 @@ import { userResponsesService } from '../lib/userResponsesService'
 import { timelineService } from '../lib/timelineService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
+import { angerMenuService } from '../lib/angerMenuService'
 
 const StandaloneUserBar = () => {
   const { user, signOut } = useAuth()
@@ -118,6 +119,38 @@ const StandaloneUserBar = () => {
         // Puntos por reflexión escrita
         if (session.reflection_text) {
           totalCharacters += session.reflection_text.length
+        }
+        
+        // Bonus por múltiples visualizaciones (dedicación)
+        if (session.view_count > 1) {
+          totalCharacters += (session.view_count - 1) * 100
+        }
+        
+        // Penalización leve por muchos skips (para fomentar la práctica completa)
+        if (session.skip_count > 5) {
+          totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
+        }
+      })
+
+      // Obtener sesiones de "Menú de la Ira"
+      const angerMenuSessions = await angerMenuService.getAllSessions(user.id)
+      angerMenuSessions.forEach(session => {
+        // Puntos por tiempo de video visto (1 punto por minuto visto)
+        totalCharacters += Math.floor(session.watch_duration / 60) * 50 // 50 caracteres equivalentes por minuto
+        
+        // Puntos por completar el video
+        if (session.completed_at) {
+          totalCharacters += 200 // Bonus por completar
+        }
+        
+        // Puntos por reflexión escrita
+        if (session.reflection_text) {
+          totalCharacters += session.reflection_text.length
+        }
+        
+        // Puntos por técnicas seleccionadas (engagement)
+        if (session.selected_techniques && session.selected_techniques.length > 0) {
+          totalCharacters += session.selected_techniques.length * 50 // 50 puntos por técnica seleccionada
         }
         
         // Bonus por múltiples visualizaciones (dedicación)

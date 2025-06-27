@@ -7,9 +7,7 @@ import { userResponsesService } from '../lib/userResponsesService'
 import { timelineService } from '../lib/timelineService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
-import { emotionMatchService } from '../lib/emotionMatchService'
-import { emotionLogService } from '../lib/emotionLogService'
-import { angerManagementService } from '../lib/angerManagementService'
+import { angerMenuService } from '../lib/angerMenuService'
 
 interface UserBarProps {
   className?: string
@@ -81,35 +79,15 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
         }
       })
 
-      // Obtener resultados de "Nombra tus Emociones"
-      const emotionStats = await emotionMatchService.getUserStats(user.id)
-      // Puntos por intentos
-      totalCharacters += emotionStats.totalAttempts * 10
-      // Puntos por aciertos
-      totalCharacters += emotionStats.correctMatches * 30
-      // Bonus por emociones completadas
-      totalCharacters += emotionStats.completedEmotions.length * 100
-
-      // Obtener registros de "Calculadora de Emociones"
-      const emotionLogs = await emotionLogService.getEmotionHistory(user.id)
-      // Puntos por cada registro de emoción
-      totalCharacters += emotionLogs.length * 50
-      // Puntos por notas escritas
-      emotionLogs.forEach(log => {
-        if (log.notes) {
-          totalCharacters += log.notes.length
-        }
-      })
-
       // Obtener sesiones de "Menú de la Ira"
-      const angerSessions = await angerManagementService.getAllSessions(user.id)
-      angerSessions.forEach(session => {
-        // Puntos por tiempo de visualización
-        totalCharacters += Math.floor(session.watch_duration / 60) * 50
+      const angerMenuSessions = await angerMenuService.getAllSessions(user.id)
+      angerMenuSessions.forEach(session => {
+        // Puntos por tiempo de video visto (1 punto por minuto visto)
+        totalCharacters += Math.floor(session.watch_duration / 60) * 50 // 50 caracteres equivalentes por minuto
         
-        // Puntos por completar la sesión
+        // Puntos por completar el video
         if (session.completed_at) {
-          totalCharacters += 200
+          totalCharacters += 200 // Bonus por completar
         }
         
         // Puntos por reflexión escrita
@@ -117,17 +95,17 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
           totalCharacters += session.reflection_text.length
         }
         
-        // Puntos por técnicas seleccionadas
-        if (session.techniques_applied && session.techniques_applied.length > 0) {
-          totalCharacters += session.techniques_applied.length * 50
+        // Puntos por técnicas seleccionadas (engagement)
+        if (session.selected_techniques && session.selected_techniques.length > 0) {
+          totalCharacters += session.selected_techniques.length * 50 // 50 puntos por técnica seleccionada
         }
         
-        // Bonus por múltiples visualizaciones
+        // Bonus por múltiples visualizaciones (dedicación)
         if (session.view_count > 1) {
           totalCharacters += (session.view_count - 1) * 100
         }
         
-        // Penalización leve por muchos skips
+        // Penalización leve por muchos skips (para fomentar la práctica completa)
         if (session.skip_count > 5) {
           totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
         }
@@ -267,7 +245,7 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
                   {getScoreLevel()}
                 </div>
                 <div className="text-xs text-gray-500 mt-2">
-                  Incluye: Línea del tiempo, Cuéntame quien eres, Cartas personales, Meditación, Nombra tus Emociones, Calculadora de Emociones y Menú de la Ira
+                  Incluye: Línea del tiempo, Cuéntame quien eres, Cartas personales, Meditación y Menú de la Ira
                 </div>
               </div>
 

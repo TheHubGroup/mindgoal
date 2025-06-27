@@ -20,9 +20,7 @@ import { userResponsesService } from '../lib/userResponsesService'
 import { timelineService } from '../lib/timelineService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
-import { emotionMatchService } from '../lib/emotionMatchService'
-import { emotionLogService } from '../lib/emotionLogService'
-import { angerManagementService } from '../lib/angerManagementService'
+import { angerMenuService } from '../lib/angerMenuService'
 
 interface LeaderboardUser {
   id: string
@@ -159,24 +157,9 @@ const LeaderboardPage = () => {
         }
       })
 
-      // Resultados de "Nombra tus Emociones"
-      const emotionStats = await emotionMatchService.getUserStats(userId)
-      totalCharacters += emotionStats.totalAttempts * 10
-      totalCharacters += emotionStats.correctMatches * 30
-      totalCharacters += emotionStats.completedEmotions.length * 100
-
-      // Registros de "Calculadora de Emociones"
-      const emotionLogs = await emotionLogService.getEmotionHistory(userId)
-      totalCharacters += emotionLogs.length * 50
-      emotionLogs.forEach(log => {
-        if (log.notes) {
-          totalCharacters += log.notes.length
-        }
-      })
-
       // Sesiones de "Menú de la Ira"
-      const angerSessions = await angerManagementService.getAllSessions(userId)
-      angerSessions.forEach(session => {
+      const angerMenuSessions = await angerMenuService.getAllSessions(userId)
+      angerMenuSessions.forEach(session => {
         totalCharacters += Math.floor(session.watch_duration / 60) * 50
         if (session.completed_at) {
           totalCharacters += 200
@@ -184,8 +167,8 @@ const LeaderboardPage = () => {
         if (session.reflection_text) {
           totalCharacters += session.reflection_text.length
         }
-        if (session.techniques_applied && session.techniques_applied.length > 0) {
-          totalCharacters += session.techniques_applied.length * 50
+        if (session.selected_techniques && session.selected_techniques.length > 0) {
+          totalCharacters += session.selected_techniques.length * 50
         }
         if (session.view_count > 1) {
           totalCharacters += (session.view_count - 1) * 100

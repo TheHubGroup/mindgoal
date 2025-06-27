@@ -16,17 +16,13 @@ import {
   AlertCircle,
   BarChart3,
   Trophy,
-  Smile,
-  Calculator,
   Flame
 } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
 import { userResponsesService } from '../lib/userResponsesService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
-import { emotionMatchService } from '../lib/emotionMatchService'
-import { emotionLogService } from '../lib/emotionLogService'
-import { angerManagementService } from '../lib/angerManagementService'
+import { angerMenuService } from '../lib/angerMenuService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -42,14 +38,14 @@ const HomePage = () => {
   const [activityStatuses, setActivityStatuses] = useState<Record<string, ActivityStatus>>({})
   const [isLoadingStatuses, setIsLoadingStatuses] = useState(true)
 
-  // Show welcome modal when user logs in
+  // Mostrar modal de bienvenida cuando el usuario inicia sesión
   useEffect(() => {
     if (user && !profileLoading) {
       setShowWelcomeModal(true)
     }
   }, [user, profileLoading])
 
-  // Load activity statuses
+  // Cargar estados de actividades
   useEffect(() => {
     if (user) {
       loadActivityStatuses()
@@ -106,30 +102,13 @@ const HomePage = () => {
             'Sesión iniciada' : undefined
       }
 
-      // Nombra tus Emociones
-      const emotionStats = await emotionMatchService.getUserStats(user.id)
-      statuses['nombra-tus-emociones'] = {
-        hasData: emotionStats.totalAttempts > 0,
-        count: emotionStats.completedEmotions.length,
-        lastActivity: emotionStats.totalAttempts > 0 ? 
-          `${emotionStats.completedEmotions.length}/10 emociones completadas` : undefined
-      }
-
-      // Calculadora de Emociones
-      const lastEmotionLog = await emotionLogService.getLastEmotionLogDate(user.id)
-      statuses['calculadora-emociones'] = {
-        hasData: !!lastEmotionLog,
-        count: 0, // Count can be added later if needed, e.g., total logs
-        lastActivity: lastEmotionLog ? `Último registro: ${new Date(lastEmotionLog).toLocaleDateString('es-ES')}` : undefined
-      }
-
       // Menú de la Ira
-      const angerSessions = await angerManagementService.getAllSessions(user.id)
-      const completedAngerSessions = angerSessions.filter(s => s.completed_at)
-      statuses['menu-de-la-ira'] = {
-        hasData: angerSessions.length > 0,
+      const angerMenuSessions = await angerMenuService.getAllSessions(user.id)
+      const completedAngerSessions = angerMenuSessions.filter(s => s.completed_at)
+      statuses['menu-ira'] = {
+        hasData: angerMenuSessions.length > 0,
         count: completedAngerSessions.length,
-        lastActivity: angerSessions.length > 0 ? 
+        lastActivity: angerMenuSessions.length > 0 ? 
           completedAngerSessions.length > 0 ? 
             `${completedAngerSessions.length} sesión${completedAngerSessions.length > 1 ? 'es' : ''} completada${completedAngerSessions.length > 1 ? 's' : ''}` :
             'Sesión iniciada' : undefined
@@ -191,34 +170,13 @@ const HomePage = () => {
       route: '/actividad/meditacion-autoconocimiento'
     },
     {
-      id: 'calculadora-emociones',
-      title: 'Calculadora de Emociones',
-      description: 'Registra y lleva un historial de las emociones que sientes cada día.',
-      icon: Calculator,
-      color: 'from-blue-500 to-green-500',
-      available: true,
-      route: '/actividad/calculadora-emociones',
-      isNew: true
-    },
-    {
-      id: 'nombra-tus-emociones',
-      title: 'Nombra tus Emociones',
-      description: 'Juego de matching para aprender a identificar diferentes emociones',
-      icon: Smile,
-      color: 'from-pink-500 to-rose-500',
-      available: true,
-      route: '/actividad/nombra-tus-emociones',
-      isNew: true
-    },
-    {
-      id: 'menu-de-la-ira',
+      id: 'menu-ira',
       title: 'Menú de la Ira',
-      description: 'Aprende diferentes técnicas para manejar la ira de forma saludable',
+      description: 'Aprende técnicas para manejar la ira de manera saludable',
       icon: Flame,
-      color: 'from-red-600 to-orange-500',
+      color: 'from-red-500 to-orange-500',
       available: true,
-      route: '/actividad/menu-de-la-ira',
-      isNew: true
+      route: '/actividad/menu-ira'
     }
   ]
 
@@ -286,7 +244,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
-      {/* Welcome Modal - Stays until user clicks */}
+      {/* Welcome Modal - Se mantiene hasta que el usuario haga clic */}
       <WelcomeModal 
         isOpen={showWelcomeModal} 
         onClose={handleCloseWelcome} 
@@ -302,7 +260,7 @@ const HomePage = () => {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            {/* Leaderboard Button */}
+            {/* Botón Leaderboard */}
             <button
               onClick={() => navigate('/leaderboard')}
               className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
@@ -328,7 +286,7 @@ const HomePage = () => {
         </div>
 
         {/* Activities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {activities.map((activity) => {
             const IconComponent = activity.icon
             return (
@@ -348,14 +306,6 @@ const HomePage = () => {
                   <div className="absolute top-4 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                     <Palette size={12} />
                     Experimental
-                  </div>
-                )}
-
-                {/* New Badge */}
-                {activity.isNew && (
-                  <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                    <Star size={12} />
-                    ¡Nuevo!
                   </div>
                 )}
 
