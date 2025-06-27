@@ -2,13 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
 import { User, LogOut, Trophy, Settings } from 'lucide-react'
-import { userResponsesService } from '../lib/userResponsesService'
-import { timelineService } from '../lib/timelineService'
-import { letterService } from '../lib/letterService'
-import { meditationService } from '../lib/meditationService'
-import { emotionMatchService } from '../lib/emotionMatchService'
-import { emotionLogService } from '../lib/emotionLogService'
-import { angerManagementService } from '../lib/angerManagementService'
+import { leaderboardService } from '../lib/leaderboardService'
 
 const StandaloneUserBar = () => {
   const { user, signOut } = useAuth()
@@ -86,99 +80,23 @@ const StandaloneUserBar = () => {
     }
 
     try {
-      let totalCharacters = 0
       let hasNewData = false
 
-      // Obtener respuestas de "Cuéntame quien eres"
-      const responses = await userResponsesService.getResponses(user.id, 'cuentame_quien_eres')
-      responses.forEach(response => {
-        totalCharacters += response.response.length
-      })
-
-      // Obtener notas de línea de tiempo
-      const timelineNotes = await timelineService.getNotes(user.id)
-      timelineNotes.forEach(note => {
-        totalCharacters += note.text.length
-      })
-
-      // Obtener cartas de "Carta a mí mismo"
-      const letters = await letterService.getLetters(user.id)
-      letters.forEach(letter => {
-        totalCharacters += letter.title.length + letter.content.length
-      })
-
-      // Obtener sesiones de meditación y reflexiones
-      const meditationSessions = await meditationService.getAllSessions(user.id)
-      meditationSessions.forEach(session => {
-        // Puntos por tiempo de meditación (1 punto por minuto visto)
-        totalCharacters += Math.floor(session.watch_duration / 60) * 50 // 50 caracteres equivalentes por minuto
-        
-        // Puntos por completar la meditación
-        if (session.completed_at) {
-          totalCharacters += 200 // Bonus por completar
-        }
-        
-        // Puntos por reflexión escrita
-        if (session.reflection_text) {
-          totalCharacters += session.reflection_text.length
-        }
-        
-        // Bonus por múltiples visualizaciones (dedicación)
-        if (session.view_count > 1) {
-          totalCharacters += (session.view_count - 1) * 100
-        }
-        
-        // Penalización leve por muchos skips (para fomentar la práctica completa)
-        if (session.skip_count > 5) {
-          totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
-        }
-      })
-
-      // Resultados de "Nombra tus Emociones"
-      const emotionStats = await emotionMatchService.getUserStats(user.id)
-      totalCharacters += emotionStats.totalAttempts * 10
-      totalCharacters += emotionStats.correctMatches * 30
-      totalCharacters += emotionStats.completedEmotions.length * 100
-
-      // Registros de "Calculadora de Emociones"
-      const emotionLogs = await emotionLogService.getEmotionHistory(user.id)
-      totalCharacters += emotionLogs.length * 50
-      emotionLogs.forEach(log => {
-        if (log.notes) {
-          totalCharacters += log.notes.length
-        }
-      })
-
-      // Sesiones de "Menú de la Ira"
-      const angerSessions = await angerManagementService.getAllSessions(user.id)
-      angerSessions.forEach(session => {
-        totalCharacters += Math.floor(session.watch_duration / 60) * 50
-        if (session.completed_at) {
-          totalCharacters += 200
-        }
-        if (session.reflection_text) {
-          totalCharacters += session.reflection_text.length
-        }
-        if (session.techniques_applied && session.techniques_applied.length > 0) {
-          totalCharacters += session.techniques_applied.length * 50
-        }
-        if (session.view_count > 1) {
-          totalCharacters += (session.view_count - 1) * 100
-        }
-        if (session.skip_count > 5) {
-          totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
-        }
-      })
-
+      // Calcular el puntaje del usuario
+      const userScore = await leaderboardService.calculateUserScore(user.id)
+      
       // Verificar si hay cambios en el score
-      if (totalCharacters !== score) {
+      if (userScore !== score) {
         hasNewData = true
-        setScore(totalCharacters)
+        setScore(userScore)
+        
+        // Actualizar el puntaje en la tabla pública
+        await leaderboardService.updatePublicScore(user.id, userScore)
         
         // Notificar al padre sobre la actualización del score
         window.parent.postMessage({ 
           type: 'SCORE_UPDATED', 
-          score: totalCharacters,
+          score: userScore,
           timestamp: Date.now()
         }, '*')
       }
@@ -247,11 +165,7 @@ const StandaloneUserBar = () => {
   }
 
   const getScoreLevel = () => {
-    if (score >= 2000) return 'Maestro'
-    if (score >= 1000) return 'Experto'
-    if (score >= 500) return 'Avanzado'
-    if (score >= 200) return 'Intermedio'
-    return 'Principiante'
+    return leaderboardService.getScoreLevel(score)
   }
 
   // Mostrar loading mientras se verifica la autenticación

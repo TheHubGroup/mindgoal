@@ -14,43 +14,19 @@ import {
   TrendingUp,
   Users,
   Sparkles,
-  RefreshCw,
-  AlertCircle,
-  Info
+  RefreshCw
 } from 'lucide-react'
-import { supabase } from '../lib/supabase'
-import { userResponsesService } from '../lib/userResponsesService'
-import { timelineService } from '../lib/timelineService'
-import { letterService } from '../lib/letterService'
-import { meditationService } from '../lib/meditationService'
-import { angerManagementService } from '../lib/angerManagementService'
-import { emotionMatchService } from '../lib/emotionMatchService'
-import { emotionLogService } from '../lib/emotionLogService'
-
-interface LeaderboardUser {
-  id: string
-  nombre: string
-  apellido: string
-  grado: string
-  avatar_url: string
-  email: string
-  score: number
-  level: string
-  position: number
-  hasCompletedProfile: boolean
-}
+import { leaderboardService, LeaderboardUser } from '../lib/leaderboardService'
 
 const LeaderboardPage = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [users, setUsers] = useState<LeaderboardUser[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isUpdating, setIsUpdating] = useState(false)
   const [currentUserPosition, setCurrentUserPosition] = useState<number | null>(null)
   const [animationPhase, setAnimationPhase] = useState(0)
-  const [error, setError] = useState<string | null>(null)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [debugInfo, setDebugInfo] = useState<string[]>([])
-  const [showDebugInfo, setShowDebugInfo] = useState(false)
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null)
 
   useEffect(() => {
     loadLeaderboard()
@@ -67,300 +43,46 @@ const LeaderboardPage = () => {
     }
   }, [])
 
-  const addDebugInfo = (info: string) => {
-    setDebugInfo(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${info}`])
-  }
-
   const loadLeaderboard = async () => {
-    if (!supabase) {
-      setError("Supabase not configured")
-      setIsLoading(false)
-      return
-    }
-
     setIsLoading(true)
-    setError(null)
-    setDebugInfo([])
     try {
-      addDebugInfo("Fetching profiles...")
-      // Obtener todos los usuarios con perfiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: true })
-
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError)
-        setError(`Error fetching profiles: ${profilesError.message}`)
-        addDebugInfo(`Error fetching profiles: ${profilesError.message}`)
-        setIsLoading(false)
-        return
-      }
-
-      if (!profiles || profiles.length === 0) {
-        console.log("No profiles found")
-        addDebugInfo("No profiles found")
-        setUsers([])
-        setIsLoading(false)
-        return
-      }
-
-      addDebugInfo(`Found ${profiles.length} profiles, calculating scores...`)
-
-      // Calcular score para cada usuario
-      const usersWithScores = await Promise.all(
-        profiles.map(async (profile, index) => {
-          try {
-            addDebugInfo(`Processing user ${index+1}/${profiles.length}: ${profile.email}`)
-            const score = await calculateUserScore(profile.id)
-            addDebugInfo(`Score for ${profile.email}: ${score}`)
-            
-            // Check if profile has basic info filled
-            const hasCompletedProfile = Boolean(
-              profile.nombre && 
-              profile.apellido && 
-              profile.grado && 
-              profile.nombre_colegio
-            )
-            
-            return {
-              id: profile.id,
-              nombre: profile.nombre || 'Usuario',
-              apellido: profile.apellido || '',
-              grado: profile.grado || 'Sin especificar',
-              avatar_url: profile.avatar_url || '',
-              email: profile.email,
-              score,
-              level: getScoreLevel(score),
-              position: 0, // Se asignará después del ordenamiento
-              hasCompletedProfile
-            }
-          } catch (error: any) {
-            console.error(`Error processing user ${profile.id}:`, error)
-            addDebugInfo(`Error processing user ${profile.email}: ${error.message || 'Unknown error'}`)
-            return {
-              id: profile.id,
-              nombre: profile.nombre || 'Usuario',
-              apellido: profile.apellido || '',
-              grado: profile.grado || 'Sin especificar',
-              avatar_url: profile.avatar_url || '',
-              email: profile.email,
-              score: 0,
-              level: getScoreLevel(0),
-              position: 0,
-              hasCompletedProfile: false
-            }
-          }
-        })
-      )
-
-      // Filtrar usuarios sin información básica
-      const usersWithInfo = usersWithScores.filter(user => user.hasCompletedProfile)
-      addDebugInfo(`Filtered out ${usersWithScores.length - usersWithInfo.length} users without profile info`)
-
-      // Ordenar por score y asignar posiciones
-      const sortedUsers = usersWithInfo
-        .sort((a, b) => b.score - a.score)
-        .map((user, index) => ({
-          ...user,
-          position: index + 1
-        }))
-
-      addDebugInfo(`Processed ${sortedUsers.length} users for leaderboard`)
-      setUsers(sortedUsers)
+      // Cargar todos los puntajes públicos
+      const leaderboardUsers = await leaderboardService.getAllPublicScores()
+      setUsers(leaderboardUsers)
       
       // Encontrar posición del usuario actual
       if (user) {
-        const currentUser = sortedUsers.find(u => u.id === user.id)
+        const currentUser = leaderboardUsers.find(u => u.id === user.id)
         setCurrentUserPosition(currentUser?.position || null)
       }
 
-    } catch (error: any) {
+      // Establecer la fecha de última actualización
+      setLastUpdated(new Date().toLocaleString())
+    } catch (error) {
       console.error('Error loading leaderboard:', error)
-      setError(`Error loading leaderboard: ${error.message || 'Unknown error'}`)
-      addDebugInfo(`Error loading leaderboard: ${error.message || 'Unknown error'}`)
     } finally {
       setIsLoading(false)
-      setIsRefreshing(false)
     }
   }
 
-  const refreshLeaderboard = () => {
-    setIsRefreshing(true)
-    loadLeaderboard()
-  }
+  const updateCurrentUserScore = async () => {
+    if (!user) return
 
-  const calculateUserScore = async (userId: string): Promise<number> => {
+    setIsUpdating(true)
     try {
-      let totalCharacters = 0
-
-      // Obtener respuestas de "Cuéntame quien eres"
-      try {
-        const responses = await userResponsesService.getResponses(userId, 'cuentame_quien_eres')
-        responses.forEach(response => {
-          totalCharacters += response.response.length
-        })
-        addDebugInfo(`User ${userId}: ${responses.length} responses, +${responses.reduce((sum, r) => sum + r.response.length, 0)} points`)
-      } catch (error) {
-        console.error(`Error getting responses for user ${userId}:`, error)
-        addDebugInfo(`Error getting responses for user ${userId}`)
-      }
-
-      // Obtener notas de línea de tiempo
-      try {
-        const timelineNotes = await timelineService.getNotes(userId)
-        timelineNotes.forEach(note => {
-          totalCharacters += note.text.length
-        })
-        addDebugInfo(`User ${userId}: ${timelineNotes.length} timeline notes, +${timelineNotes.reduce((sum, n) => sum + n.text.length, 0)} points`)
-      } catch (error) {
-        console.error(`Error getting timeline notes for user ${userId}:`, error)
-        addDebugInfo(`Error getting timeline notes for user ${userId}`)
-      }
-
-      // Obtener cartas de "Carta a mí mismo"
-      try {
-        const letters = await letterService.getLetters(userId)
-        letters.forEach(letter => {
-          totalCharacters += letter.title.length + letter.content.length
-        })
-        addDebugInfo(`User ${userId}: ${letters.length} letters, +${letters.reduce((sum, l) => sum + l.title.length + l.content.length, 0)} points`)
-      } catch (error) {
-        console.error(`Error getting letters for user ${userId}:`, error)
-        addDebugInfo(`Error getting letters for user ${userId}`)
-      }
-
-      // Obtener sesiones de meditación y reflexiones
-      try {
-        const meditationSessions = await meditationService.getAllSessions(userId)
-        let meditationPoints = 0
-        
-        meditationSessions.forEach(session => {
-          // Puntos por tiempo de meditación (1 punto por minuto visto)
-          const timePoints = Math.floor(session.watch_duration / 60) * 50
-          meditationPoints += timePoints
-          
-          // Puntos por completar la meditación
-          if (session.completed_at) {
-            meditationPoints += 200 // Bonus por completar
-          }
-          
-          // Puntos por reflexión escrita
-          if (session.reflection_text) {
-            meditationPoints += session.reflection_text.length
-          }
-          
-          // Bonus por múltiples visualizaciones (dedicación)
-          if (session.view_count > 1) {
-            meditationPoints += (session.view_count - 1) * 100
-          }
-          
-          // Penalización leve por muchos skips (para fomentar la práctica completa)
-          if (session.skip_count > 5) {
-            meditationPoints = Math.max(0, meditationPoints - (session.skip_count - 5) * 10)
-          }
-        })
-        
-        totalCharacters += meditationPoints
-        addDebugInfo(`User ${userId}: ${meditationSessions.length} meditation sessions, +${meditationPoints} points`)
-      } catch (error) {
-        console.error(`Error getting meditation sessions for user ${userId}:`, error)
-        addDebugInfo(`Error getting meditation sessions for user ${userId}`)
-      }
-
-      // Resultados de "Nombra tus Emociones"
-      try {
-        const emotionStats = await emotionMatchService.getUserStats(userId)
-        const emotionPoints = emotionStats.totalAttempts * 10 + 
-                             emotionStats.correctMatches * 30 + 
-                             emotionStats.completedEmotions.length * 100
-        
-        totalCharacters += emotionPoints
-        addDebugInfo(`User ${userId}: ${emotionStats.completedEmotions.length} completed emotions, +${emotionPoints} points`)
-      } catch (error) {
-        console.error(`Error getting emotion stats for user ${userId}:`, error)
-        addDebugInfo(`Error getting emotion stats for user ${userId}`)
-      }
-
-      // Registros de "Calculadora de Emociones"
-      try {
-        const emotionLogs = await emotionLogService.getEmotionHistory(userId)
-        let emotionLogPoints = emotionLogs.length * 50
-        
-        emotionLogs.forEach(log => {
-          if (log.notes) {
-            emotionLogPoints += log.notes.length
-          }
-        })
-        
-        totalCharacters += emotionLogPoints
-        addDebugInfo(`User ${userId}: ${emotionLogs.length} emotion logs, +${emotionLogPoints} points`)
-      } catch (error) {
-        console.error(`Error getting emotion logs for user ${userId}:`, error)
-        addDebugInfo(`Error getting emotion logs for user ${userId}`)
-      }
-
-      // Sesiones de "Menú de la Ira"
-      try {
-        const angerSessions = await angerManagementService.getAllSessions(userId)
-        let angerPoints = 0
-        
-        angerSessions.forEach(session => {
-          // Puntos por tiempo de video visto
-          angerPoints += Math.floor(session.watch_duration / 60) * 50
-          
-          // Puntos por completar el video
-          if (session.completed_at) {
-            angerPoints += 200
-          }
-          
-          // Puntos por reflexión escrita
-          if (session.reflection_text) {
-            angerPoints += session.reflection_text.length
-          }
-          
-          // Puntos por técnicas seleccionadas
-          if (session.techniques_applied && session.techniques_applied.length > 0) {
-            angerPoints += session.techniques_applied.length * 50
-          }
-          
-          // Bonus por múltiples visualizaciones
-          if (session.view_count > 1) {
-            angerPoints += (session.view_count - 1) * 100
-          }
-          
-          // Penalización por muchos skips
-          if (session.skip_count > 5) {
-            angerPoints = Math.max(0, angerPoints - (session.skip_count - 5) * 10)
-          }
-        })
-        
-        totalCharacters += angerPoints
-        addDebugInfo(`User ${userId}: ${angerSessions.length} anger sessions, +${angerPoints} points`)
-      } catch (error) {
-        console.error(`Error getting anger sessions for user ${userId}:`, error)
-        addDebugInfo(`Error getting anger sessions for user ${userId}`)
-      }
-
-      // Asegurar que el puntaje sea al menos 10 si el usuario tiene alguna actividad
-      if (totalCharacters > 0 && totalCharacters < 10) {
-        totalCharacters = 10
-      }
-
-      return totalCharacters
+      // Calcular el puntaje actual del usuario
+      const score = await leaderboardService.calculateUserScore(user.id)
+      
+      // Actualizar el puntaje en la tabla pública
+      await leaderboardService.updatePublicScore(user.id, score)
+      
+      // Recargar el leaderboard para ver los cambios
+      await loadLeaderboard()
     } catch (error) {
-      console.error('Error calculating score for user:', userId, error)
-      addDebugInfo(`Error calculating total score for user ${userId}: ${error}`)
-      return 0
+      console.error('Error updating user score:', error)
+    } finally {
+      setIsUpdating(false)
     }
-  }
-
-  const getScoreLevel = (score: number): string => {
-    if (score >= 2000) return 'Maestro'
-    if (score >= 1000) return 'Experto'
-    if (score >= 500) return 'Avanzado'
-    if (score >= 200) return 'Intermedio'
-    return 'Principiante'
   }
 
   const getLevelColor = (level: string): string => {
@@ -459,75 +181,33 @@ const LeaderboardPage = () => {
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={refreshLeaderboard}
-              disabled={isRefreshing}
-              className="bg-white bg-opacity-10 hover:bg-opacity-20 text-white rounded-full p-3 transition-all transform hover:scale-105 disabled:opacity-50"
-              title="Actualizar leaderboard"
+              onClick={updateCurrentUserScore}
+              disabled={isUpdating || !user}
+              className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <RefreshCw size={20} className={isRefreshing ? "animate-spin" : ""} />
-            </button>
-            <button
-              onClick={() => setShowDebugInfo(!showDebugInfo)}
-              className="bg-white bg-opacity-10 hover:bg-opacity-20 text-white rounded-full p-3 transition-all transform hover:scale-105"
-              title="Mostrar/ocultar información de depuración"
-            >
-              <Info size={20} />
+              {isUpdating ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <RefreshCw size={20} />
+              )}
+              Actualizar Mi Score
             </button>
             <UserMenu />
           </div>
         </div>
       </div>
 
-      {/* Error message */}
-      {error && (
-        <div className="max-w-7xl mx-auto px-4 py-4 mt-4">
-          <div className="bg-red-500 bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-red-500 text-white">
-            <h3 className="font-bold mb-2 flex items-center gap-2">
-              <AlertCircle size={20} />
-              Error al cargar el leaderboard:
-            </h3>
-            <p>{error}</p>
-            <button 
-              onClick={loadLeaderboard}
-              className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              Reintentar
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Debug Info */}
-      {showDebugInfo && (
-        <div className="max-w-7xl mx-auto px-4 py-4 mt-4">
-          <div className="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-4 border border-blue-500 text-white">
-            <h3 className="font-bold mb-2 flex items-center gap-2">
-              <Info size={20} className="text-blue-400" />
-              Información de Depuración
-            </h3>
-            <div className="bg-black bg-opacity-50 p-4 rounded-lg max-h-40 overflow-y-auto text-xs font-mono">
-              {debugInfo.length > 0 ? (
-                debugInfo.map((info, index) => (
-                  <div key={index} className="mb-1">{info}</div>
-                ))
-              ) : (
-                <div>No hay información de depuración disponible</div>
-              )}
-            </div>
-            <div className="mt-2 flex justify-end">
-              <button 
-                onClick={() => setShowDebugInfo(false)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
+        {/* Información de última actualización */}
+        {lastUpdated && (
+          <div className="text-center mb-4">
+            <p className="text-white text-opacity-70 text-sm">
+              Última actualización: {lastUpdated}
+            </p>
+          </div>
+        )}
+
         {/* Podio de los 3 primeros */}
         {topThree.length > 0 && (
           <div className={`mb-12 transform transition-all duration-1000 ${animationPhase >= 1 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
@@ -563,10 +243,8 @@ const LeaderboardPage = () => {
                       {topThree[1].nombre} {topThree[1].apellido}
                     </h3>
                     <p className="text-gray-300 text-sm font-medium">{topThree[1].grado}</p>
-                    
-                    {/* Show score for all users */}
                     <div className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
-                      {topThree[1].score.toLocaleString()} puntos
+                      {topThree[1].score.toLocaleString()}
                     </div>
                   </div>
                   <div className={`bg-gradient-to-t from-gray-500 to-gray-400 ${getPodiumHeight(2)} rounded-t-2xl flex items-center justify-center shadow-2xl border-4 border-gray-300`}>
@@ -600,10 +278,8 @@ const LeaderboardPage = () => {
                       {topThree[0].nombre} {topThree[0].apellido}
                     </h3>
                     <p className="text-yellow-300 text-sm font-bold">{topThree[0].grado}</p>
-                    
-                    {/* Show score for all users */}
                     <div className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-yellow-900 px-6 py-3 rounded-full font-black text-xl mt-2 shadow-xl">
-                      {topThree[0].score.toLocaleString()} puntos
+                      {topThree[0].score.toLocaleString()}
                     </div>
                   </div>
                   <div className={`bg-gradient-to-t from-yellow-600 to-yellow-400 ${getPodiumHeight(1)} rounded-t-2xl flex items-center justify-center shadow-2xl border-4 border-yellow-300 relative overflow-hidden`}>
@@ -635,10 +311,8 @@ const LeaderboardPage = () => {
                       {topThree[2].nombre} {topThree[2].apellido}
                     </h3>
                     <p className="text-amber-300 text-sm font-medium">{topThree[2].grado}</p>
-                    
-                    {/* Show score for all users */}
                     <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
-                      {topThree[2].score.toLocaleString()} puntos
+                      {topThree[2].score.toLocaleString()}
                     </div>
                   </div>
                   <div className={`bg-gradient-to-t from-amber-700 to-amber-500 ${getPodiumHeight(3)} rounded-t-2xl flex items-center justify-center shadow-2xl border-4 border-amber-400`}>
@@ -663,80 +337,79 @@ const LeaderboardPage = () => {
               </div>
             </div>
 
-            {users.length === 0 && !error ? (
+            <div className="space-y-3">
+              {users.map((user, index) => (
+                <div
+                  key={user.id}
+                  className={`bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-4 border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 transform hover:scale-105 ${
+                    user.id === user?.id ? 'ring-2 ring-yellow-400 bg-yellow-500 bg-opacity-20' : ''
+                  }`}
+                  style={{
+                    animationDelay: `${index * 100}ms`
+                  }}
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Posición */}
+                    <div className="flex-shrink-0">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg ${
+                        user.position <= 3 
+                          ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900' 
+                          : 'bg-gradient-to-br from-gray-600 to-gray-800 text-white'
+                      }`}>
+                        {user.position <= 3 ? getPodiumIcon(user.position) : user.position}
+                      </div>
+                    </div>
+
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-white border-opacity-30 shadow-lg">
+                        {user.avatar_url ? (
+                          <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
+                            <Users size={24} className="text-white" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Información del usuario */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-black text-white text-xl truncate" style={{ fontFamily: 'Fredoka' }}>
+                          {user.nombre} {user.apellido}
+                        </h3>
+                        {user.id === user?.id && (
+                          <div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-black">
+                            TÚ
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-white text-opacity-80 text-lg font-medium" style={{ fontFamily: 'Comic Neue' }}>
+                        {user.grado}
+                      </p>
+                    </div>
+
+                    {/* Score y nivel */}
+                    <div className="flex-shrink-0 text-right">
+                      <div className={`bg-gradient-to-r ${getLevelColor(user.level)} text-white px-6 py-3 rounded-full font-black text-xl mb-2 shadow-lg`}>
+                        {user.score.toLocaleString()}
+                      </div>
+                      <div className="text-white text-opacity-90 text-sm font-bold">
+                        {user.level}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {users.length === 0 && (
               <div className="text-center py-12">
                 <Trophy size={64} className="mx-auto text-white text-opacity-30 mb-4" />
                 <p className="text-white text-opacity-70 text-lg" style={{ fontFamily: 'Comic Neue' }}>
                   No hay usuarios registrados aún
                 </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {users.map((leaderboardUser, index) => (
-                  <div
-                    key={leaderboardUser.id}
-                    className={`bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-4 border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 transform hover:scale-105 ${
-                      leaderboardUser.id === user?.id ? 'ring-2 ring-yellow-400 bg-yellow-500 bg-opacity-20' : ''
-                    }`}
-                    style={{
-                      animationDelay: `${index * 100}ms`
-                    }}
-                  >
-                    <div className="flex items-center gap-4">
-                      {/* Posición */}
-                      <div className="flex-shrink-0">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg ${
-                          leaderboardUser.position <= 3 
-                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900' 
-                            : 'bg-gradient-to-br from-gray-600 to-gray-800 text-white'
-                        }`}>
-                          {leaderboardUser.position <= 3 ? getPodiumIcon(leaderboardUser.position) : leaderboardUser.position}
-                        </div>
-                      </div>
-
-                      {/* Avatar */}
-                      <div className="flex-shrink-0">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-white border-opacity-30 shadow-lg">
-                          {leaderboardUser.avatar_url ? (
-                            <img src={leaderboardUser.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
-                              <Users size={24} className="text-white" />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Información del usuario */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-black text-white text-xl truncate" style={{ fontFamily: 'Fredoka' }}>
-                            {leaderboardUser.nombre} {leaderboardUser.apellido}
-                          </h3>
-                          {leaderboardUser.id === user?.id && (
-                            <div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-black">
-                              TÚ
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-white text-opacity-80 text-lg font-medium" style={{ fontFamily: 'Comic Neue' }}>
-                          {leaderboardUser.grado}
-                        </p>
-                      </div>
-
-                      {/* Score y nivel */}
-                      <div className="flex-shrink-0 text-right">
-                        {/* Show score for all users */}
-                        <div className={`bg-gradient-to-r ${getLevelColor(leaderboardUser.level)} text-white px-6 py-3 rounded-full font-black text-xl mb-2 shadow-lg`}>
-                          {leaderboardUser.score.toLocaleString()} puntos
-                        </div>
-                        <div className="text-white text-opacity-90 text-sm font-bold">
-                          {leaderboardUser.level}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
             )}
           </div>
@@ -758,37 +431,6 @@ const LeaderboardPage = () => {
             </div>
           </div>
         )}
-
-        {/* Explicación de puntuación */}
-        <div className="mt-8 bg-black bg-opacity-20 backdrop-blur-lg rounded-2xl p-6 border border-white border-opacity-10">
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
-            <Zap size={24} className="text-yellow-400" />
-            ¿Cómo se calcula la puntuación?
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
-            <div>
-              <h4 className="font-bold text-white mb-2">📝 Actividades de Escritura:</h4>
-              <ul className="space-y-1 text-sm">
-                <li>• Línea del tiempo: 1 punto por carácter</li>
-                <li>• Cuéntame quien eres: 1 punto por carácter</li>
-                <li>• Cartas personales: 1 punto por carácter</li>
-                <li>• Reflexiones de meditación: 1 punto por carácter</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-bold text-white mb-2">🧘‍♀️ Actividades Interactivas:</h4>
-              <ul className="space-y-1 text-sm">
-                <li>• 50 puntos por minuto de meditación</li>
-                <li>• 200 puntos bonus por completar actividades</li>
-                <li>• 100 puntos por cada re-visualización</li>
-                <li>• 30 puntos por cada match correcto en "Nombra tus Emociones"</li>
-                <li>• 50 puntos por cada registro en "Calculadora de Emociones"</li>
-              </ul>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
