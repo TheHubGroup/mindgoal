@@ -20,7 +20,9 @@ import { userResponsesService } from '../lib/userResponsesService'
 import { timelineService } from '../lib/timelineService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
-import { angerMenuService } from '../lib/angerMenuService'
+import { angerManagementService } from '../lib/angerManagementService'
+import { emotionMatchService } from '../lib/emotionMatchService'
+import { emotionLogService } from '../lib/emotionLogService'
 
 interface LeaderboardUser {
   id: string
@@ -41,6 +43,7 @@ const LeaderboardPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [currentUserPosition, setCurrentUserPosition] = useState<number | null>(null)
   const [animationPhase, setAnimationPhase] = useState(0)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     loadLeaderboard()
@@ -58,38 +61,67 @@ const LeaderboardPage = () => {
   }, [])
 
   const loadLeaderboard = async () => {
-    if (!supabase) return
+    if (!supabase) {
+      setError("Supabase not configured")
+      setIsLoading(false)
+      return
+    }
 
     setIsLoading(true)
     try {
+      console.log("Fetching profiles...")
       // Obtener todos los usuarios con perfiles
-      const { data: profiles, error } = await supabase
+      const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: true })
 
-      if (error) {
-        console.error('Error fetching profiles:', error)
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError)
+        setError(`Error fetching profiles: ${profilesError.message}`)
+        setIsLoading(false)
         return
       }
 
-      if (!profiles) return
+      if (!profiles || profiles.length === 0) {
+        console.log("No profiles found")
+        setUsers([])
+        setIsLoading(false)
+        return
+      }
+
+      console.log(`Found ${profiles.length} profiles, calculating scores...`)
 
       // Calcular score para cada usuario
       const usersWithScores = await Promise.all(
         profiles.map(async (profile) => {
-          const score = await calculateUserScore(profile.id)
-          
-          return {
-            id: profile.id,
-            nombre: profile.nombre || 'Usuario',
-            apellido: profile.apellido || '',
-            grado: profile.grado || 'Sin especificar',
-            avatar_url: profile.avatar_url || '',
-            email: profile.email,
-            score,
-            level: getScoreLevel(score),
-            position: 0 // Se asignará después del ordenamiento
+          try {
+            const score = await calculateUserScore(profile.id)
+            
+            return {
+              id: profile.id,
+              nombre: profile.nombre || 'Usuario',
+              apellido: profile.apellido || '',
+              grado: profile.grado || 'Sin especificar',
+              avatar_url: profile.avatar_url || '',
+              email: profile.email,
+              score,
+              level: getScoreLevel(score),
+              position: 0 // Se asignará después del ordenamiento
+            }
+          } catch (error) {
+            console.error(`Error calculating score for user ${profile.id}:`, error)
+            return {
+              id: profile.id,
+              nombre: profile.nombre || 'Usuario',
+              apellido: profile.apellido || '',
+              grado: profile.grado || 'Sin especificar',
+              avatar_url: profile.avatar_url || '',
+              email: profile.email,
+              score: 0,
+              level: getScoreLevel(0),
+              position: 0
+            }
           }
         })
       )
@@ -102,6 +134,7 @@ const LeaderboardPage = () => {
           position: index + 1
         }))
 
+      console.log(`Processed ${sortedUsers.length} users for leaderboard`)
       setUsers(sortedUsers)
       
       // Encontrar posición del usuario actual
@@ -110,8 +143,9 @@ const LeaderboardPage = () => {
         setCurrentUserPosition(currentUser?.position || null)
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading leaderboard:', error)
+      setError(`Error loading leaderboard: ${error.message || 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
@@ -121,45 +155,69 @@ const LeaderboardPage = () => {
     try {
       let totalCharacters = 0
 
-      // Respuestas de "Cuéntame quien eres"
+      // Obtener respuestas de "Cuéntame quien eres"
       const responses = await userResponsesService.getResponses(userId, 'cuentame_quien_eres')
       responses.forEach(response => {
         totalCharacters += response.response.length
       })
 
-      // Notas de línea de tiempo
+      // Obtener notas de línea de tiempo
       const timelineNotes = await timelineService.getNotes(userId)
       timelineNotes.forEach(note => {
         totalCharacters += note.text.length
       })
 
-      // Cartas personales
+      // Obtener cartas de "Carta a mí mismo"
       const letters = await letterService.getLetters(userId)
       letters.forEach(letter => {
         totalCharacters += letter.title.length + letter.content.length
       })
 
-      // Sesiones de meditación
+      // Obtener sesiones de meditación y reflexiones
       const meditationSessions = await meditationService.getAllSessions(userId)
       meditationSessions.forEach(session => {
-        totalCharacters += Math.floor(session.watch_duration / 60) * 50
+        // Puntos por tiempo de meditación (1 punto por minuto visto)
+        totalCharacters += Math.floor(session.watch_duration / 60) * 50 // 50 caracteres equivalentes por minuto
+        
+        // Puntos por completar la meditación
         if (session.completed_at) {
-          totalCharacters += 200
+          totalCharacters += 200 // Bonus por completar
         }
+        
+        // Puntos por reflexión escrita
         if (session.reflection_text) {
           totalCharacters += session.reflection_text.length
         }
+        
+        // Bonus por múltiples visualizaciones (dedicación)
         if (session.view_count > 1) {
           totalCharacters += (session.view_count - 1) * 100
         }
+        
+        // Penalización leve por muchos skips (para fomentar la práctica completa)
         if (session.skip_count > 5) {
           totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
         }
       })
 
+      // Resultados de "Nombra tus Emociones"
+      const emotionStats = await emotionMatchService.getUserStats(userId)
+      totalCharacters += emotionStats.totalAttempts * 10
+      totalCharacters += emotionStats.correctMatches * 30
+      totalCharacters += emotionStats.completedEmotions.length * 100
+
+      // Registros de "Calculadora de Emociones"
+      const emotionLogs = await emotionLogService.getEmotionHistory(userId)
+      totalCharacters += emotionLogs.length * 50
+      emotionLogs.forEach(log => {
+        if (log.notes) {
+          totalCharacters += log.notes.length
+        }
+      })
+
       // Sesiones de "Menú de la Ira"
-      const angerMenuSessions = await angerMenuService.getAllSessions(userId)
-      angerMenuSessions.forEach(session => {
+      const angerSessions = await angerManagementService.getAllSessions(userId)
+      angerSessions.forEach(session => {
         totalCharacters += Math.floor(session.watch_duration / 60) * 50
         if (session.completed_at) {
           totalCharacters += 200
@@ -167,8 +225,8 @@ const LeaderboardPage = () => {
         if (session.reflection_text) {
           totalCharacters += session.reflection_text.length
         }
-        if (session.selected_techniques && session.selected_techniques.length > 0) {
-          totalCharacters += session.selected_techniques.length * 50
+        if (session.techniques_applied && session.techniques_applied.length > 0) {
+          totalCharacters += session.techniques_applied.length * 50
         }
         if (session.view_count > 1) {
           totalCharacters += (session.view_count - 1) * 100
@@ -290,6 +348,24 @@ const LeaderboardPage = () => {
           <UserMenu />
         </div>
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="max-w-7xl mx-auto px-4 py-4 mt-4">
+          <div className="bg-red-500 bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-red-500 text-white">
+            <h3 className="font-bold mb-2 flex items-center gap-2">
+              <span>⚠️</span> Error al cargar el leaderboard:
+            </h3>
+            <p>{error}</p>
+            <button 
+              onClick={loadLeaderboard}
+              className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
@@ -422,79 +498,79 @@ const LeaderboardPage = () => {
               </div>
             </div>
 
-            <div className="space-y-3">
-              {users.map((user, index) => (
-                <div
-                  key={user.id}
-                  className={`bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-4 border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 transform hover:scale-105 ${
-                    user.id === user?.id ? 'ring-2 ring-yellow-400 bg-yellow-500 bg-opacity-20' : ''
-                  }`}
-                  style={{
-                    animationDelay: `${index * 100}ms`
-                  }}
-                >
-                  <div className="flex items-center gap-4">
-                    {/* Posición */}
-                    <div className="flex-shrink-0">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg ${
-                        user.position <= 3 
-                          ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900' 
-                          : 'bg-gradient-to-br from-gray-600 to-gray-800 text-white'
-                      }`}>
-                        {user.position <= 3 ? getPodiumIcon(user.position) : user.position}
-                      </div>
-                    </div>
-
-                    {/* Avatar */}
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-white border-opacity-30 shadow-lg">
-                        {user.avatar_url ? (
-                          <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
-                            <Users size={24} className="text-white" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Información del usuario */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-black text-white text-xl truncate" style={{ fontFamily: 'Fredoka' }}>
-                          {user.nombre} {user.apellido}
-                        </h3>
-                        {user.id === user?.id && (
-                          <div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-black">
-                            TÚ
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-white text-opacity-80 text-lg font-medium" style={{ fontFamily: 'Comic Neue' }}>
-                        {user.grado}
-                      </p>
-                    </div>
-
-                    {/* Score y nivel */}
-                    <div className="flex-shrink-0 text-right">
-                      <div className={`bg-gradient-to-r ${getLevelColor(user.level)} text-white px-6 py-3 rounded-full font-black text-xl mb-2 shadow-lg`}>
-                        {user.score.toLocaleString()}
-                      </div>
-                      <div className="text-white text-opacity-90 text-sm font-bold">
-                        {user.level}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {users.length === 0 && (
+            {users.length === 0 && !error ? (
               <div className="text-center py-12">
                 <Trophy size={64} className="mx-auto text-white text-opacity-30 mb-4" />
                 <p className="text-white text-opacity-70 text-lg" style={{ fontFamily: 'Comic Neue' }}>
                   No hay usuarios registrados aún
                 </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {users.map((leaderboardUser, index) => (
+                  <div
+                    key={leaderboardUser.id}
+                    className={`bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-4 border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 transform hover:scale-105 ${
+                      leaderboardUser.id === user?.id ? 'ring-2 ring-yellow-400 bg-yellow-500 bg-opacity-20' : ''
+                    }`}
+                    style={{
+                      animationDelay: `${index * 100}ms`
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Posición */}
+                      <div className="flex-shrink-0">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg ${
+                          leaderboardUser.position <= 3 
+                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900' 
+                            : 'bg-gradient-to-br from-gray-600 to-gray-800 text-white'
+                        }`}>
+                          {leaderboardUser.position <= 3 ? getPodiumIcon(leaderboardUser.position) : leaderboardUser.position}
+                        </div>
+                      </div>
+
+                      {/* Avatar */}
+                      <div className="flex-shrink-0">
+                        <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-white border-opacity-30 shadow-lg">
+                          {leaderboardUser.avatar_url ? (
+                            <img src={leaderboardUser.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
+                              <Users size={24} className="text-white" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Información del usuario */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-black text-white text-xl truncate" style={{ fontFamily: 'Fredoka' }}>
+                            {leaderboardUser.nombre} {leaderboardUser.apellido}
+                          </h3>
+                          {leaderboardUser.id === user?.id && (
+                            <div className="bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-black">
+                              TÚ
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-white text-opacity-80 text-lg font-medium" style={{ fontFamily: 'Comic Neue' }}>
+                          {leaderboardUser.grado}
+                        </p>
+                      </div>
+
+                      {/* Score y nivel */}
+                      <div className="flex-shrink-0 text-right">
+                        <div className={`bg-gradient-to-r ${getLevelColor(leaderboardUser.level)} text-white px-6 py-3 rounded-full font-black text-xl mb-2 shadow-lg`}>
+                          {leaderboardUser.score.toLocaleString()}
+                        </div>
+                        <div className="text-white text-opacity-90 text-sm font-bold">
+                          {leaderboardUser.level}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
