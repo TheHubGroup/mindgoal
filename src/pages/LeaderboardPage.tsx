@@ -16,8 +16,7 @@ import {
   Sparkles,
   RefreshCw,
   AlertCircle,
-  Info,
-  Lock
+  Info
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { userResponsesService } from '../lib/userResponsesService'
@@ -112,17 +111,9 @@ const LeaderboardPage = () => {
       const usersWithScores = await Promise.all(
         profiles.map(async (profile, index) => {
           try {
-            // Solo calcular el score para el usuario actual, para los demás dejarlo en 0
-            const isCurrentUser = user && user.id === profile.id;
-            addDebugInfo(`Processing user ${index+1}/${profiles.length}: ${profile.email} ${isCurrentUser ? '(current user)' : ''}`)
-            
-            let score = 0;
-            if (isCurrentUser) {
-              score = await calculateUserScore(profile.id);
-              addDebugInfo(`Score for ${profile.email} (current user): ${score}`);
-            } else {
-              addDebugInfo(`Not calculating score for other user: ${profile.email}`);
-            }
+            addDebugInfo(`Processing user ${index+1}/${profiles.length}: ${profile.email}`)
+            const score = await calculateUserScore(profile.id)
+            addDebugInfo(`Score for ${profile.email}: ${score}`)
             
             // Check if profile has basic info filled
             const hasCompletedProfile = Boolean(
@@ -130,7 +121,7 @@ const LeaderboardPage = () => {
               profile.apellido && 
               profile.grado && 
               profile.nombre_colegio
-            );
+            )
             
             return {
               id: profile.id,
@@ -161,57 +152,27 @@ const LeaderboardPage = () => {
             }
           }
         })
-      );
+      )
 
       // Filtrar usuarios sin información básica
-      const usersWithInfo = usersWithScores.filter(user => user.hasCompletedProfile);
-      addDebugInfo(`Filtered out ${usersWithScores.length - usersWithInfo.length} users without profile info`);
+      const usersWithInfo = usersWithScores.filter(user => user.hasCompletedProfile)
+      addDebugInfo(`Filtered out ${usersWithScores.length - usersWithInfo.length} users without profile info`)
 
-      // Solo para ordenar, calculamos temporalmente los scores de todos
-      const allUsersWithTempScores = await Promise.all(
-        usersWithInfo.map(async (userInfo) => {
-          if (userInfo.id === user?.id) {
-            return userInfo; // Ya tiene el score calculado
-          }
-          
-          try {
-            const tempScore = await calculateUserScore(userInfo.id);
-            return {
-              ...userInfo,
-              tempScoreForSorting: tempScore
-            };
-          } catch (error) {
-            return {
-              ...userInfo,
-              tempScoreForSorting: 0
-            };
-          }
-        })
-      );
+      // Ordenar por score y asignar posiciones
+      const sortedUsers = usersWithInfo
+        .sort((a, b) => b.score - a.score)
+        .map((user, index) => ({
+          ...user,
+          position: index + 1
+        }))
 
-      // Ordenar por tempScoreForSorting (o score para el usuario actual)
-      const sortedUsers = allUsersWithTempScores
-        .sort((a, b) => {
-          const scoreA = a.tempScoreForSorting !== undefined ? a.tempScoreForSorting : a.score;
-          const scoreB = b.tempScoreForSorting !== undefined ? b.tempScoreForSorting : b.score;
-          return scoreB - scoreA;
-        })
-        .map((user, index) => {
-          // Eliminar el campo tempScoreForSorting y asignar posición
-          const { tempScoreForSorting, ...userWithoutTempScore } = user as any;
-          return {
-            ...userWithoutTempScore,
-            position: index + 1
-          };
-        });
-
-      addDebugInfo(`Processed ${sortedUsers.length} users for leaderboard`);
-      setUsers(sortedUsers);
+      addDebugInfo(`Processed ${sortedUsers.length} users for leaderboard`)
+      setUsers(sortedUsers)
       
       // Encontrar posición del usuario actual
       if (user) {
-        const currentUser = sortedUsers.find(u => u.id === user.id);
-        setCurrentUserPosition(currentUser?.position || null);
+        const currentUser = sortedUsers.find(u => u.id === user.id)
+        setCurrentUserPosition(currentUser?.position || null)
       }
 
     } catch (error: any) {
@@ -603,17 +564,10 @@ const LeaderboardPage = () => {
                     </h3>
                     <p className="text-gray-300 text-sm font-medium">{topThree[1].grado}</p>
                     
-                    {/* Mostrar puntuación solo si es el usuario actual */}
-                    {user && topThree[1].id === user.id ? (
-                      <div className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
-                        {topThree[1].score.toLocaleString()} puntos
-                      </div>
-                    ) : (
-                      <div className="bg-gray-700 bg-opacity-50 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg flex items-center justify-center gap-2">
-                        <Lock size={14} />
-                        <span>Puntuación oculta</span>
-                      </div>
-                    )}
+                    {/* Show score for all users */}
+                    <div className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
+                      {topThree[1].score.toLocaleString()} puntos
+                    </div>
                   </div>
                   <div className={`bg-gradient-to-t from-gray-500 to-gray-400 ${getPodiumHeight(2)} rounded-t-2xl flex items-center justify-center shadow-2xl border-4 border-gray-300`}>
                     <div className="text-white font-black text-4xl" style={{ fontFamily: 'Fredoka' }}>2</div>
@@ -647,17 +601,10 @@ const LeaderboardPage = () => {
                     </h3>
                     <p className="text-yellow-300 text-sm font-bold">{topThree[0].grado}</p>
                     
-                    {/* Mostrar puntuación solo si es el usuario actual */}
-                    {user && topThree[0].id === user.id ? (
-                      <div className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-yellow-900 px-6 py-3 rounded-full font-black text-xl mt-2 shadow-xl">
-                        {topThree[0].score.toLocaleString()} puntos
-                      </div>
-                    ) : (
-                      <div className="bg-yellow-700 bg-opacity-50 text-white px-6 py-3 rounded-full font-bold text-xl mt-2 shadow-xl flex items-center justify-center gap-2">
-                        <Lock size={16} />
-                        <span>Puntuación oculta</span>
-                      </div>
-                    )}
+                    {/* Show score for all users */}
+                    <div className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-yellow-900 px-6 py-3 rounded-full font-black text-xl mt-2 shadow-xl">
+                      {topThree[0].score.toLocaleString()} puntos
+                    </div>
                   </div>
                   <div className={`bg-gradient-to-t from-yellow-600 to-yellow-400 ${getPodiumHeight(1)} rounded-t-2xl flex items-center justify-center shadow-2xl border-4 border-yellow-300 relative overflow-hidden`}>
                     <div className="text-white font-black text-5xl" style={{ fontFamily: 'Fredoka' }}>1</div>
@@ -689,17 +636,10 @@ const LeaderboardPage = () => {
                     </h3>
                     <p className="text-amber-300 text-sm font-medium">{topThree[2].grado}</p>
                     
-                    {/* Mostrar puntuación solo si es el usuario actual */}
-                    {user && topThree[2].id === user.id ? (
-                      <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
-                        {topThree[2].score.toLocaleString()} puntos
-                      </div>
-                    ) : (
-                      <div className="bg-amber-700 bg-opacity-50 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg flex items-center justify-center gap-2">
-                        <Lock size={14} />
-                        <span>Puntuación oculta</span>
-                      </div>
-                    )}
+                    {/* Show score for all users */}
+                    <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white px-4 py-2 rounded-full font-bold text-lg mt-2 shadow-lg">
+                      {topThree[2].score.toLocaleString()} puntos
+                    </div>
                   </div>
                   <div className={`bg-gradient-to-t from-amber-700 to-amber-500 ${getPodiumHeight(3)} rounded-t-2xl flex items-center justify-center shadow-2xl border-4 border-amber-400`}>
                     <div className="text-white font-black text-4xl" style={{ fontFamily: 'Fredoka' }}>3</div>
@@ -786,17 +726,10 @@ const LeaderboardPage = () => {
 
                       {/* Score y nivel */}
                       <div className="flex-shrink-0 text-right">
-                        {/* Solo mostrar puntaje para el usuario actual */}
-                        {user && leaderboardUser.id === user.id ? (
-                          <div className={`bg-gradient-to-r ${getLevelColor(leaderboardUser.level)} text-white px-6 py-3 rounded-full font-black text-xl mb-2 shadow-lg`}>
-                            {leaderboardUser.score.toLocaleString()} puntos
-                          </div>
-                        ) : (
-                          <div className="bg-gray-700 bg-opacity-60 text-white px-6 py-3 rounded-full font-bold text-lg mb-2 shadow-lg flex items-center justify-center gap-2">
-                            <Lock size={16} />
-                            <span>Puntuación oculta</span>
-                          </div>
-                        )}
+                        {/* Show score for all users */}
+                        <div className={`bg-gradient-to-r ${getLevelColor(leaderboardUser.level)} text-white px-6 py-3 rounded-full font-black text-xl mb-2 shadow-lg`}>
+                          {leaderboardUser.score.toLocaleString()} puntos
+                        </div>
                         <div className="text-white text-opacity-90 text-sm font-bold">
                           {leaderboardUser.level}
                         </div>
@@ -830,7 +763,7 @@ const LeaderboardPage = () => {
         <div className="mt-8 bg-black bg-opacity-20 backdrop-blur-lg rounded-2xl p-6 border border-white border-opacity-10">
           <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
             <Zap size={24} className="text-yellow-400" />
-            ¿Cómo se calcula tu puntuación?
+            ¿Cómo se calcula la puntuación?
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
@@ -854,16 +787,6 @@ const LeaderboardPage = () => {
                 <li>• 50 puntos por cada registro en "Calculadora de Emociones"</li>
               </ul>
             </div>
-          </div>
-          
-          <div className="mt-4 p-4 bg-blue-900 bg-opacity-30 rounded-xl border border-blue-500 border-opacity-30">
-            <div className="flex items-center gap-2 mb-2">
-              <Info size={20} className="text-blue-300" />
-              <h4 className="font-bold text-blue-300">Nota sobre puntuaciones</h4>
-            </div>
-            <p className="text-blue-100 text-sm">
-              Por razones de privacidad, solo puedes ver tu propia puntuación. Las puntuaciones de otros usuarios están ocultas, pero el ranking se mantiene según la participación en actividades.
-            </p>
           </div>
         </div>
       </div>
