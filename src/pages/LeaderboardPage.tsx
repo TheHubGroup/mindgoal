@@ -13,7 +13,8 @@ import {
   Award,
   TrendingUp,
   Users,
-  Sparkles
+  Sparkles,
+  RefreshCw
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { userResponsesService } from '../lib/userResponsesService'
@@ -44,6 +45,7 @@ const LeaderboardPage = () => {
   const [currentUserPosition, setCurrentUserPosition] = useState<number | null>(null)
   const [animationPhase, setAnimationPhase] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   useEffect(() => {
     loadLeaderboard()
@@ -68,6 +70,7 @@ const LeaderboardPage = () => {
     }
 
     setIsLoading(true)
+    setError(null)
     try {
       console.log("Fetching profiles...")
       // Obtener todos los usuarios con perfiles
@@ -148,7 +151,13 @@ const LeaderboardPage = () => {
       setError(`Error loading leaderboard: ${error.message || 'Unknown error'}`)
     } finally {
       setIsLoading(false)
+      setIsRefreshing(false)
     }
+  }
+
+  const refreshLeaderboard = () => {
+    setIsRefreshing(true)
+    loadLeaderboard()
   }
 
   const calculateUserScore = async (userId: string): Promise<number> => {
@@ -345,7 +354,17 @@ const LeaderboardPage = () => {
               </div>
             </div>
           </div>
-          <UserMenu />
+          <div className="flex items-center gap-4">
+            <button
+              onClick={refreshLeaderboard}
+              disabled={isRefreshing}
+              className="bg-white bg-opacity-10 hover:bg-opacity-20 text-white rounded-full p-3 transition-all transform hover:scale-105 disabled:opacity-50"
+              title="Actualizar leaderboard"
+            >
+              <RefreshCw size={20} className={isRefreshing ? "animate-spin" : ""} />
+            </button>
+            <UserMenu />
+          </div>
         </div>
       </div>
 
@@ -592,6 +611,37 @@ const LeaderboardPage = () => {
             </div>
           </div>
         )}
+
+        {/* Explicación de puntuación */}
+        <div className="mt-8 bg-black bg-opacity-20 backdrop-blur-lg rounded-2xl p-6 border border-white border-opacity-10">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
+            <Zap size={24} className="text-yellow-400" />
+            ¿Cómo se calcula tu puntuación?
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
+            <div>
+              <h4 className="font-bold text-white mb-2">📝 Actividades de Escritura:</h4>
+              <ul className="space-y-1 text-sm">
+                <li>• Línea del tiempo: 1 punto por carácter</li>
+                <li>• Cuéntame quien eres: 1 punto por carácter</li>
+                <li>• Cartas personales: 1 punto por carácter</li>
+                <li>• Reflexiones de meditación: 1 punto por carácter</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-bold text-white mb-2">🧘‍♀️ Actividades Interactivas:</h4>
+              <ul className="space-y-1 text-sm">
+                <li>• 50 puntos por minuto de meditación</li>
+                <li>• 200 puntos bonus por completar actividades</li>
+                <li>• 100 puntos por cada re-visualización</li>
+                <li>• 30 puntos por cada match correcto en "Nombra tus Emociones"</li>
+                <li>• 50 puntos por cada registro en "Calculadora de Emociones"</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
