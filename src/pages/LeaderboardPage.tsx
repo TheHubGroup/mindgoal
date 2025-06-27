@@ -14,7 +14,9 @@ import {
   TrendingUp,
   Users,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  AlertCircle,
+  Info
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { userResponsesService } from '../lib/userResponsesService'
@@ -46,6 +48,8 @@ const LeaderboardPage = () => {
   const [animationPhase, setAnimationPhase] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [debugInfo, setDebugInfo] = useState<string[]>([])
+  const [showDebugInfo, setShowDebugInfo] = useState(false)
 
   useEffect(() => {
     loadLeaderboard()
@@ -62,6 +66,10 @@ const LeaderboardPage = () => {
     }
   }, [])
 
+  const addDebugInfo = (info: string) => {
+    setDebugInfo(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${info}`])
+  }
+
   const loadLeaderboard = async () => {
     if (!supabase) {
       setError("Supabase not configured")
@@ -71,8 +79,9 @@ const LeaderboardPage = () => {
 
     setIsLoading(true)
     setError(null)
+    setDebugInfo([])
     try {
-      console.log("Fetching profiles...")
+      addDebugInfo("Fetching profiles...")
       // Obtener todos los usuarios con perfiles
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
@@ -82,24 +91,28 @@ const LeaderboardPage = () => {
       if (profilesError) {
         console.error('Error fetching profiles:', profilesError)
         setError(`Error fetching profiles: ${profilesError.message}`)
+        addDebugInfo(`Error fetching profiles: ${profilesError.message}`)
         setIsLoading(false)
         return
       }
 
       if (!profiles || profiles.length === 0) {
         console.log("No profiles found")
+        addDebugInfo("No profiles found")
         setUsers([])
         setIsLoading(false)
         return
       }
 
-      console.log(`Found ${profiles.length} profiles, calculating scores...`)
+      addDebugInfo(`Found ${profiles.length} profiles, calculating scores...`)
 
       // Calcular score para cada usuario
       const usersWithScores = await Promise.all(
-        profiles.map(async (profile) => {
+        profiles.map(async (profile, index) => {
           try {
+            addDebugInfo(`Calculating score for user ${index+1}/${profiles.length}: ${profile.email}`)
             const score = await calculateUserScore(profile.id)
+            addDebugInfo(`Score for ${profile.email}: ${score}`)
             
             return {
               id: profile.id,
@@ -112,8 +125,9 @@ const LeaderboardPage = () => {
               level: getScoreLevel(score),
               position: 0 // Se asignará después del ordenamiento
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error(`Error calculating score for user ${profile.id}:`, error)
+            addDebugInfo(`Error calculating score for ${profile.email}: ${error.message || 'Unknown error'}`)
             return {
               id: profile.id,
               nombre: profile.nombre || 'Usuario',
@@ -137,7 +151,7 @@ const LeaderboardPage = () => {
           position: index + 1
         }))
 
-      console.log(`Processed ${sortedUsers.length} users for leaderboard`)
+      addDebugInfo(`Processed ${sortedUsers.length} users for leaderboard`)
       setUsers(sortedUsers)
       
       // Encontrar posición del usuario actual
@@ -149,6 +163,7 @@ const LeaderboardPage = () => {
     } catch (error: any) {
       console.error('Error loading leaderboard:', error)
       setError(`Error loading leaderboard: ${error.message || 'Unknown error'}`)
+      addDebugInfo(`Error loading leaderboard: ${error.message || 'Unknown error'}`)
     } finally {
       setIsLoading(false)
       setIsRefreshing(false)
@@ -165,89 +180,162 @@ const LeaderboardPage = () => {
       let totalCharacters = 0
 
       // Obtener respuestas de "Cuéntame quien eres"
-      const responses = await userResponsesService.getResponses(userId, 'cuentame_quien_eres')
-      responses.forEach(response => {
-        totalCharacters += response.response.length
-      })
+      try {
+        const responses = await userResponsesService.getResponses(userId, 'cuentame_quien_eres')
+        responses.forEach(response => {
+          totalCharacters += response.response.length
+        })
+        addDebugInfo(`User ${userId}: ${responses.length} responses, +${responses.reduce((sum, r) => sum + r.response.length, 0)} points`)
+      } catch (error) {
+        console.error(`Error getting responses for user ${userId}:`, error)
+        addDebugInfo(`Error getting responses for user ${userId}`)
+      }
 
       // Obtener notas de línea de tiempo
-      const timelineNotes = await timelineService.getNotes(userId)
-      timelineNotes.forEach(note => {
-        totalCharacters += note.text.length
-      })
+      try {
+        const timelineNotes = await timelineService.getNotes(userId)
+        timelineNotes.forEach(note => {
+          totalCharacters += note.text.length
+        })
+        addDebugInfo(`User ${userId}: ${timelineNotes.length} timeline notes, +${timelineNotes.reduce((sum, n) => sum + n.text.length, 0)} points`)
+      } catch (error) {
+        console.error(`Error getting timeline notes for user ${userId}:`, error)
+        addDebugInfo(`Error getting timeline notes for user ${userId}`)
+      }
 
       // Obtener cartas de "Carta a mí mismo"
-      const letters = await letterService.getLetters(userId)
-      letters.forEach(letter => {
-        totalCharacters += letter.title.length + letter.content.length
-      })
+      try {
+        const letters = await letterService.getLetters(userId)
+        letters.forEach(letter => {
+          totalCharacters += letter.title.length + letter.content.length
+        })
+        addDebugInfo(`User ${userId}: ${letters.length} letters, +${letters.reduce((sum, l) => sum + l.title.length + l.content.length, 0)} points`)
+      } catch (error) {
+        console.error(`Error getting letters for user ${userId}:`, error)
+        addDebugInfo(`Error getting letters for user ${userId}`)
+      }
 
       // Obtener sesiones de meditación y reflexiones
-      const meditationSessions = await meditationService.getAllSessions(userId)
-      meditationSessions.forEach(session => {
-        // Puntos por tiempo de meditación (1 punto por minuto visto)
-        totalCharacters += Math.floor(session.watch_duration / 60) * 50 // 50 caracteres equivalentes por minuto
+      try {
+        const meditationSessions = await meditationService.getAllSessions(userId)
+        let meditationPoints = 0
         
-        // Puntos por completar la meditación
-        if (session.completed_at) {
-          totalCharacters += 200 // Bonus por completar
-        }
+        meditationSessions.forEach(session => {
+          // Puntos por tiempo de meditación (1 punto por minuto visto)
+          const timePoints = Math.floor(session.watch_duration / 60) * 50
+          meditationPoints += timePoints
+          
+          // Puntos por completar la meditación
+          if (session.completed_at) {
+            meditationPoints += 200 // Bonus por completar
+          }
+          
+          // Puntos por reflexión escrita
+          if (session.reflection_text) {
+            meditationPoints += session.reflection_text.length
+          }
+          
+          // Bonus por múltiples visualizaciones (dedicación)
+          if (session.view_count > 1) {
+            meditationPoints += (session.view_count - 1) * 100
+          }
+          
+          // Penalización leve por muchos skips (para fomentar la práctica completa)
+          if (session.skip_count > 5) {
+            meditationPoints = Math.max(0, meditationPoints - (session.skip_count - 5) * 10)
+          }
+        })
         
-        // Puntos por reflexión escrita
-        if (session.reflection_text) {
-          totalCharacters += session.reflection_text.length
-        }
-        
-        // Bonus por múltiples visualizaciones (dedicación)
-        if (session.view_count > 1) {
-          totalCharacters += (session.view_count - 1) * 100
-        }
-        
-        // Penalización leve por muchos skips (para fomentar la práctica completa)
-        if (session.skip_count > 5) {
-          totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
-        }
-      })
+        totalCharacters += meditationPoints
+        addDebugInfo(`User ${userId}: ${meditationSessions.length} meditation sessions, +${meditationPoints} points`)
+      } catch (error) {
+        console.error(`Error getting meditation sessions for user ${userId}:`, error)
+        addDebugInfo(`Error getting meditation sessions for user ${userId}`)
+      }
 
       // Resultados de "Nombra tus Emociones"
-      const emotionStats = await emotionMatchService.getUserStats(userId)
-      totalCharacters += emotionStats.totalAttempts * 10
-      totalCharacters += emotionStats.correctMatches * 30
-      totalCharacters += emotionStats.completedEmotions.length * 100
+      try {
+        const emotionStats = await emotionMatchService.getUserStats(userId)
+        const emotionPoints = emotionStats.totalAttempts * 10 + 
+                             emotionStats.correctMatches * 30 + 
+                             emotionStats.completedEmotions.length * 100
+        
+        totalCharacters += emotionPoints
+        addDebugInfo(`User ${userId}: ${emotionStats.completedEmotions.length} completed emotions, +${emotionPoints} points`)
+      } catch (error) {
+        console.error(`Error getting emotion stats for user ${userId}:`, error)
+        addDebugInfo(`Error getting emotion stats for user ${userId}`)
+      }
 
       // Registros de "Calculadora de Emociones"
-      const emotionLogs = await emotionLogService.getEmotionHistory(userId)
-      totalCharacters += emotionLogs.length * 50
-      emotionLogs.forEach(log => {
-        if (log.notes) {
-          totalCharacters += log.notes.length
-        }
-      })
+      try {
+        const emotionLogs = await emotionLogService.getEmotionHistory(userId)
+        let emotionLogPoints = emotionLogs.length * 50
+        
+        emotionLogs.forEach(log => {
+          if (log.notes) {
+            emotionLogPoints += log.notes.length
+          }
+        })
+        
+        totalCharacters += emotionLogPoints
+        addDebugInfo(`User ${userId}: ${emotionLogs.length} emotion logs, +${emotionLogPoints} points`)
+      } catch (error) {
+        console.error(`Error getting emotion logs for user ${userId}:`, error)
+        addDebugInfo(`Error getting emotion logs for user ${userId}`)
+      }
 
       // Sesiones de "Menú de la Ira"
-      const angerSessions = await angerManagementService.getAllSessions(userId)
-      angerSessions.forEach(session => {
-        totalCharacters += Math.floor(session.watch_duration / 60) * 50
-        if (session.completed_at) {
-          totalCharacters += 200
-        }
-        if (session.reflection_text) {
-          totalCharacters += session.reflection_text.length
-        }
-        if (session.techniques_applied && session.techniques_applied.length > 0) {
-          totalCharacters += session.techniques_applied.length * 50
-        }
-        if (session.view_count > 1) {
-          totalCharacters += (session.view_count - 1) * 100
-        }
-        if (session.skip_count > 5) {
-          totalCharacters = Math.max(0, totalCharacters - (session.skip_count - 5) * 10)
-        }
-      })
+      try {
+        const angerSessions = await angerManagementService.getAllSessions(userId)
+        let angerPoints = 0
+        
+        angerSessions.forEach(session => {
+          // Puntos por tiempo de video visto
+          angerPoints += Math.floor(session.watch_duration / 60) * 50
+          
+          // Puntos por completar el video
+          if (session.completed_at) {
+            angerPoints += 200
+          }
+          
+          // Puntos por reflexión escrita
+          if (session.reflection_text) {
+            angerPoints += session.reflection_text.length
+          }
+          
+          // Puntos por técnicas seleccionadas
+          if (session.techniques_applied && session.techniques_applied.length > 0) {
+            angerPoints += session.techniques_applied.length * 50
+          }
+          
+          // Bonus por múltiples visualizaciones
+          if (session.view_count > 1) {
+            angerPoints += (session.view_count - 1) * 100
+          }
+          
+          // Penalización por muchos skips
+          if (session.skip_count > 5) {
+            angerPoints = Math.max(0, angerPoints - (session.skip_count - 5) * 10)
+          }
+        })
+        
+        totalCharacters += angerPoints
+        addDebugInfo(`User ${userId}: ${angerSessions.length} anger sessions, +${angerPoints} points`)
+      } catch (error) {
+        console.error(`Error getting anger sessions for user ${userId}:`, error)
+        addDebugInfo(`Error getting anger sessions for user ${userId}`)
+      }
+
+      // Asegurar que el puntaje sea al menos 10 si el usuario tiene alguna actividad
+      if (totalCharacters > 0 && totalCharacters < 10) {
+        totalCharacters = 10
+      }
 
       return totalCharacters
     } catch (error) {
       console.error('Error calculating score for user:', userId, error)
+      addDebugInfo(`Error calculating total score for user ${userId}: ${error}`)
       return 0
     }
   }
@@ -363,6 +451,13 @@ const LeaderboardPage = () => {
             >
               <RefreshCw size={20} className={isRefreshing ? "animate-spin" : ""} />
             </button>
+            <button
+              onClick={() => setShowDebugInfo(!showDebugInfo)}
+              className="bg-white bg-opacity-10 hover:bg-opacity-20 text-white rounded-full p-3 transition-all transform hover:scale-105"
+              title="Mostrar/ocultar información de depuración"
+            >
+              <Info size={20} />
+            </button>
             <UserMenu />
           </div>
         </div>
@@ -373,7 +468,8 @@ const LeaderboardPage = () => {
         <div className="max-w-7xl mx-auto px-4 py-4 mt-4">
           <div className="bg-red-500 bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-red-500 text-white">
             <h3 className="font-bold mb-2 flex items-center gap-2">
-              <span>⚠️</span> Error al cargar el leaderboard:
+              <AlertCircle size={20} />
+              Error al cargar el leaderboard:
             </h3>
             <p>{error}</p>
             <button 
@@ -382,6 +478,35 @@ const LeaderboardPage = () => {
             >
               Reintentar
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Debug Info */}
+      {showDebugInfo && (
+        <div className="max-w-7xl mx-auto px-4 py-4 mt-4">
+          <div className="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-4 border border-blue-500 text-white">
+            <h3 className="font-bold mb-2 flex items-center gap-2">
+              <Info size={20} className="text-blue-400" />
+              Información de Depuración
+            </h3>
+            <div className="bg-black bg-opacity-50 p-4 rounded-lg max-h-40 overflow-y-auto text-xs font-mono">
+              {debugInfo.length > 0 ? (
+                debugInfo.map((info, index) => (
+                  <div key={index} className="mb-1">{info}</div>
+                ))
+              ) : (
+                <div>No hay información de depuración disponible</div>
+              )}
+            </div>
+            <div className="mt-2 flex justify-end">
+              <button 
+                onClick={() => setShowDebugInfo(false)}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}
