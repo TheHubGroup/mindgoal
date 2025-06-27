@@ -43,7 +43,7 @@ const MenuDeLaIra = () => {
   const playerRef = useRef<VimeoPlayerRef>(null)
   
   // Video configuration
-  const VIDEO_ID = '1094217297' // Placeholder - replace with actual Vimeo ID
+  const VIDEO_ID = '1096763056' // Video ID de Vimeo proporcionado
   const VIDEO_TITLE = 'Menú de la Ira'
   
   // Player state
