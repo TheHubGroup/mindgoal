@@ -69,7 +69,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('🚀 Iniciando registro...')
       
-      // Paso 1: Crear usuario en Supabase Auth (SIN metadata adicional)
+      // Check if this is a no-email registration with username
+      const isNoEmailRegistration = email.includes('@noemail.local')
+      
+      // Paso 1: Crear usuario en Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: email.toLowerCase().trim(),
         password: password
@@ -92,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const profilePayload = {
           id: authData.user.id,
           email: email.toLowerCase().trim(),
-          nombre: profileData.first_name || '',
+          nombre: isNoEmailRegistration ? profileData.username : (profileData.first_name || ''),
           apellido: profileData.last_name || '',
           grado: profileData.grade || '',
           nombre_colegio: profileData.school_name || '',
@@ -100,7 +103,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           pais: profileData.country || 'Colombia',
           edad: profileData.age || null,
           sexo: profileData.gender || '',
-          avatar_url: ''
+          avatar_url: '',
+          has_email: !isNoEmailRegistration
         }
 
         console.log('📝 Creando perfil:', profilePayload)
@@ -133,8 +137,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      // Check if this is a username login
+      let loginEmail = email.toLowerCase().trim()
+      
+      // If it doesn't look like an email, try to find the user by username
+      if (!loginEmail.includes('@')) {
+        const { data: profiles, error: profileError } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('nombre', loginEmail)
+          .limit(1)
+          
+        if (profileError) {
+          console.error('Error finding user by username:', profileError)
+          return { error: { message: 'Error al buscar usuario' } }
+        }
+        
+        if (profiles && profiles.length > 0) {
+          loginEmail = profiles[0].email
+        } else {
+          return { error: { message: 'Usuario no encontrado' } }
+        }
+      }
+      
       const { error } = await supabase.auth.signInWithPassword({
-        email: email.toLowerCase().trim(),
+        email: loginEmail,
         password,
       })
 

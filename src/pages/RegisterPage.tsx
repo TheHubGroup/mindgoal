@@ -1,16 +1,20 @@
 import React, { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Clock, Sparkles, Eye, EyeOff, UserPlus, Camera, User, School, MapPin, Calendar, Users, AlertTriangle } from 'lucide-react'
+import { Clock, Sparkles, Eye, EyeOff, UserPlus, Camera, User, School, MapPin, Calendar, Users, AlertTriangle, Mail, AlertCircle } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [hasEmail, setHasEmail] = useState(true)
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null)
+  const [checkingUsername, setCheckingUsername] = useState(false)
   
   // Profile data fields
   const [nombre, setNombre] = useState('')
@@ -53,6 +57,50 @@ const RegisterPage = () => {
       reader.readAsDataURL(file)
     }
   }
+
+  const checkUsernameAvailability = async (username: string) => {
+    if (!username.trim() || username.length < 4) {
+      setUsernameAvailable(null)
+      return
+    }
+
+    setCheckingUsername(true)
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('nombre', username)
+        .limit(1)
+
+      if (error) {
+        console.error('Error checking username:', error)
+        setUsernameAvailable(null)
+      } else {
+        setUsernameAvailable(data.length === 0)
+      }
+    } catch (error) {
+      console.error('Error checking username:', error)
+      setUsernameAvailable(null)
+    } finally {
+      setCheckingUsername(false)
+    }
+  }
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setUsername(value)
+    
+    // Debounce username check
+    if (usernameCheckTimeout.current) {
+      clearTimeout(usernameCheckTimeout.current)
+    }
+    
+    usernameCheckTimeout.current = setTimeout(() => {
+      checkUsernameAvailability(value)
+    }, 500)
+  }
+
+  const usernameCheckTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -110,6 +158,22 @@ const RegisterPage = () => {
       return
     }
 
+    // Validate username if no email
+    if (!hasEmail) {
+      if (!username.trim() || username.length < 4) {
+        setError('El nombre de usuario debe tener al menos 4 caracteres')
+        return
+      }
+      
+      if (usernameAvailable === false) {
+        setError('Este nombre de usuario ya está en uso')
+        return
+      }
+    } else if (!email.trim() || !email.includes('@')) {
+      setError('Por favor ingresa un email válido')
+      return
+    }
+
     setIsLoading(true)
 
     try {
@@ -124,14 +188,15 @@ const RegisterPage = () => {
         city: ciudad.trim(),
         country: pais,
         age: Number(edad),
-        gender: sexo
+        gender: sexo,
+        username: hasEmail ? null : username.trim()
       }
 
       console.log('📋 Datos del perfil:', profileData)
 
       // Sign up with simplified approach
       const { error: signUpError } = await signUp(
-        email.trim().toLowerCase(), 
+        hasEmail ? email.trim().toLowerCase() : `${username.trim()}@noemail.local`, 
         password, 
         profileData
       )
@@ -141,7 +206,9 @@ const RegisterPage = () => {
         
         // Mensajes de error más específicos
         if (signUpError.message?.includes('User already registered')) {
-          setError('Este email ya está registrado. Intenta iniciar sesión.')
+          setError(hasEmail 
+            ? 'Este email ya está registrado. Intenta iniciar sesión.' 
+            : 'Este nombre de usuario ya está registrado. Intenta con otro.')
         } else if (signUpError.message?.includes('Invalid email')) {
           setError('El formato del email no es válido')
         } else if (signUpError.message?.includes('Password')) {
@@ -224,23 +291,99 @@ const RegisterPage = () => {
             </p>
           </div>
 
-          {/* Email and Password */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                📧 Correo Electrónico *
+          {/* Email/Username Toggle */}
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Mail size={16} />
+                ¿Tienes correo electrónico?
               </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="tu@email.com"
-              />
+              <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
+                <input
+                  type="checkbox"
+                  id="hasEmail"
+                  checked={hasEmail}
+                  onChange={(e) => setHasEmail(e.target.checked)}
+                  className="absolute w-6 h-6 transition duration-200 ease-in-out transform bg-white border-4 rounded-full appearance-none cursor-pointer peer border-gray-300 checked:border-blue-500 checked:translate-x-6"
+                />
+                <label
+                  htmlFor="hasEmail"
+                  className="block w-full h-full overflow-hidden rounded-full cursor-pointer bg-gray-300 peer-checked:bg-blue-200"
+                ></label>
+              </div>
             </div>
 
+            {hasEmail ? (
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  📧 Correo Electrónico *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required={hasEmail}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="tu@email.com"
+                />
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                  👤 Nombre de Usuario *
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={handleUsernameChange}
+                    required={!hasEmail}
+                    minLength={4}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none ${
+                      usernameAvailable === true 
+                        ? 'border-green-300 focus:ring-green-500 focus:border-transparent' 
+                        : usernameAvailable === false
+                          ? 'border-red-300 focus:ring-red-500 focus:border-transparent'
+                          : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
+                    }`}
+                    placeholder="Elige un nombre de usuario único"
+                  />
+                  {checkingUsername && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+                    </div>
+                  )}
+                  {!checkingUsername && usernameAvailable !== null && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      {usernameAvailable ? (
+                        <CheckCircle size={20} className="text-green-500" />
+                      ) : (
+                        <AlertCircle size={20} className="text-red-500" />
+                      )}
+                    </div>
+                  )}
+                </div>
+                {usernameAvailable === false && (
+                  <p className="mt-1 text-sm text-red-600">
+                    Este nombre de usuario ya está en uso
+                  </p>
+                )}
+                {usernameAvailable === true && (
+                  <p className="mt-1 text-sm text-green-600">
+                    ¡Nombre de usuario disponible!
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Mínimo 4 caracteres. Será tu identificador único en la plataforma.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Password Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 🔒 Contraseña *

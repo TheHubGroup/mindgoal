@@ -4,7 +4,7 @@ import { Clock, Sparkles, Eye, EyeOff, LogIn, AlertTriangle } from 'lucide-react
 import { useAuth } from '../contexts/AuthContext'
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('')
+  const [emailOrUsername, setEmailOrUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -17,7 +17,7 @@ const LoginPage = () => {
     e.preventDefault()
     setError('')
 
-    if (!email.trim() || !password) {
+    if (!emailOrUsername.trim() || !password) {
       setError('Por favor, completa todos los campos')
       return
     }
@@ -25,13 +25,15 @@ const LoginPage = () => {
     setIsLoading(true)
 
     try {
-      const { error } = await signIn(email.trim().toLowerCase(), password)
+      const { error } = await signIn(emailOrUsername.trim(), password)
 
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
-          setError('Email o contraseña incorrectos')
+          setError('Email/usuario o contraseña incorrectos')
         } else if (error.message.includes('Email not confirmed')) {
           setError('Por favor, confirma tu email antes de iniciar sesión')
+        } else if (error.message.includes('Usuario no encontrado')) {
+          setError('Usuario no encontrado')
         } else {
           setError(error.message || 'Error al iniciar sesión')
         }
@@ -79,17 +81,17 @@ const LoginPage = () => {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              📧 Correo Electrónico
+            <label htmlFor="emailOrUsername" className="block text-sm font-medium text-gray-700 mb-2">
+              📧 Correo Electrónico o Nombre de Usuario
             </label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              id="emailOrUsername"
+              value={emailOrUsername}
+              onChange={(e) => setEmailOrUsername(e.target.value)}
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="tu@email.com"
+              placeholder="tu@email.com o tu nombre de usuario"
             />
           </div>
 
