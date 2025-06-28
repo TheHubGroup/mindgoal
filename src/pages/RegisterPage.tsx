@@ -111,6 +111,19 @@ const RegisterPage = () => {
       setError('Las contraseñas no coinciden')
       return
     }
+    // Validate username format if not using email
+    if (!hasEmail) {
+      if (username.length < 4) {
+        setError('El nombre de usuario debe tener al menos 4 caracteres')
+        return
+      }
+      
+      if (username.includes('@') || username.includes(' ')) {
+        setError('El nombre de usuario no puede contener @ ni espacios')
+        return
+      }
+    }
+
 
     if (password.length < 6) {
       setError('La contraseña debe tener al menos 6 caracteres')
@@ -179,9 +192,16 @@ const RegisterPage = () => {
     try {
       console.log('🎯 Iniciando proceso de registro...')
       
+      // Prepare the actual email/username to use
+      const loginIdentifier = hasEmail 
+        ? emailOrUsername.trim() 
+        : `${username.trim()}@noemail.local`;
+      
+      console.log('👤 Identificador de login:', loginIdentifier);
+      
       // Prepare profile data
       const profileData = {
-        first_name: nombre.trim(),
+        username: hasEmail ? null : username.trim(),
         last_name: apellido.trim(),
         grade: grado,
         school_name: nombreColegio.trim(),
@@ -195,11 +215,7 @@ const RegisterPage = () => {
       console.log('📋 Datos del perfil:', profileData)
 
       // Sign up with simplified approach
-      const { error: signUpError } = await signUp(
-        hasEmail ? email.trim().toLowerCase() : `${username.trim()}@noemail.local`, 
-        password, 
-        profileData
-      )
+      const { error } = await signUp(loginIdentifier, password, profileData)
 
       if (signUpError) {
         console.error('❌ Error en registro:', signUpError)
@@ -337,8 +353,13 @@ const RegisterPage = () => {
                   <input
                     type="text"
                     id="username"
-                    value={username}
-                    onChange={handleUsernameChange}
+                    value={username.trim()}
+                    onChange={(e) => {
+                      // Remove spaces and @ symbols from username
+                      const sanitizedValue = e.target.value.replace(/[@\s]/g, '');
+                      setUsername(sanitizedValue);
+                      handleUsernameChange(e);
+                    }}
                     required={!hasEmail}
                     minLength={4}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none ${

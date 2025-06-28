@@ -22,10 +22,15 @@ const LoginPage = () => {
       return
     }
 
+    // Sanitize input - remove spaces and ensure lowercase for emails
+    const sanitizedInput = emailOrUsername.trim();
+    
     setIsLoading(true)
 
     try {
-      const { error } = await signIn(emailOrUsername.trim(), password)
+      console.log('🔑 Intentando login con:', sanitizedInput);
+      
+      const { error } = await signIn(sanitizedInput, password)
 
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
