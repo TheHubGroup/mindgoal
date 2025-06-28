@@ -162,8 +162,8 @@ const RegisterPage = () => {
       return
     }
 
-    if (!edad || edad < 0 || edad > 100) {
-      setError('La edad debe estar entre 5 y 25 años')
+    if (!edad || edad < 0) {
+      setError('La edad debe ser un número positivo')
       return
     }
 
@@ -340,8 +340,7 @@ const RegisterPage = () => {
                   type="email"
                   id="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required={hasEmail}
+                  min="0"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="tu@email.com"
                 />
