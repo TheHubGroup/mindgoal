@@ -24,6 +24,15 @@ const StandaloneUserBar = () => {
     if (user) {
       calculateUserScore()
       startAutoUpdate()
+      
+      // Auto-update score on initial load
+      leaderboardService.autoUpdateCurrentUserScore(user.id)
+        .then(success => {
+          if (success) {
+            console.log('✅ Score auto-updated on standalone bar load')
+          }
+        })
+        .catch(err => console.error('Error auto-updating score:', err))
     }
 
     // Escuchar mensajes del padre
@@ -59,8 +68,14 @@ const StandaloneUserBar = () => {
   const startAutoUpdate = () => {
     // Actualizar cada 5 segundos
     intervalRef.current = setInterval(() => {
-      if (user) {
+      if (user && user.id) {
         calculateUserScore(true) // true = actualización silenciosa
+        
+        // Also update the score in the database occasionally
+        if (Math.random() < 0.2) { // 20% chance each interval
+          leaderboardService.autoUpdateCurrentUserScore(user.id)
+            .catch(err => console.error('Error in background score update:', err))
+        }
       }
     }, 5000)
   }

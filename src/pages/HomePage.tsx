@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
+import { leaderboardService } from '../lib/leaderboardService'
 import UserMenu from '../components/UserMenu'
 import WelcomeModal from '../components/WelcomeModal'
 import { 
@@ -42,6 +43,17 @@ const HomePage = () => {
   useEffect(() => {
     if (user && !profileLoading) {
       setShowWelcomeModal(true)
+      
+      // Auto-update user score when homepage loads
+      if (user.id) {
+        leaderboardService.autoUpdateCurrentUserScore(user.id)
+          .then(success => {
+            if (success) {
+              console.log('✅ User score auto-updated on homepage load')
+            }
+          })
+          .catch(err => console.error('Error auto-updating score:', err))
+      }
     }
   }, [user, profileLoading])
 

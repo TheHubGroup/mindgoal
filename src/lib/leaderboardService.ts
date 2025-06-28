@@ -261,6 +261,28 @@ export const leaderboardService = {
     }
   },
 
+  // Actualizar automáticamente el puntaje del usuario actual
+  async autoUpdateCurrentUserScore(userId: string): Promise<boolean> {
+    if (!supabase || !userId) {
+      console.warn('Supabase not configured or no user ID provided')
+      return false
+    }
+
+    try {
+      // Calcular el puntaje actual del usuario
+      const score = await this.calculateUserScore(userId)
+      
+      // Actualizar el puntaje en la tabla pública
+      await this.updatePublicScore(userId, score)
+      
+      console.log('✅ Score auto-updated successfully:', score)
+      return true
+    } catch (error) {
+      console.error('Error auto-updating user score:', error)
+      return false
+    }
+  },
+
   // Obtener la posición de un usuario en el leaderboard
   async getUserPosition(userId: string): Promise<number | null> {
     if (!supabase) {

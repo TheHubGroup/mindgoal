@@ -10,9 +10,25 @@ export const useLeaderboard = () => {
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [autoUpdateInterval, setAutoUpdateInterval] = useState<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     loadLeaderboard()
+    
+    // Set up auto-refresh interval
+    const interval = setInterval(() => {
+      if (user) {
+        loadLeaderboard()
+      }
+    }, 30000) // Refresh every 30 seconds
+    
+    setAutoUpdateInterval(interval)
+    
+    return () => {
+      if (autoUpdateInterval) {
+        clearInterval(autoUpdateInterval)
+      }
+    }
   }, [user])
 
   const loadLeaderboard = async () => {

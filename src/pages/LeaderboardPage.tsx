@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
-import { 
+import {
   ArrowLeft, 
   Trophy, 
   Crown, 
@@ -30,6 +30,7 @@ const LeaderboardPage = () => {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
   const [updateAllInProgress, setUpdateAllInProgress] = useState(false)
 
+  // Auto-update scores on component mount
   useEffect(() => {
     loadLeaderboard()
     
@@ -42,6 +43,13 @@ const LeaderboardPage = () => {
       clearTimeout(timer)
       clearTimeout(timer2)
       clearTimeout(timer3)
+    }
+  }, [])
+
+  // Auto-update current user's score when component mounts
+  useEffect(() => {
+    if (user) {
+      updateCurrentUserScore(true)
     }
   }, [])
 
@@ -72,10 +80,13 @@ const LeaderboardPage = () => {
     }
   }
 
-  const updateCurrentUserScore = async () => {
+  const updateCurrentUserScore = async (silent = false) => {
     if (!user) return
 
-    setIsUpdating(true)
+    if (!silent) {
+      setIsUpdating(true)
+    }
+    
     try {
       // Calcular el puntaje actual del usuario
       const score = await leaderboardService.calculateUserScore(user.id)
@@ -88,7 +99,9 @@ const LeaderboardPage = () => {
     } catch (error) {
       console.error('Error updating user score:', error)
     } finally {
-      setIsUpdating(false)
+      if (!silent) {
+        setIsUpdating(false)
+      }
     }
   }
 

@@ -20,13 +20,23 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
   useEffect(() => {
     if (user) {
       calculateUserScore()
+      
+      // Set up auto-refresh interval for score
+      const interval = setInterval(() => {
+        calculateUserScore(true) // silent update
+      }, 60000) // Refresh every minute
+      
+      return () => clearInterval(interval)
     }
   }, [user])
 
-  const calculateUserScore = async () => {
+  const calculateUserScore = async (silent = false) => {
     if (!user) return
 
-    setIsLoading(true)
+    if (!silent) {
+      setIsLoading(true)
+    }
+    
     try {
       // Primero intentar obtener el puntaje de la tabla pública
       const publicScore = await leaderboardService.getUserPublicScore(user.id)
@@ -46,7 +56,9 @@ const UserBar: React.FC<UserBarProps> = ({ className = '' }) => {
       console.error('Error calculating score:', error)
       setScore(0)
     } finally {
-      setIsLoading(false)
+      if (!silent) {
+        setIsLoading(false)
+      }
     }
   }
 

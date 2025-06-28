@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
+import { leaderboardService } from '../lib/leaderboardService'
 
 interface UserByUsername {
   id: string;
@@ -60,6 +61,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
+        
+        // Auto-update score when user logs in
+        if (session?.user) {
+          leaderboardService.autoUpdateCurrentUserScore(session.user.id)
+            .then(success => {
+              if (success) {
+                console.log('✅ User score auto-updated on auth state change')
+              }
+            })
+            .catch(err => console.error('Error auto-updating score:', err))
+        }
       }
     )
 
@@ -259,6 +271,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Always clear local auth state to ensure UI consistency
       setUser(null)
       setSession(null)
+      
+      // Notify about logout for analytics
+      console.log('👋 User logged out successfully')
     }
   }
 
