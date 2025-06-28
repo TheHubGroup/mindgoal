@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null
   loading: boolean
   signUp: (email: string, password: string, profileData: any) => Promise<{ error?: any }>
-  signIn: (email: string, password: string) => Promise<{ error?: any }>
+  signIn: (emailOrUsername: string, password: string) => Promise<{ error?: any }>
   signOut: () => Promise<void>
   bypassUser?: any
 }
@@ -131,17 +131,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (emailOrUsername: string, password: string) => {
     if (!supabase) {
       return { error: { message: 'Supabase not configured' } }
     }
 
     try {
       // Check if this is a username login
-      let loginEmail = email.toLowerCase().trim()
+      let loginEmail = emailOrUsername.toLowerCase().trim()
       
       // If it doesn't look like an email, try to find the user by username
       if (!loginEmail.includes('@')) {
+        console.log('🔍 Buscando usuario por nombre:', loginEmail)
         const { data: profiles, error: profileError } = await supabase
           .from('profiles')
           .select('email')
@@ -155,15 +156,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (profiles && profiles.length > 0) {
           loginEmail = profiles[0].email
+          console.log('✅ Usuario encontrado, email:', loginEmail)
         } else {
+          console.error('❌ Usuario no encontrado:', loginEmail)
           return { error: { message: 'Usuario no encontrado' } }
         }
       }
       
+      console.log('🔑 Intentando login con email:', loginEmail)
       const { error } = await supabase.auth.signInWithPassword({
         email: loginEmail,
         password,
       })
+
+      if (error) {
+        console.error('❌ Error en login:', error)
+      }
 
       return { error }
     } catch (error: any) {
