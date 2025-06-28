@@ -26,7 +26,7 @@ export const useProfile = () => {
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .maybeSingle()
+        .single()
 
       if (error) {
         console.error('Error fetching profile:', error)
