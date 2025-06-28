@@ -284,8 +284,8 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ isOpen, onClose, 
                 value={formData.edad}
                 onChange={handleInputChange}
                 required
-                min="5"
-                max="25"
+                min="0"
+                max="100"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Tu edad"
               />
