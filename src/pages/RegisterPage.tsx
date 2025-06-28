@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Clock, Sparkles, Eye, EyeOff, UserPlus, Camera, User, School, MapPin, Calendar, Users, AlertTriangle, Mail, AlertCircle, CheckCircle } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext' 
+import supabase from '../lib/supabase'
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('')
@@ -67,17 +67,29 @@ const RegisterPage = () => {
 
     setCheckingUsername(true)
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('nombre', username)
-        .limit(1)
-
-      if (error) {
-        console.error('Error checking username:', error)
+      if (!supabase) {
+        console.warn('Supabase not configured')
         setUsernameAvailable(null)
-      } else {
-        setUsernameAvailable(data.length === 0)
+        setCheckingUsername(false)
+        return
+      }
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('nombre', username)
+          .limit(1)
+
+        if (error) {
+          console.error('Error checking username:', error)
+          setUsernameAvailable(null)
+        } else {
+          setUsernameAvailable(data.length === 0)
+        }
+      } catch (error) {
+        console.error('Error in username check:', error)
+        setUsernameAvailable(null)
       }
     } catch (error) {
       console.error('Error checking username:', error)
@@ -240,10 +252,10 @@ const RegisterPage = () => {
       console.log('✅ Registro exitoso, redirigiendo...')
       
       // Success - redirect to home
-      navigate('/')
+      navigate('/profile')
       
-    } catch (error: any) {
-      console.error('❌ Error inesperado:', error)
+    } catch (signUpError: any) {
+      console.error('❌ Error inesperado:', signUpError)
       setError('Error inesperado. Por favor intenta de nuevo.')
     } finally {
       setIsLoading(false)
