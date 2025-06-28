@@ -105,7 +105,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const profilePayload = {
           id: authData.user.id,
-          user_id: authData.user.id,
           email: email.toLowerCase().trim(),
           nombre: isNoEmailRegistration ? username : (profileData.first_name || ''),
           username: isNoEmailRegistration ? username : null,

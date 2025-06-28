@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Clock, Sparkles, Eye, EyeOff, UserPlus, Camera, User, School, MapPin, Calendar, Users, AlertTriangle, Mail, AlertCircle } from 'lucide-react'
+import { Clock, Sparkles, Eye, EyeOff, UserPlus, Camera, User, School, MapPin, Calendar, Users, AlertTriangle, Mail, AlertCircle, CheckCircle } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('')
@@ -194,13 +195,14 @@ const RegisterPage = () => {
       
       // Prepare the actual email/username to use
       const loginIdentifier = hasEmail 
-        ? emailOrUsername.trim() 
+        ? email.trim() 
         : `${username.trim()}@noemail.local`;
       
       console.log('👤 Identificador de login:', loginIdentifier);
       
       // Prepare profile data
       const profileData = {
+        first_name: nombre.trim(),
         username: hasEmail ? null : username.trim(),
         last_name: apellido.trim(),
         grade: grado,
@@ -217,20 +219,20 @@ const RegisterPage = () => {
       // Sign up with simplified approach
       const { error } = await signUp(loginIdentifier, password, profileData)
 
-      if (signUpError) {
-        console.error('❌ Error en registro:', signUpError)
+      if (error) {
+        console.error('❌ Error en registro:', error)
         
         // Mensajes de error más específicos
-        if (signUpError.message?.includes('User already registered')) {
+        if (error.message?.includes('User already registered')) {
           setError(hasEmail 
             ? 'Este email ya está registrado. Intenta iniciar sesión.' 
             : 'Este nombre de usuario ya está registrado. Intenta con otro.')
-        } else if (signUpError.message?.includes('Invalid email')) {
+        } else if (error.message?.includes('Invalid email')) {
           setError('El formato del email no es válido')
-        } else if (signUpError.message?.includes('Password')) {
+        } else if (error.message?.includes('Password')) {
           setError('La contraseña no cumple con los requisitos')
         } else {
-          setError(signUpError.message || 'Error al crear la cuenta')
+          setError(error.message || 'Error al crear la cuenta')
         }
         return
       }
