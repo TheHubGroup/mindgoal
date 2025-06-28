@@ -162,7 +162,7 @@ const RegisterPage = () => {
       return
     }
 
-    if (!edad || edad < 5 || edad > 25) {
+    if (!edad || edad < 0 || edad > 100) {
       setError('La edad debe estar entre 5 y 25 años')
       return
     }
