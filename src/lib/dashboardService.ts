@@ -1,5 +1,76 @@
 import { supabase } from './supabase'
 
+export interface UserActivityDetails {
+  user_id: string
+  email: string
+  nombre: string
+  apellido: string
+  grado: string
+  nombre_colegio: string
+  ciudad: string
+  pais: string
+  edad: number
+  sexo: string
+  avatar_url: string
+  timeline_notes: Array<{
+    id: string
+    text: string
+    emoji: string
+    color: string
+    section: string
+    created_at: string
+  }> | null
+  user_responses: Array<{
+    id: string
+    question: string
+    response: string
+    activity_type: string
+    created_at: string
+  }> | null
+  letters: Array<{
+    id: string
+    title: string
+    content: string
+    created_at: string
+  }> | null
+  meditation_sessions: Array<{
+    id: string
+    video_id: string
+    video_title: string
+    watch_duration: number
+    completion_percentage: number
+    reflection_text: string | null
+    completed_at: string | null
+    created_at: string
+  }> | null
+  emotion_matches: Array<{
+    id: string
+    emotion_name: string
+    is_correct: boolean
+    explanation_shown: boolean
+    created_at: string
+  }> | null
+  emotion_logs: Array<{
+    id: string
+    emotion_name: string
+    felt_at: string
+    intensity: number | null
+    notes: string | null
+    created_at: string
+  }> | null
+  anger_management_sessions: Array<{
+    id: string
+    video_id: string
+    video_title: string
+    watch_duration: number
+    completion_percentage: number
+    reflection_text: string | null
+    techniques_applied: string[] | null
+    completed_at: string | null
+    created_at: string
+  }> | null
+}
+
 export interface DashboardData {
   id: string
   user_id: string
@@ -279,6 +350,98 @@ export const dashboardService = {
     } catch (error) {
       console.error('Error in forceUpdateDashboard:', error)
       return false
+    }
+  }
+
+  // Get detailed activity data for a specific user
+  async getUserActivityDetails(userId: string): Promise<UserActivityDetails | null> {
+    if (!supabase) {
+      console.warn('Supabase not configured')
+      return null
+    }
+
+    try {
+      const { data, error } = await supabase
+        .rpc('get_user_activity_details', {
+          p_user_id: userId
+        })
+        .single()
+
+      if (error) {
+        console.error('Error getting user activity details:', error)
+        return null
+      }
+
+      return data as UserActivityDetails
+    } catch (error) {
+      console.error('Error in getUserActivityDetails:', error)
+      return null
+    }
+  },
+
+  // Get user responses for a specific activity type
+  async getUserResponsesByActivity(userId: string, activityType: string): Promise<any[]> {
+    if (!supabase) {
+      console.warn('Supabase not configured, returning empty array')
+      return []
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('get_user_activity_responses', {
+        p_user_id: userId,
+        p_activity_type: activityType
+      })
+
+      if (error) {
+        console.error(`Error fetching ${activityType} responses:`, error)
+        return []
+      }
+
+      // La función devuelve un array dentro de un objeto JSON
+      return data || []
+    } catch (error) {
+      console.error(`Error in getUserResponsesByActivity for ${activityType}:`, error)
+      return []
+    }
+  },
+  
+  // Obtener detalles de una actividad específica
+  async getUserActivityByType(userId: string, activityType: string): Promise<any[]> {
+    if (!supabase) {
+      console.warn('Supabase not configured, returning empty array')
+      return []
+    }
+    
+    try {
+      // Primero obtenemos todos los detalles del usuario
+      const userDetails = await this.getUserActivityDetails(userId)
+      
+      if (!userDetails) {
+        return []
+      }
+      
+      // Dependiendo del tipo de actividad, devolvemos los datos correspondientes
+      switch (activityType) {
+        case 'timeline':
+          return userDetails.timeline_notes || []
+        case 'responses':
+          return userDetails.user_responses || []
+        case 'letters':
+          return userDetails.letters || []
+        case 'meditation':
+          return userDetails.meditation_sessions || []
+        case 'emotion_matches':
+          return userDetails.emotion_matches || []
+        case 'emotion_logs':
+          return userDetails.emotion_logs || []
+        case 'anger':
+          return userDetails.anger_management_sessions || []
+        default:
+          return []
+      }
+    } catch (error) {
+      console.error(`Error in getUserActivityByType for ${activityType}:`, error)
+      return []
     }
   }
 }

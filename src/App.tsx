@@ -19,6 +19,7 @@ import DashboardPage from './pages/DashboardPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
 import LeaderboardPage from './pages/LeaderboardPage'
+import UserDetailPage from './pages/UserDetailPage'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -82,6 +83,11 @@ function App() {
             <Route path="/leaderboard" element={
               <ProtectedRoute>
                 <LeaderboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/user/:userId" element={
+              <ProtectedRoute>
+                <UserDetailPage />
               </ProtectedRoute>
             } />
             <Route path="/dashboard" element={
