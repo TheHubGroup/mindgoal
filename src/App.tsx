@@ -15,6 +15,7 @@ import NombraTusEmociones from './pages/NombraTusEmociones'
 import EmotionCalculatorPage from './pages/EmotionCalculatorPage'
 import MenuDeLaIra from './pages/MenuDeLaIra'
 import UserBarPage from './pages/UserBarPage'
+import DashboardPage from './pages/DashboardPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
 import LeaderboardPage from './pages/LeaderboardPage'
@@ -81,6 +82,11 @@ function App() {
             <Route path="/leaderboard" element={
               <ProtectedRoute>
                 <LeaderboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
               </ProtectedRoute>
             } />
             <Route path="/actividad/linea-tiempo" element={

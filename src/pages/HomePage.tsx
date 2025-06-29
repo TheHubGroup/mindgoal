@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
 import { leaderboardService } from '../lib/leaderboardService'
+import { dashboardService } from '../lib/dashboardService'
 import UserMenu from '../components/UserMenu'
 import WelcomeModal from '../components/WelcomeModal'
 import { 
@@ -48,9 +49,13 @@ const HomePage = () => {
       if (user.id) {
         leaderboardService.autoUpdateCurrentUserScore(user.id)
           .then(success => {
-            if (success) {
-              console.log('✅ User score auto-updated on homepage load')
-            }
+            console.log('✅ User score auto-updated on homepage load:', success)
+            
+            // Also update dashboard data
+            return dashboardService.forceUpdateDashboard(user.id)
+          })
+          .then(success => {
+            console.log('✅ Dashboard data updated:', success)
           })
           .catch(err => console.error('Error auto-updating score:', err))
       }
@@ -280,6 +285,16 @@ const HomePage = () => {
               <Trophy size={20} />
               <span style={{ fontFamily: 'Fredoka' }}>Leaderboard</span>
             </button>
+            
+            {/* Botón Dashboard */}
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
+            >
+              <BarChart3 size={20} />
+              <span style={{ fontFamily: 'Fredoka' }}>Dashboard</span>
+            </button>
+            
             <UserMenu />
           </div>
         </div>
