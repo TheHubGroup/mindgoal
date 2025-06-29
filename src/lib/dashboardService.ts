@@ -351,7 +351,7 @@ export const dashboardService = {
       console.error('Error in forceUpdateDashboard:', error)
       return false
     }
-  }
+  },
 
   // Get detailed activity data for a specific user
   async getUserActivityDetails(userId: string): Promise<UserActivityDetails | null> {
