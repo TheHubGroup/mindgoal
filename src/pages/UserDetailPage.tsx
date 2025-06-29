@@ -532,26 +532,25 @@ const UserDetailPage = () => {
                 
                 {userDetails.emotion_logs && userDetails.emotion_logs.length > 0 ? (
                   <div>
-                    {/* Group logs by date */}
                     {(() => {
                       // Group logs by date
-                      const logsByDate: Record<string, typeof userDetails.emotion_logs> = {};
+                      const logsByDate: Record<string, typeof userDetails.emotion_logs> = {}
                       userDetails.emotion_logs.forEach(log => {
                         const date = new Date(log.felt_at).toLocaleDateString('es-ES', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
-                        });
+                        })
                         if (!logsByDate[date]) {
-                          logsByDate[date] = [];
+                          logsByDate[date] = []
                         }
-                        logsByDate[date].push(log);
-                      });
+                        logsByDate[date].push(log)
+                      })
                       
                       // Sort dates in descending order
                       const sortedDates = Object.keys(logsByDate).sort((a, b) => {
-                        return new Date(b).getTime() - new Date(a).getTime();
-                      });
+                        return new Date(b).getTime() - new Date(a).getTime()
+                      })
                       
                       return sortedDates.map(date => (
                         <div key={date} className="mb-8">
@@ -599,7 +598,8 @@ const UserDetailPage = () => {
                               </div>
                             ))}
                           </div>
-                      ));
+                        </div>
+                      ))
                     })()}
                   </div>
                 ) : (
