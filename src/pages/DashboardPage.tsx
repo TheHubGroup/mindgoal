@@ -247,8 +247,20 @@ const DashboardPage = () => {
             
             <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
               <Heart size={32} className="mx-auto mb-2 text-pink-400" />
+              <div className="text-2xl font-bold text-white">{stats.totalEmotionMatches + stats.totalEmotionLogs}</div>
+              <div className="text-sm text-white text-opacity-80">Emociones Totales</div>
+            </div>
+            
+            <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+              <Heart size={32} className="mx-auto mb-2 text-pink-400" />
               <div className="text-2xl font-bold text-white">{stats.totalEmotionMatches}</div>
-              <div className="text-sm text-white text-opacity-80">Emociones</div>
+              <div className="text-sm text-white text-opacity-80">Nombra Emociones</div>
+            </div>
+            
+            <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+              <Heart size={32} className="mx-auto mb-2 text-pink-400" />
+              <div className="text-2xl font-bold text-white">{stats.totalEmotionLogs}</div>
+              <div className="text-sm text-white text-opacity-80">Calculadora</div>
             </div>
             
             <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
