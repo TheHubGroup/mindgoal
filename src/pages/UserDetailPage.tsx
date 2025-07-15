@@ -494,50 +494,7 @@ const UserDetailPage = () => {
                       <div className="text-sm opacity-80">Precisión</div>
                     </div>
                   </div>
-                  
-                  {/* Progress Bar */}
-                  <div className="mt-4">
-                    <div className="w-full bg-white bg-opacity-20 rounded-full h-3">
-                      <div 
-                        className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
-                        style={{ width: `${userDetails.emotion_matches.length > 0 ? (userDetails.emotion_matches.filter(m => m.is_correct).length / userDetails.emotion_matches.length) * 100 : 0}%` }}
-                      />
-              {userDetails.emotion_matches && userDetails.emotion_matches.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {userDetails.emotion_matches.map(match => (
-                    <div 
-                      key={match.id} 
-                      className={`p-4 rounded-lg ${
-                        match.is_correct 
-                          ? 'bg-green-100 border-l-4 border-green-500' 
-                          : 'bg-red-100 border-l-4 border-red-500'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="text-3xl">
-                          {match.emotion_name === 'Alegría' ? '😊' :
-                           match.emotion_name === 'Tristeza' ? '😢' :
-                           match.emotion_name === 'Enojo' ? '😡' :
-                           match.emotion_name === 'Miedo' ? '😨' :
-                           match.emotion_name === 'Emoción' ? '🤩' :
-                           match.emotion_name === 'Calma' ? '😌' :
-                           match.emotion_name === 'Vergüenza' ? '😳' :
-                           match.emotion_name === 'Confusión' ? '😕' :
-                           match.emotion_name === 'Cariño' ? '🥰' :
-                           match.emotion_name === 'Desilusión' ? '😞' : '😐'}
-                        </div>
-                        <div>
-                          <div className="font-bold text-gray-800">{match.emotion_name}</div>
-                          <div className="text-xs text-gray-600">
-                            {match.is_correct ? '✓ Correcto' : '✗ Incorrecto'} • 
-                            {match.explanation_shown ? ' Vio explicación' : ' Sin explicación'} •
-                            {new Date(match.created_at).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              )}
               ) : (
                 <div className="text-center py-6 text-white text-opacity-70 bg-black bg-opacity-20 rounded-lg">
                   <p>No hay registros de "Nombra tus Emociones"</p>
