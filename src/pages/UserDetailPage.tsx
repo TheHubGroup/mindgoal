@@ -502,38 +502,6 @@ const UserDetailPage = () => {
                         className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${userDetails.emotion_matches.length > 0 ? (userDetails.emotion_matches.filter(m => m.is_correct).length / userDetails.emotion_matches.length) * 100 : 0}%` }}
                       />
-                    </div>
-                  </div>
-                </div>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-white">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold">{userDetails.emotion_matches.length}</div>
-                      <div className="text-sm opacity-80">Intentos Totales</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-400">
-                        {userDetails.emotion_matches.filter(m => m.is_correct).length}
-                      </div>
-                      <div className="text-sm opacity-80">Aciertos</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-red-400">
-                        {userDetails.emotion_matches.filter(m => !m.is_correct).length}
-                      </div>
-                      <div className="text-sm opacity-80">Fallos</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-yellow-400">
-                        {userDetails.emotion_matches.length > 0 
-                          ? Math.round((userDetails.emotion_matches.filter(m => m.is_correct).length / userDetails.emotion_matches.length) * 100)
-                          : 0}%
-                      </div>
-                      <div className="text-sm opacity-80">Precisión</div>
-                    </div>
-                  </div>
-                </>
-              )}
-              
               {userDetails.emotion_matches && userDetails.emotion_matches.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {userDetails.emotion_matches.map(match => (
