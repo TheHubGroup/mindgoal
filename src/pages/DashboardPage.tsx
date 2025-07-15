@@ -348,18 +348,6 @@ const DashboardPage = () => {
             </div>
             
             <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
-              <Heart size={32} className="mx-auto mb-2 text-pink-400" />
-              <div className="text-2xl font-bold text-white">{stats.totalEmotionMatches}</div>
-              <div className="text-sm text-white text-opacity-80">Nombra Emociones</div>
-            </div>
-            
-            <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
-              <Heart size={32} className="mx-auto mb-2 text-pink-400" />
-              <div className="text-2xl font-bold text-white">{stats.totalEmotionLogs}</div>
-              <div className="text-sm text-white text-opacity-80">Calculadora</div>
-            </div>
-            
-            <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
               <Flame size={32} className="mx-auto mb-2 text-red-400" />
               <div className="text-2xl font-bold text-white">{stats.totalAngerSessions}</div>
               <div className="text-sm text-white text-opacity-80">Menú de la Ira</div>
