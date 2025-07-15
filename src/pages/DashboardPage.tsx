@@ -17,7 +17,9 @@ import {
   Trophy,
   Search,
   User,
-  Eye
+  Eye,
+  Filter,
+  X
 } from 'lucide-react'
 
 const DashboardPage = () => {
@@ -26,7 +28,22 @@ const DashboardPage = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [filters, setFilters] = useState({
+    grado: '',
+    edad: { min: '', max: '' },
+    sexo: '',
+    colegio: '',
+    ciudad: '',
+    pais: '',
+    tieneLineasTiempo: false,
+    tieneCartas: false,
+    tieneMeditacion: false,
+    tieneNombraEmociones: false,
+    tieneCalculadoraEmociones: false,
+    tieneMenuIra: false
+  })
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalTimelines: 0,
@@ -82,15 +99,94 @@ const DashboardPage = () => {
     }
   }
 
-  const filteredUsers = dashboardData.filter(user => {
-    const searchLower = searchTerm.toLowerCase()
-    const fullName = `${user.profile_info.nombre || ''} ${user.profile_info.apellido || ''}`.toLowerCase()
-    const email = (user.profile_info.email || '').toLowerCase()
-    const school = (user.profile_info.nombre_colegio || '').toLowerCase()
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
     
-    return fullName.includes(searchLower) || 
-           email.includes(searchLower) || 
-           school.includes(searchLower)
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFilters(prev => ({ ...prev, [name]: checked }));
+    } else {
+      setFilters(prev => ({ ...prev, [name]: value }));
+    }
+  }
+  
+  const handleEdadChange = (type: 'min' | 'max', value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      edad: { ...prev.edad, [type]: value }
+    }));
+  }
+  
+  const resetFilters = () => {
+    setFilters({
+      grado: '',
+      edad: { min: '', max: '' },
+      sexo: '',
+      colegio: '',
+      ciudad: '',
+      pais: '',
+      tieneLineasTiempo: false,
+      tieneCartas: false,
+      tieneMeditacion: false,
+      tieneNombraEmociones: false,
+      tieneCalculadoraEmociones: false,
+      tieneMenuIra: false
+    });
+  }
+
+  const filteredUsers = dashboardData.filter(userData => {
+    // Apply search filter
+    const searchLower = searchTerm.toLowerCase()
+    const fullName = `${userData.profile_info.nombre || ''} ${userData.profile_info.apellido || ''}`.toLowerCase()
+    const email = (userData.profile_info.email || '').toLowerCase()
+    const school = (userData.profile_info.nombre_colegio || '').toLowerCase()
+    
+    const matchesSearch = fullName.includes(searchLower) || 
+                         email.includes(searchLower) || 
+                         school.includes(searchLower)
+    
+    // Skip other filters if no search match
+    if (!matchesSearch) return false;
+    
+    // Apply grade filter
+    if (filters.grado && userData.profile_info.grado !== filters.grado) {
+      return false;
+    }
+    
+    // Apply gender filter
+    if (filters.sexo && userData.profile_info.sexo !== filters.sexo) {
+      return false;
+    }
+    
+    // Apply school filter
+    if (filters.colegio && !userData.profile_info.nombre_colegio?.toLowerCase().includes(filters.colegio.toLowerCase())) {
+      return false;
+    }
+    
+    // Apply city filter
+    if (filters.ciudad && !userData.profile_info.ciudad?.toLowerCase().includes(filters.ciudad.toLowerCase())) {
+      return false;
+    }
+    
+    // Apply country filter
+    if (filters.pais && !userData.profile_info.pais?.toLowerCase().includes(filters.pais.toLowerCase())) {
+      return false;
+    }
+    
+    // Apply age filter
+    const age = userData.profile_info.edad;
+    if (filters.edad.min && (!age || age < parseInt(filters.edad.min))) return false;
+    if (filters.edad.max && (!age || age > parseInt(filters.edad.max))) return false;
+    
+    // Apply activity filters
+    if (filters.tieneLineasTiempo && userData.timeline_stats.count <= 0) return false;
+    if (filters.tieneCartas && userData.letters_stats.count <= 0) return false;
+    if (filters.tieneMeditacion && userData.meditation_stats.count <= 0) return false;
+    if (filters.tieneNombraEmociones && userData.emotion_matches_stats.attempts <= 0) return false;
+    if (filters.tieneCalculadoraEmociones && userData.emotion_logs_stats.count <= 0) return false;
+    if (filters.tieneMenuIra && userData.anger_stats.count <= 0) return false;
+    
+    return true;
   })
 
   const formatDate = (dateString: string | null) => {
@@ -270,6 +366,265 @@ const DashboardPage = () => {
             </div>
           </div>
         </div>
+        
+        {/* Filter Section */}
+        <div className="mb-6 flex items-center justify-between">
+          <button
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
+            <Filter size={18} />
+            {filtersOpen ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+          </button>
+          
+          {filtersOpen && (
+            <button
+              onClick={resetFilters}
+              className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm"
+            >
+              Resetear Filtros
+            </button>
+          )}
+        </div>
+        
+        {filtersOpen && (
+          <div className="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white border-opacity-20">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+                Filtros Avanzados
+              </h3>
+              <button 
+                onClick={() => setFiltersOpen(false)}
+                className="text-white bg-gray-700 hover:bg-gray-800 p-2 rounded-full"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Datos Personales */}
+              <div className="bg-white bg-opacity-10 rounded-xl p-4">
+                <h4 className="font-bold text-white mb-4 border-b border-white border-opacity-20 pb-2">
+                  Datos Personales
+                </h4>
+                
+                <div className="space-y-4">
+                  {/* Grado */}
+                  <div>
+                    <label className="block text-white text-sm mb-1">Grado</label>
+                    <select 
+                      name="grado"
+                      value={filters.grado}
+                      onChange={handleFilterChange}
+                      className="w-full bg-black bg-opacity-50 border border-white border-opacity-20 rounded p-2 text-white"
+                    >
+                      <option value="">Todos</option>
+                      <option value="1°">1° Primaria</option>
+                      <option value="2°">2° Primaria</option>
+                      <option value="3°">3° Primaria</option>
+                      <option value="4°">4° Primaria</option>
+                      <option value="5°">5° Primaria</option>
+                      <option value="6°">6° Secundaria</option>
+                      <option value="7°">7° Secundaria</option>
+                      <option value="8°">8° Secundaria</option>
+                      <option value="9°">9° Secundaria</option>
+                      <option value="10°">10° Secundaria</option>
+                      <option value="11°">11° Secundaria</option>
+                    </select>
+                  </div>
+                  
+                  {/* Edad */}
+                  <div>
+                    <label className="block text-white text-sm mb-1">Edad</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={filters.edad.min}
+                        onChange={(e) => handleEdadChange('min', e.target.value)}
+                        className="w-1/2 bg-black bg-opacity-50 border border-white border-opacity-20 rounded p-2 text-white"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={filters.edad.max}
+                        onChange={(e) => handleEdadChange('max', e.target.value)}
+                        className="w-1/2 bg-black bg-opacity-50 border border-white border-opacity-20 rounded p-2 text-white"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Sexo */}
+                  <div>
+                    <label className="block text-white text-sm mb-1">Género</label>
+                    <select 
+                      name="sexo"
+                      value={filters.sexo}
+                      onChange={handleFilterChange}
+                      className="w-full bg-black bg-opacity-50 border border-white border-opacity-20 rounded p-2 text-white"
+                    >
+                      <option value="">Todos</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Otro">Otro</option>
+                      <option value="Prefiero no decir">Prefiero no decir</option>
+                    </select>
+                  </div>
+                  
+                  {/* Colegio */}
+                  <div>
+                    <label className="block text-white text-sm mb-1">Colegio</label>
+                    <input 
+                      type="text"
+                      name="colegio"
+                      value={filters.colegio}
+                      onChange={handleFilterChange}
+                      placeholder="Nombre del colegio"
+                      className="w-full bg-black bg-opacity-50 border border-white border-opacity-20 rounded p-2 text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Ubicación */}
+              <div className="bg-white bg-opacity-10 rounded-xl p-4">
+                <h4 className="font-bold text-white mb-4 border-b border-white border-opacity-20 pb-2">
+                  Ubicación
+                </h4>
+                
+                <div className="space-y-4">
+                  {/* Ciudad */}
+                  <div>
+                    <label className="block text-white text-sm mb-1">Ciudad</label>
+                    <input 
+                      type="text"
+                      name="ciudad"
+                      value={filters.ciudad}
+                      onChange={handleFilterChange}
+                      placeholder="Ciudad"
+                      className="w-full bg-black bg-opacity-50 border border-white border-opacity-20 rounded p-2 text-white"
+                    />
+                  </div>
+                  
+                  {/* País */}
+                  <div>
+                    <label className="block text-white text-sm mb-1">País</label>
+                    <input 
+                      type="text"
+                      name="pais"
+                      value={filters.pais}
+                      onChange={handleFilterChange}
+                      placeholder="País"
+                      className="w-full bg-black bg-opacity-50 border border-white border-opacity-20 rounded p-2 text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Actividades */}
+              <div className="bg-white bg-opacity-10 rounded-xl p-4">
+                <h4 className="font-bold text-white mb-4 border-b border-white border-opacity-20 pb-2">
+                  Actividades Realizadas
+                </h4>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="tieneLineasTiempo"
+                      name="tieneLineasTiempo"
+                      checked={filters.tieneLineasTiempo}
+                      onChange={(e) => setFilters(prev => ({ ...prev, tieneLineasTiempo: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <label htmlFor="tieneLineasTiempo" className="text-white text-sm">Tiene Líneas de Tiempo</label>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="tieneCartas"
+                      name="tieneCartas"
+                      checked={filters.tieneCartas}
+                      onChange={(e) => setFilters(prev => ({ ...prev, tieneCartas: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <label htmlFor="tieneCartas" className="text-white text-sm">Tiene Cartas</label>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="tieneMeditacion"
+                      name="tieneMeditacion"
+                      checked={filters.tieneMeditacion}
+                      onChange={(e) => setFilters(prev => ({ ...prev, tieneMeditacion: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <label htmlFor="tieneMeditacion" className="text-white text-sm">Tiene Meditación</label>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="tieneNombraEmociones"
+                      name="tieneNombraEmociones"
+                      checked={filters.tieneNombraEmociones}
+                      onChange={(e) => setFilters(prev => ({ ...prev, tieneNombraEmociones: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <label htmlFor="tieneNombraEmociones" className="text-white text-sm">Tiene Nombra tus Emociones</label>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="tieneCalculadoraEmociones"
+                      name="tieneCalculadoraEmociones"
+                      checked={filters.tieneCalculadoraEmociones}
+                      onChange={(e) => setFilters(prev => ({ ...prev, tieneCalculadoraEmociones: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <label htmlFor="tieneCalculadoraEmociones" className="text-white text-sm">Tiene Calculadora de Emociones</label>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="tieneMenuIra"
+                      name="tieneMenuIra"
+                      checked={filters.tieneMenuIra}
+                      onChange={(e) => setFilters(prev => ({ ...prev, tieneMenuIra: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <label htmlFor="tieneMenuIra" className="text-white text-sm">Tiene Menú de la Ira</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Filter Counts */}
+            <div className="mt-4 flex justify-between items-center text-white">
+              <div>
+                <span className="text-green-400 font-bold">{filteredUsers.length}</span> de {dashboardData.length} usuarios mostrados
+              </div>
+              <div>
+                {Object.values(filters).some(value => 
+                  value !== '' && value !== false && 
+                  !(typeof value === 'object' && Object.values(value).every(v => v === ''))
+                ) && (
+                  <button 
+                    onClick={resetFilters}
+                    className="text-red-400 hover:text-red-300 text-sm flex items-center gap-1"
+                  >
+                    <X size={14} />
+                    Limpiar filtros
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* User List */}
         <div className="bg-black bg-opacity-20 backdrop-blur-lg rounded-3xl p-6 border border-white border-opacity-10">
@@ -281,6 +636,9 @@ const DashboardPage = () => {
             <div className="relative">
               <input
                 type="text"
+                id="searchInput"
+                name="searchInput"
+                aria-label="Buscar usuario"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar usuario..."

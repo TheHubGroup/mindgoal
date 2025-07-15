@@ -145,12 +145,13 @@ const UserDetailPage = () => {
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={refreshUserDetails}
-              disabled={isRefreshing}
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isRefreshing ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                onClick={refreshUserDetails}
+                disabled={isRefreshing}
+                aria-label="Actualizar datos"
+                className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isRefreshing ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <RefreshCw size={20} />
               )}
@@ -244,16 +245,6 @@ const UserDetailPage = () => {
             <button
               onClick={() => setActiveTab('emotion_matches')}
               className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
-                activeTab === 'emotion_matches' 
-                  ? 'bg-pink-500 text-white' 
-                  : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
-              }`}
-            >
-              Nombra tus Emociones ({userDetails.emotion_matches?.length || 0})
-            </button>
-            <button
-              onClick={() => setActiveTab('emotion_logs')}
-              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
                 activeTab === 'emotion_logs' 
                   ? 'bg-pink-400 text-white' 
                   : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
@@ -261,6 +252,18 @@ const UserDetailPage = () => {
             >
               Calculadora de Emociones ({userDetails.emotion_logs?.length || 0})
             </button>
+
+            <button
+              onClick={() => setActiveTab('emotion_matches')}
+              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+                activeTab === 'emotion_matches' 
+                  ? 'bg-pink-500 text-white' 
+                  : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+              }`}
+            >
+              Nombra tus Emociones ({userDetails.emotion_matches?.length || 0})
+            </button>
+
             <button
               onClick={() => setActiveTab('anger')}
               className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
@@ -458,10 +461,12 @@ const UserDetailPage = () => {
               <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
                 <Smile size={24} className="text-pink-400" />
                 Nombra tus Emociones
+                <span className="text-sm bg-pink-500 px-2 py-1 rounded-full">{userDetails.emotion_matches?.length || 0}</span>
               </h3>
               
               {/* Statistics Summary */}
-              {userDetails.emotion_matches && userDetails.emotion_matches.length > 0 && (
+              {userDetails.emotion_matches && userDetails.emotion_matches.length > 0 ? (
+                <>
                 <div className="bg-black bg-opacity-30 rounded-xl p-4 mb-6">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-white">
                     <div className="text-center">
@@ -489,7 +494,44 @@ const UserDetailPage = () => {
                       <div className="text-sm opacity-80">Precisión</div>
                     </div>
                   </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="mt-4">
+                    <div className="w-full bg-white bg-opacity-20 rounded-full h-3">
+                      <div 
+                        className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
+                        style={{ width: `${userDetails.emotion_matches.length > 0 ? (userDetails.emotion_matches.filter(m => m.is_correct).length / userDetails.emotion_matches.length) * 100 : 0}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-white">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{userDetails.emotion_matches.length}</div>
+                      <div className="text-sm opacity-80">Intentos Totales</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-400">
+                        {userDetails.emotion_matches.filter(m => m.is_correct).length}
+                      </div>
+                      <div className="text-sm opacity-80">Aciertos</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-red-400">
+                        {userDetails.emotion_matches.filter(m => !m.is_correct).length}
+                      </div>
+                      <div className="text-sm opacity-80">Fallos</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-yellow-400">
+                        {userDetails.emotion_matches.length > 0 
+                          ? Math.round((userDetails.emotion_matches.filter(m => m.is_correct).length / userDetails.emotion_matches.length) * 100)
+                          : 0}%
+                      </div>
+                      <div className="text-sm opacity-80">Precisión</div>
+                    </div>
+                  </div>
+                </>
               )}
               
               {userDetails.emotion_matches && userDetails.emotion_matches.length > 0 ? (
@@ -541,7 +583,7 @@ const UserDetailPage = () => {
             <div>
               <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
                 <Heart size={24} className="text-pink-400" />
-                Calculadora de Emociones
+                Calculadora de Emociones <span className="text-sm bg-pink-400 px-2 py-1 rounded-full">{userDetails.emotion_logs?.length || 0}</span>
               </h3>
               
               {userDetails.emotion_logs && userDetails.emotion_logs.length > 0 ? (
@@ -549,51 +591,52 @@ const UserDetailPage = () => {
                   {(() => {
                     // Group logs by date
                     const logsByDate: Record<string, typeof userDetails.emotion_logs> = {}
-                    userDetails.emotion_logs.forEach(log => {
-                      const date = new Date(log.felt_at).toLocaleDateString('es-ES', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                    if (userDetails.emotion_logs) {
+                      userDetails.emotion_logs.forEach(log => {
+                        const date = new Date(log.felt_at).toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
+                        if (!logsByDate[date]) {
+                          logsByDate[date] = []
+                        }
+                        logsByDate[date].push(log)
                       })
-                      if (!logsByDate[date]) {
-                        logsByDate[date] = []
-                      }
-                      logsByDate[date].push(log)
-                    })
-                    
-                    // Sort dates in descending order
-                    const sortedDates = Object.keys(logsByDate).sort((a, b) => {
-                      return new Date(b).getTime() - new Date(a).getTime()
-                    })
-                    
-                    return sortedDates.map(date => (
-                      <div key={date} className="mb-8">
-                        <h4 className="text-lg font-bold text-white mb-4 bg-pink-500 inline-block px-3 py-1 rounded-lg">
-                          {date}
-                        </h4>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {logsByDate[date].map(log => (
-                            <div 
-                              key={log.id} 
-                              className="bg-pink-100 p-4 rounded-lg border-l-4 border-pink-500"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="text-3xl">
-                                  {log.emotion_name === 'Alegría' ? '😊' :
-                                   log.emotion_name === 'Tristeza' ? '😢' :
-                                   log.emotion_name === 'Enojo' ? '😡' :
-                                   log.emotion_name === 'Miedo' ? '😨' :
-                                   log.emotion_name === 'Emoción' ? '🤩' :
-                                   log.emotion_name === 'Calma' ? '😌' :
-                                   log.emotion_name === 'Vergüenza' ? '😳' :
-                                   log.emotion_name === 'Confusión' ? '😕' :
-                                   log.emotion_name === 'Cariño' ? '🥰' :
-                                   log.emotion_name === 'Desilusión' ? '😞' : '😐'}
-                                </div>
-                                <div>
-                                  <div className="font-bold text-gray-800">{log.emotion_name}</div>
-                                  <div className="text-xs text-gray-600">
+                      
+                      // Sort dates in descending order
+                      const sortedDates = Object.keys(logsByDate).sort((a, b) => {
+                        return new Date(b).getTime() - new Date(a).getTime()
+                      })
+                      
+                      return sortedDates.map(date => (
+                        <div key={date} className="mb-8">
+                          <h4 className="text-lg font-bold text-white mb-4 bg-pink-500 inline-block px-3 py-1 rounded-lg">
+                            {date}
+                          </h4>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {logsByDate[date].map(log => (
+                              <div 
+                                key={log.id} 
+                                className="bg-pink-100 p-4 rounded-lg border-l-4 border-pink-500"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="text-3xl">
+                                    {log.emotion_name === 'Alegría' ? '😊' :
+                                     log.emotion_name === 'Tristeza' ? '😢' :
+                                     log.emotion_name === 'Enojo' ? '😡' :
+                                     log.emotion_name === 'Miedo' ? '😨' :
+                                     log.emotion_name === 'Emoción' ? '🤩' :
+                                     log.emotion_name === 'Calma' ? '😌' :
+                                     log.emotion_name === 'Vergüenza' ? '😳' :
+                                     log.emotion_name === 'Confusión' ? '😕' :
+                                     log.emotion_name === 'Cariño' ? '🥰' :
+                                     log.emotion_name === 'Desilusión' ? '😞' : '😐'}
+                                  </div>
+                                  <div>
+                                    <div className="font-bold text-gray-800">{log.emotion_name}</div>
+                                    <div className="text-xs text-gray-600">
                                     {new Date(log.felt_at).toLocaleTimeString('es-ES', {
                                       hour: '2-digit',
                                       minute: '2-digit'
@@ -618,7 +661,8 @@ const UserDetailPage = () => {
                 </div>
               ) : (
                 <div className="text-center py-6 text-white text-opacity-70 bg-black bg-opacity-20 rounded-lg">
-                  <p>No hay registros de "Calculadora de Emociones"</p>
+                  <Heart size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-xl" style={{ fontFamily: 'Comic Neue' }}>No hay registros de "Calculadora de Emociones"</p>
                 </div>
               )}
             </div>
