@@ -55,7 +55,19 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
     setError(null)
 
     try {
-      const analysis = await openaiService.analyzeUserBehavior(userData)
+      // Structure userData to match the expected format for OpenAI service
+      const structuredUserData = {
+        profile: userData,
+        timelineNotes: userData.timelineNotes || [],
+        cuentameQuienEres: userData.cuentameQuienEres || [],
+        cartasMiMismo: userData.cartasMiMismo || [],
+        meditationSessions: userData.meditationSessions || [],
+        emotionNaming: userData.emotionNaming || [],
+        emotionCalculator: userData.emotionCalculator || [],
+        angerManagement: userData.angerManagement || []
+      }
+      
+      const analysis = await openaiService.analyzeUserBehavior(structuredUserData)
       
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -89,7 +101,19 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
     setError(null)
 
     try {
-      const response = await openaiService.chatWithAnalysis(userData, newMessages)
+      // Structure userData to match the expected format for OpenAI service
+      const structuredUserData = {
+        profile: userData,
+        timelineNotes: userData.timelineNotes || [],
+        cuentameQuienEres: userData.cuentameQuienEres || [],
+        cartasMiMismo: userData.cartasMiMismo || [],
+        meditationSessions: userData.meditationSessions || [],
+        emotionNaming: userData.emotionNaming || [],
+        emotionCalculator: userData.emotionCalculator || [],
+        angerManagement: userData.angerManagement || []
+      }
+      
+      const response = await openaiService.chatWithAnalysis(structuredUserData, newMessages)
       
       const assistantMessage: ChatMessage = {
         role: 'assistant',
