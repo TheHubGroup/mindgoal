@@ -1,32 +1,44 @@
+// Interface que coincide exactamente con los datos del dashboard
 interface UserAnalysisData {
-  profile: {
-    nombre: string
-    apellido: string
-    edad: number
-    sexo: string
-    grado: string
-    nombre_colegio: string
-    ciudad: string
-    pais: string
-  }
-  timeline_notes: Array<{
+  user_id: string
+  email: string
+  nombre: string
+  apellido: string
+  grado: string
+  nombre_colegio: string
+  ciudad: string
+  pais: string
+  edad: number
+  sexo: string
+  avatar_url: string
+  timeline_notes?: Array<{
+    id: string
     text: string
     emoji: string
+    color: string
+    shape: string
+    font: string
     section: string
+    position_x: number
+    position_y: number
     created_at: string
   }>
-  user_responses: Array<{
+  user_responses?: Array<{
+    id: string
     question: string
     response: string
     activity_type: string
     created_at: string
   }>
-  letters: Array<{
+  letters?: Array<{
+    id: string
     title: string
     content: string
     created_at: string
   }>
-  meditation_sessions: Array<{
+  meditation_sessions?: Array<{
+    id: string
+    video_id: string
     video_title: string
     watch_duration: number
     completion_percentage: number
@@ -34,20 +46,24 @@ interface UserAnalysisData {
     completed_at: string | null
     created_at: string
   }>
-  emotion_matches: Array<{
+  emotion_matches?: Array<{
+    id: string
     emotion_name: string
     is_correct: boolean
     explanation_shown: boolean
     created_at: string
   }>
-  emotion_logs: Array<{
+  emotion_logs?: Array<{
+    id: string
     emotion_name: string
     felt_at: string
     intensity: number | null
     notes: string | null
     created_at: string
   }>
-  anger_management_sessions: Array<{
+  anger_management_sessions?: Array<{
+    id: string
+    video_id: string
     video_title: string
     watch_duration: number
     completion_percentage: number
@@ -153,17 +169,15 @@ export const openaiService = {
   },
 
   prepareUserContext(userData: UserAnalysisData): string {
-    const { profile } = userData
-    
     let context = `DATOS DEL USUARIO:
 
 INFORMACIÓN PERSONAL:
-- Nombre: ${profile.nombre} ${profile.apellido}
-- Edad: ${profile.edad} años
-- Sexo: ${profile.sexo}
-- Grado: ${profile.grado}
-- Colegio: ${profile.nombre_colegio}
-- Ubicación: ${profile.ciudad}, ${profile.pais}
+- Nombre: ${userData.nombre} ${userData.apellido}
+- Edad: ${userData.edad} años
+- Sexo: ${userData.sexo}
+- Grado: ${userData.grado}
+- Colegio: ${userData.nombre_colegio}
+- Ubicación: ${userData.ciudad}, ${userData.pais}
 
 `
 
