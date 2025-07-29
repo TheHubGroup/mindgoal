@@ -12,6 +12,7 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { openaiService } from '../lib/openaiService'
+import { dashboardService } from '../lib/dashboardService'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -31,6 +32,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasInitialAnalysis, setHasInitialAnalysis] = useState(false)
+  const [fullUserData, setFullUserData] = useState<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -48,26 +50,37 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
     }
   }, [isOpen])
 
+  // Cargar datos completos del usuario cuando se abre el chat
+  useEffect(() => {
+    if (isOpen && userData?.user_id) {
+      loadFullUserData()
+    }
+  }, [isOpen, userData?.user_id])
+
+  const loadFullUserData = async () => {
+    if (!userData?.user_id) return
+
+    try {
+      const detailedData = await dashboardService.getUserActivityDetails(userData.user_id)
+      setFullUserData(detailedData)
+      console.log('Datos completos del usuario cargados:', detailedData)
+    } catch (error) {
+      console.error('Error cargando datos completos del usuario:', error)
+      setError('Error al cargar los datos completos del usuario')
+    }
+  }
   const generateInitialAnalysis = async () => {
     if (hasInitialAnalysis) return
 
+    if (!fullUserData) {
+      setError('Los datos del usuario aún no están disponibles. Por favor, espera un momento.')
+      return
+    }
     setIsLoading(true)
     setError(null)
 
     try {
-      // Structure userData to match the expected format for OpenAI service
-      const structuredUserData = {
-        profile: userData,
-        timelineNotes: userData.timelineNotes || [],
-        cuentameQuienEres: userData.cuentameQuienEres || [],
-        cartasMiMismo: userData.cartasMiMismo || [],
-        meditationSessions: userData.meditationSessions || [],
-        emotionNaming: userData.emotionNaming || [],
-        emotionCalculator: userData.emotionCalculator || [],
-        angerManagement: userData.angerManagement || []
-      }
-      
-      const analysis = await openaiService.analyzeUserBehavior(structuredUserData)
+      const analysis = await openaiService.analyzeUserBehavior(fullUserData)
       
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -88,6 +101,10 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return
 
+    if (!fullUserData) {
+      setError('Los datos del usuario aún no están disponibles. Por favor, espera un momento.')
+      return
+    }
     const userMessage: ChatMessage = {
       role: 'user',
       content: inputMessage.trim(),
@@ -101,19 +118,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
     setError(null)
 
     try {
-      // Structure userData to match the expected format for OpenAI service
-      const structuredUserData = {
-        profile: userData,
-        timelineNotes: userData.timelineNotes || [],
-        cuentameQuienEres: userData.cuentameQuienEres || [],
-        cartasMiMismo: userData.cartasMiMismo || [],
-        meditationSessions: userData.meditationSessions || [],
-        emotionNaming: userData.emotionNaming || [],
-        emotionCalculator: userData.emotionCalculator || [],
-        angerManagement: userData.angerManagement || []
-      }
-      
-      const response = await openaiService.chatWithAnalysis(structuredUserData, newMessages)
+      const response = await openaiService.chatWithAnalysis(fullUserData, newMessages)
       
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -162,6 +167,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
               </h3>
               <p className="text-indigo-200 text-sm" style={{ fontFamily: 'Comic Neue' }}>
                 Análisis de {userName} • {userData.edad} años • {userData.grado}
+                {fullUserData && <span className="ml-2 text-green-300">• Datos cargados ✓</span>}
               </p>
             </div>
           </div>
@@ -196,6 +202,12 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
                 Genera un análisis completo del comportamiento y desarrollo socioemocional de {userName} 
                 basado en todas sus actividades en la plataforma.
               </p>
+              {!fullUserData ? (
+                <div className="flex items-center justify-center gap-2 text-gray-500 mb-4">
+                  <Loader size={20} className="animate-spin" />
+                  <span>Cargando datos del usuario...</span>
+                </div>
+              ) : (
               <button
                 onClick={generateInitialAnalysis}
                 disabled={isLoading}
@@ -204,6 +216,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
                 <Brain size={20} />
                 Generar Análisis Inicial
               </button>
+              )}
             </div>
           )}
 
@@ -280,12 +293,12 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
               onKeyPress={handleKeyPress}
               placeholder="Haz una pregunta específica sobre el análisis socioemocional..."
               className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              disabled={isLoading}
+              disabled={isLoading || !fullUserData}
               style={{ fontFamily: 'Comic Neue' }}
             />
             <button
               onClick={sendMessage}
-              disabled={!inputMessage.trim() || isLoading}
+              disabled={!inputMessage.trim() || isLoading || !fullUserData}
               className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white p-3 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send size={20} />
