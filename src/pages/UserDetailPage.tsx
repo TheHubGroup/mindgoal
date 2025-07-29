@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
+import UserAnalysisChat from '../components/UserAnalysisChat'
 import { dashboardService, UserActivityDetails } from '../lib/dashboardService'
 import { 
   ArrowLeft, 
@@ -20,7 +21,8 @@ import {
   CheckCircle,
   AlertCircle,
   BarChart3,
-  Smile
+  Smile,
+  MessageCircle
 } from 'lucide-react'
 
 const UserDetailPage = () => {
@@ -31,6 +33,7 @@ const UserDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('timeline')
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [showAnalysisChat, setShowAnalysisChat] = useState(false)
 
   useEffect(() => {
     if (userId) {
@@ -156,6 +159,13 @@ const UserDetailPage = () => {
                 <RefreshCw size={20} />
               )}
               Actualizar Datos
+            </button>
+            <button
+              onClick={() => setShowAnalysisChat(true)}
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105"
+            >
+              <MessageCircle size={20} />
+              Análisis IA
             </button>
             <UserMenu />
           </div>
@@ -725,6 +735,13 @@ const UserDetailPage = () => {
           )}
         </div>
       </div>
+
+      {/* Chat de Análisis IA */}
+      <UserAnalysisChat
+        userData={userDetails}
+        isOpen={showAnalysisChat}
+        onClose={() => setShowAnalysisChat(false)}
+      />
     </div>
   )
 }
