@@ -138,7 +138,7 @@ export const openaiService = {
           'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'gpt-4-turbo-2024-04-09', // Usando el modelo más reciente disponible
+          model: 'gpt-4o-mini-2024-07-18', // Modelo actualizado más eficiente
           messages: [
             {
               role: 'system',
@@ -350,7 +350,7 @@ Responde de manera conversacional manteniendo tu rol de analista socioemocional.
           'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'gpt-4-turbo-2024-04-09',
+          model: 'gpt-4o-mini-2024-07-18',
           messages: chatMessages,
           max_tokens: 1500,
           temperature: 0.7,
