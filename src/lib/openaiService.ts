@@ -270,8 +270,7 @@ INFORMACIÓN PERSONAL:
         .slice(-3)
       
       if (notasRecientes.length > 0) {
-        context += 'Notas recientes:
-'
+        context += 'Notas recientes:\n'
         notasRecientes.forEach((log, index) => {
           context += `${index + 1}. [${log.emotion_name}] ${log.notes}
 `
