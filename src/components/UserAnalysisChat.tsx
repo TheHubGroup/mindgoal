@@ -36,6 +36,38 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // Función para formatear el contenido del mensaje con HTML
+  const formatMessageContent = (content: string, isUser: boolean = false) => {
+    let formattedContent = content
+      // Convertir **texto** a <strong>texto</strong>
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
+      // Convertir *texto* a <em>texto</em>
+      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+      // Convertir títulos con números (1., 2., etc.)
+      .replace(/^(\d+\.\s+)(.+)$/gm, '<div class="mt-4 mb-2"><span class="font-bold text-lg">$1</span><span class="font-semibold">$2</span></div>')
+      // Convertir líneas que empiezan con • en listas
+      .replace(/^•\s+(.+)$/gm, '<div class="ml-4 mb-1 flex items-start"><span class="mr-2 mt-1 w-2 h-2 bg-current rounded-full flex-shrink-0"></span><span>$1</span></div>')
+      // Convertir líneas que empiezan con - en listas
+      .replace(/^-\s+(.+)$/gm, '<div class="ml-4 mb-1 flex items-start"><span class="mr-2 mt-1 w-2 h-2 bg-current rounded-full flex-shrink-0"></span><span>$1</span></div>')
+      // Convertir títulos en MAYÚSCULAS
+      .replace(/^([A-ZÁÉÍÓÚÑ\s]+):$/gm, '<h3 class="text-lg font-bold mt-6 mb-3 border-b border-current pb-1">$1</h3>')
+      // Convertir subtítulos que terminan en :
+      .replace(/^([^:\n]+):$/gm, '<h4 class="font-semibold mt-4 mb-2 text-base">$1:</h4>')
+      // Convertir saltos de línea dobles en párrafos
+      .replace(/\n\n/g, '</p><p class="mb-3">')
+      // Envolver todo en párrafos
+      .replace(/^/, '<p class="mb-3">')
+      .replace(/$/, '</p>')
+      // Limpiar párrafos vacíos
+      .replace(/<p class="mb-3"><\/p>/g, '')
+      // Aplicar colores específicos para el rol del usuario
+      .replace(/<strong class="font-bold">/g, `<strong class="font-bold ${isUser ? 'text-yellow-200' : 'text-indigo-700'}">`)
+      .replace(/<em class="italic">/g, `<em class="italic ${isUser ? 'text-blue-200' : 'text-purple-600'}">`)
+      .replace(/<h3 class="text-lg font-bold mt-6 mb-3 border-b border-current pb-1">/g, `<h3 class="text-lg font-bold mt-6 mb-3 border-b ${isUser ? 'border-white' : 'border-gray-400'} pb-1 ${isUser ? 'text-yellow-100' : 'text-indigo-800'}">`)
+      .replace(/<h4 class="font-semibold mt-4 mb-2 text-base">/g, `<h4 class="font-semibold mt-4 mb-2 text-base ${isUser ? 'text-blue-100' : 'text-purple-700'}">`)
+
+    return formattedContent
+  }
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -189,7 +221,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-gray-50 to-gray-100">
           {messages.length === 0 && !isLoading && (
             <div className="text-center py-12">
               <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -211,7 +243,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
               <button
                 onClick={generateInitialAnalysis}
                 disabled={isLoading}
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-8 py-4 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-3 mx-auto shadow-lg hover:shadow-xl"
               >
                 <Brain size={20} />
                 Generar Análisis Inicial
@@ -223,33 +255,39 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
             >
               {message.role === 'assistant' && (
-                <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <Bot size={20} className="text-white" />
                 </div>
               )}
               
               <div
-                className={`max-w-3xl p-4 rounded-2xl ${
+                className={`max-w-3xl p-6 rounded-2xl shadow-lg ${
                   message.role === 'user'
-                    ? 'bg-indigo-500 text-white ml-12'
-                    : 'bg-white border border-gray-200 mr-12'
+                    ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white ml-16 shadow-indigo-200'
+                    : 'bg-white border border-gray-200 mr-16 shadow-gray-200'
                 }`}
               >
-                <div className="whitespace-pre-wrap" style={{ fontFamily: 'Comic Neue' }}>
-                  {message.content}
-                </div>
-                <div className={`text-xs mt-2 ${
+                <div 
+                  className={`leading-relaxed ${
+                    message.role === 'user' ? 'text-white' : 'text-gray-800'
+                  }`}
+                  style={{ fontFamily: 'Comic Neue' }}
+                  dangerouslySetInnerHTML={{ 
+                    __html: formatMessageContent(message.content, message.role === 'user')
+                  }}
+                />
+                <div className={`text-xs mt-4 pt-2 border-t ${
                   message.role === 'user' ? 'text-indigo-200' : 'text-gray-500'
-                }`}>
+                } ${message.role === 'user' ? 'border-indigo-400' : 'border-gray-200'}`}>
                   {message.timestamp.toLocaleTimeString()}
                 </div>
               </div>
 
               {message.role === 'user' && (
-                <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                   <User size={20} className="text-white" />
                 </div>
               )}
@@ -258,10 +296,10 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
 
           {isLoading && (
             <div className="flex gap-3 justify-start">
-              <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                 <Bot size={20} className="text-white" />
               </div>
-              <div className="bg-white border border-gray-200 p-4 rounded-2xl mr-12">
+              <div className="bg-white border border-gray-200 p-6 rounded-2xl mr-16 shadow-lg">
                 <div className="flex items-center gap-2 text-gray-600">
                   <Loader size={16} className="animate-spin" />
                   <span style={{ fontFamily: 'Comic Neue' }}>
@@ -273,9 +311,12 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
           )}
 
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg flex items-center gap-2">
+            <div className="bg-red-50 border-l-4 border-red-400 text-red-700 p-4 rounded-lg flex items-center gap-3 shadow-lg">
               <AlertCircle size={20} />
-              <span>{error}</span>
+              <div>
+                <div className="font-semibold">Error en el análisis</div>
+                <div className="text-sm">{error}</div>
+              </div>
             </div>
           )}
 
@@ -283,7 +324,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
         </div>
 
         {/* Input Area */}
-        <div className="p-6 border-t border-gray-200 bg-white rounded-b-3xl">
+        <div className="p-6 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white rounded-b-3xl">
           <div className="flex gap-3">
             <input
               ref={inputRef}
@@ -292,14 +333,14 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Haz una pregunta específica sobre el análisis socioemocional..."
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="flex-1 px-6 py-4 border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 transition-all shadow-sm"
               disabled={isLoading || !fullUserData}
               style={{ fontFamily: 'Comic Neue' }}
             />
             <button
               onClick={sendMessage}
               disabled={!inputMessage.trim() || isLoading || !fullUserData}
-              className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white p-3 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white p-4 rounded-full transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               <Send size={20} />
             </button>
@@ -311,6 +352,24 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
             </p>
           </div>
         </div>
+        
+        {/* CSS para animaciones */}
+        <style jsx>{`
+          @keyframes fade-in {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+          }
+        `}</style>
       </div>
     </div>
   )
