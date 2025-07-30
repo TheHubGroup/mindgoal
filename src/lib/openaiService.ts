@@ -120,7 +120,8 @@ No te identifiques con nombre propio. Eres una herramienta de análisis de Mind 
 export const openaiService = {
   async analyzeUserBehavior(userData: UserAnalysisData, customQuestion?: string): Promise<string> {
     if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not configured')
+      console.error('❌ OpenAI API key not configured')
+      return 'Error: La clave de API de OpenAI no está configurada. Por favor, contacta al administrador para configurar la variable de entorno VITE_OPENAI_API_KEY.'
     }
 
     try {
@@ -130,6 +131,9 @@ export const openaiService = {
       // Preparar el mensaje del usuario
       const userMessage = customQuestion || 
         "Por favor, realiza un análisis socioemocional completo de este usuario basado en todos los datos disponibles."
+
+      console.log('🔍 Iniciando análisis con OpenAI...')
+      console.log('📊 Contexto del usuario preparado:', userContext.length, 'caracteres')
 
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -156,15 +160,41 @@ export const openaiService = {
       })
 
       if (!response.ok) {
+        console.error('❌ Error en respuesta de OpenAI:', response.status, response.statusText)
         const errorData = await response.json()
-        throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
+        console.error('❌ Detalles del error:', errorData)
+        
+        if (response.status === 401) {
+          return 'Error: Clave de API de OpenAI inválida o expirada. Por favor, verifica la configuración.'
+        } else if (response.status === 429) {
+          return 'Error: Se ha excedido el límite de uso de la API de OpenAI. Por favor, intenta más tarde.'
+        } else if (response.status === 400) {
+          return 'Error: Solicitud inválida a OpenAI. El contenido puede ser demasiado largo o contener caracteres no válidos.'
+        } else {
+          return `Error de OpenAI (${response.status}): ${errorData.error?.message || 'Error desconocido'}`
+        }
       }
 
       const data = await response.json()
-      return data.choices[0]?.message?.content || 'No se pudo generar el análisis.'
+      console.log('✅ Respuesta exitosa de OpenAI')
+      
+      const analysis = data.choices[0]?.message?.content
+      if (!analysis) {
+        console.error('❌ No se recibió contenido en la respuesta de OpenAI:', data)
+        return 'Error: OpenAI no devolvió contenido en la respuesta. Por favor, intenta de nuevo.'
+      }
+      
+      return analysis
     } catch (error) {
       console.error('Error calling OpenAI API:', error)
-      throw error
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        return 'Error de conexión: No se pudo conectar con OpenAI. Verifica tu conexión a internet.'
+      } else if (error instanceof SyntaxError) {
+        return 'Error: Respuesta inválida de OpenAI. Por favor, intenta de nuevo.'
+      } else {
+        return `Error inesperado: ${error.message || 'Error desconocido al comunicarse con OpenAI'}`
+      }
     }
   },
 
@@ -319,7 +349,8 @@ INFORMACIÓN PERSONAL:
 
   async chatWithAnalysis(userData: UserAnalysisData, messages: ChatMessage[]): Promise<string> {
     if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not configured')
+      console.error('❌ OpenAI API key not configured for chat')
+      return 'Error: La clave de API de OpenAI no está configurada para el chat.'
     }
 
     try {
@@ -343,6 +374,8 @@ Responde de manera conversacional manteniendo tu rol de analista socioemocional.
         }))
       ]
 
+      console.log('💬 Enviando mensaje de chat a OpenAI...')
+
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -359,15 +392,37 @@ Responde de manera conversacional manteniendo tu rol de analista socioemocional.
       })
 
       if (!response.ok) {
+        console.error('❌ Error en chat con OpenAI:', response.status, response.statusText)
         const errorData = await response.json()
-        throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
+        console.error('❌ Detalles del error de chat:', errorData)
+        
+        if (response.status === 401) {
+          return 'Error: Clave de API de OpenAI inválida para el chat.'
+        } else if (response.status === 429) {
+          return 'Error: Límite de uso excedido. Intenta más tarde.'
+        } else {
+          return `Error de chat (${response.status}): ${errorData.error?.message || 'Error desconocido'}`
+        }
       }
 
       const data = await response.json()
-      return data.choices[0]?.message?.content || 'No se pudo generar la respuesta.'
+      console.log('✅ Respuesta de chat exitosa')
+      
+      const chatResponse = data.choices[0]?.message?.content
+      if (!chatResponse) {
+        console.error('❌ No se recibió contenido en la respuesta de chat:', data)
+        return 'Error: No se pudo generar la respuesta del chat.'
+      }
+      
+      return chatResponse
     } catch (error) {
       console.error('Error in chat with analysis:', error)
-      throw error
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        return 'Error de conexión en el chat. Verifica tu conexión a internet.'
+      } else {
+        return `Error en el chat: ${error.message || 'Error desconocido'}`
+      }
     }
   }
 }

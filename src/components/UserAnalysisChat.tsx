@@ -112,7 +112,18 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
     setError(null)
 
     try {
+      console.log('🚀 Iniciando análisis inicial...')
+      console.log('📊 Datos del usuario:', fullUserData)
+      
       const analysis = await openaiService.analyzeUserBehavior(fullUserData)
+      
+      console.log('✅ Análisis recibido:', analysis.substring(0, 100) + '...')
+      
+      // Verificar si la respuesta es un error
+      if (analysis.startsWith('Error:')) {
+        setError(analysis)
+        return
+      }
       
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -124,7 +135,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
       setHasInitialAnalysis(true)
     } catch (err) {
       console.error('Error generating initial analysis:', err)
-      setError('Error al generar el análisis inicial. Por favor, intenta de nuevo.')
+      setError(`Error al generar el análisis inicial: ${err.message || 'Error desconocido'}`)
     } finally {
       setIsLoading(false)
     }
@@ -150,7 +161,17 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
     setError(null)
 
     try {
+      console.log('💬 Enviando mensaje del usuario...')
+      
       const response = await openaiService.chatWithAnalysis(fullUserData, newMessages)
+      
+      console.log('✅ Respuesta del chat recibida')
+      
+      // Verificar si la respuesta es un error
+      if (response.startsWith('Error:')) {
+        setError(response)
+        return
+      }
       
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -161,7 +182,7 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
       setMessages([...newMessages, assistantMessage])
     } catch (err) {
       console.error('Error sending message:', err)
-      setError('Error al enviar el mensaje. Por favor, intenta de nuevo.')
+      setError(`Error al enviar el mensaje: ${err.message || 'Error desconocido'}`)
     } finally {
       setIsLoading(false)
     }
@@ -249,6 +270,18 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
                 Generar Análisis Inicial
               </button>
               )}
+              
+              {/* Debug info para desarrollo */}
+              {process.env.NODE_ENV === 'development' && fullUserData && (
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg text-xs">
+                  <details>
+                    <summary className="cursor-pointer font-bold">Debug: Datos del usuario</summary>
+                    <pre className="mt-2 overflow-auto max-h-40">
+                      {JSON.stringify(fullUserData, null, 2)}
+                    </pre>
+                  </details>
+                </div>
+              )}
             </div>
           )}
 
@@ -314,8 +347,11 @@ const UserAnalysisChat: React.FC<UserAnalysisChatProps> = ({ userData, isOpen, o
             <div className="bg-red-50 border-l-4 border-red-400 text-red-700 p-4 rounded-lg flex items-center gap-3 shadow-lg">
               <AlertCircle size={20} />
               <div>
-                <div className="font-semibold">Error en el análisis</div>
-                <div className="text-sm">{error}</div>
+                <div className="font-semibold">Error en el análisis:</div>
+                <div className="text-sm whitespace-pre-wrap">{error}</div>
+                <div className="text-xs mt-2 opacity-70">
+                  Si el problema persiste, verifica que la API key de OpenAI esté configurada correctamente.
+                </div>
               </div>
             </div>
           )}
