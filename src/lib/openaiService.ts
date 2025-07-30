@@ -121,10 +121,7 @@ export const openaiService = {
   async analyzeUserBehavior(userData: UserAnalysisData, customQuestion?: string): Promise<string> {
     if (!OPENAI_API_KEY) {
       console.error('❌ OpenAI API key not configured')
-      
-      // Modo demostración - generar análisis de ejemplo
-      console.log('🎭 Ejecutando en modo demostración')
-      return this.generateDemoAnalysis(userData)
+      return 'Error: La clave de API de OpenAI no está configurada. Por favor, contacta al administrador para configurar la variable de entorno VITE_OPENAI_API_KEY.'
     }
 
     try {
@@ -199,85 +196,6 @@ export const openaiService = {
         return `Error inesperado: ${error.message || 'Error desconocido al comunicarse con OpenAI'}`
       }
     }
-  },
-
-  generateDemoAnalysis(userData: UserAnalysisData): string {
-    const userName = `${userData.nombre} ${userData.apellido}`.trim()
-    const edad = userData.edad
-    const grado = userData.grado
-    
-    // Contar actividades para personalizar el análisis
-    const timelineCount = userData.timeline_notes?.length || 0
-    const lettersCount = userData.letters?.length || 0
-    const responsesCount = userData.user_responses?.length || 0
-    const meditationCount = userData.meditation_sessions?.length || 0
-    const emotionLogsCount = userData.emotion_logs?.length || 0
-    
-    return `# ANÁLISIS SOCIOEMOCIONAL - MODO DEMOSTRACIÓN
-
-**Usuario:** ${userName} (${edad} años, ${grado})
-**Fecha:** ${new Date().toLocaleDateString('es-ES')}
-
----
-
-## 1. RESUMEN GENERAL DEL ESTADO SOCIOEMOCIONAL
-
-${userName} muestra un perfil socioemocional en desarrollo típico para su edad. A través de las ${timelineCount + lettersCount + responsesCount + meditationCount + emotionLogsCount} actividades completadas en la plataforma, se observa un estudiante que está explorando activamente su mundo interior y desarrollando habilidades de autoconocimiento.
-
-${timelineCount > 0 ? `La creación de ${timelineCount} notas en su línea del tiempo indica una capacidad reflexiva desarrollada y un interés por organizar sus experiencias temporalmente.` : ''}
-
-${lettersCount > 0 ? `Las ${lettersCount} cartas personales escritas demuestran una habilidad notable para la introspección y la comunicación escrita de emociones.` : ''}
-
-## 2. RASGOS OBSERVABLES DE PERSONALIDAD EMOCIONAL
-
-- **Capacidad reflexiva:** Demuestra interés por el autoconocimiento a través de su participación en actividades introspectivas
-- **Expresión emocional:** ${lettersCount > 0 ? 'Muestra facilidad para expresar pensamientos y sentimientos por escrito' : 'Está desarrollando habilidades de expresión emocional'}
-- **Organización temporal:** ${timelineCount > 0 ? 'Capacidad para estructurar experiencias en el tiempo' : 'En proceso de desarrollar perspectiva temporal'}
-- **Compromiso con el crecimiento:** Su participación activa indica motivación hacia el desarrollo personal
-
-## 3. TEMAS A CONSIDERAR
-
-- **Desarrollo de la identidad:** Como es típico en su grupo etario, está en proceso de construcción de su identidad personal
-- **Necesidad de validación:** Puede beneficiarse de reconocimiento positivo por sus esfuerzos de autoconocimiento
-- **Equilibrio emocional:** Importante mantener un balance entre introspección y actividades sociales
-
-## 4. CONDUCTAS OBSERVABLES ESPERADAS
-
-En el entorno escolar y familiar, es probable observar:
-- Mayor consciencia de sus propias emociones y reacciones
-- Interés por actividades que involucren reflexión personal
-- Posible tendencia a analizar situaciones antes de reaccionar
-- Capacidad creciente para verbalizar sus sentimientos
-
-## 5. OPORTUNIDADES PARA POTENCIAR HABILIDADES
-
-**Áreas de fortalecimiento recomendadas:**
-- **Autorregulación emocional:** Continuar desarrollando estrategias de manejo emocional
-- **Comunicación asertiva:** Fortalecer la expresión de necesidades y límites
-- **Empatía:** Expandir la comprensión de las emociones de otros
-- **Resiliencia:** Desarrollar herramientas para enfrentar desafíos
-
-## 6. SUGERENCIAS PRÁCTICAS DE ACOMPAÑAMIENTO
-
-**Para padres y educadores:**
-
-- **Validar su proceso:** Reconocer y valorar sus esfuerzos de autoconocimiento
-- **Crear espacios de diálogo:** Establecer momentos regulares para conversaciones emocionales
-- **Modelar inteligencia emocional:** Demostrar manejo saludable de emociones propias
-- **Fomentar la escritura:** Continuar promoviendo la expresión escrita como herramienta de procesamiento
-- **Equilibrar introspección y socialización:** Asegurar tiempo tanto para reflexión personal como para interacción social
-
-**Actividades recomendadas:**
-- Journaling o diario emocional regular
-- Actividades de mindfulness apropiadas para su edad
-- Proyectos creativos que permitan expresión emocional
-- Conversaciones familiares sobre emociones y experiencias
-
----
-
-*Este análisis está basado en las actividades completadas en la plataforma Mind Goal. Para una evaluación más completa, se recomienda observación directa en contextos reales y, si es necesario, consulta con profesionales especializados en desarrollo socioemocional.*
-
-**Nota:** Este es un análisis de demostración generado automáticamente. Para análisis personalizados completos, configure la integración con OpenAI.`
   },
 
   prepareUserContext(userData: UserAnalysisData): string {
@@ -432,10 +350,7 @@ INFORMACIÓN PERSONAL:
   async chatWithAnalysis(userData: UserAnalysisData, messages: ChatMessage[]): Promise<string> {
     if (!OPENAI_API_KEY) {
       console.error('❌ OpenAI API key not configured for chat')
-      
-      // Modo demostración para chat
-      console.log('🎭 Chat en modo demostración')
-      return this.generateDemoChatResponse(userData, messages)
+      return 'Error: La clave de API de OpenAI no está configurada para el chat.'
     }
 
     try {
@@ -509,65 +424,5 @@ Responde de manera conversacional manteniendo tu rol de analista socioemocional.
         return `Error en el chat: ${error.message || 'Error desconocido'}`
       }
     }
-  },
-
-  generateDemoChatResponse(userData: UserAnalysisData, messages: ChatMessage[]): string {
-    const lastMessage = messages[messages.length - 1]
-    const userName = `${userData.nombre} ${userData.apellido}`.trim()
-    
-    // Respuestas de demostración basadas en palabras clave
-    const userQuestion = lastMessage.content.toLowerCase()
-    
-    if (userQuestion.includes('emocion') || userQuestion.includes('sentimiento')) {
-      return `Basándome en las actividades de ${userName}, observo un desarrollo emocional apropiado para su edad. ${userData.emotion_logs?.length ? `Los ${userData.emotion_logs.length} registros emocionales muestran una buena capacidad de autoconocimiento.` : 'Sería beneficioso fomentar más actividades de reconocimiento emocional.'} 
-
-Es importante continuar validando sus emociones y ayudarle a desarrollar un vocabulario emocional más amplio.
-
-*Nota: Esta es una respuesta de demostración. Para análisis personalizados, configure la API de OpenAI.*`
-    }
-    
-    if (userQuestion.includes('recomendacion') || userQuestion.includes('sugerencia')) {
-      return `Para ${userName}, recomiendo:
-
-**Estrategias inmediatas:**
-- Mantener rutinas de reflexión personal
-- Fomentar la expresión creativa
-- Crear espacios de diálogo familiar
-
-**A largo plazo:**
-- Desarrollar habilidades de autorregulación
-- Fortalecer la comunicación asertiva
-- Promover la empatía hacia otros
-
-*Nota: Esta es una respuesta de demostración. Para recomendaciones personalizadas detalladas, configure la API de OpenAI.*`
-    }
-    
-    if (userQuestion.includes('comportamiento') || userQuestion.includes('conducta')) {
-      return `En cuanto al comportamiento de ${userName}, es probable observar:
-
-**En el aula:**
-- Mayor consciencia de sus reacciones emocionales
-- Posible tendencia a reflexionar antes de actuar
-- Interés por actividades que involucren autoconocimiento
-
-**En casa:**
-- Momentos de introspección
-- Posible necesidad de validación emocional
-- Capacidad creciente para expresar sentimientos
-
-*Nota: Esta es una respuesta de demostración basada en patrones generales.*`
-    }
-    
-    // Respuesta genérica
-    return `Gracias por tu pregunta sobre ${userName}. En modo demostración, puedo ofrecer insights generales basados en las actividades completadas.
-
-Para obtener análisis específicos y personalizados que respondan directamente a tu pregunta, es necesario configurar la integración con OpenAI.
-
-**¿Te gustaría que te ayude con:**
-- Configuración de la API de OpenAI
-- Interpretación de las actividades específicas
-- Sugerencias generales de acompañamiento
-
-*Nota: Este es el modo demostración. Para análisis completos y personalizados, configure la variable de entorno VITE_OPENAI_API_KEY.*`
   }
 }
