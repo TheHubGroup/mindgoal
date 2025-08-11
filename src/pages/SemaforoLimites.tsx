@@ -29,9 +29,9 @@ interface Situation {
 const situations: Situation[] = [
   {
     id: 'situacion_1',
-    title: 'Alguien te pide tu contraseña',
+    title: 'Alguien te quita algo sin tu permiso',
     imageUrl: 'https://images.pexels.com/photos/5474028/pexels-photo-5474028.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Un amigo te pide que le des tu contraseña de redes sociales para "ayudarte" con algo.'
+    description: 'Alguien de tu salón toma algo que es tuyo, no te avisó que lo necesitaba. ¿Qué te parece ese comportamiento? Exprésalo en el Semáforo.'
   },
   {
     id: 'situacion_2', 
