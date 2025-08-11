@@ -40,6 +40,21 @@ const HomePage = () => {
   const [activityStatuses, setActivityStatuses] = useState<Record<string, ActivityStatus>>({})
   const [isLoadingStatuses, setIsLoadingStatuses] = useState(true)
 
+  // Function to get display name from profile
+  const getDisplayName = () => {
+    if (!profile) return 'Usuario'
+    
+    if (profile.first_name && profile.last_name) {
+      return `${profile.first_name} ${profile.last_name}`
+    } else if (profile.first_name) {
+      return profile.first_name
+    } else if (profile.username) {
+      return profile.username
+    } else {
+      return 'Usuario'
+    }
+  }
+
   // Mostrar modal de bienvenida cuando el usuario inicia sesión
   useEffect(() => {
     if (user && !profileLoading) {
