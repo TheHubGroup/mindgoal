@@ -66,7 +66,6 @@ const LaComunicacion = () => {
     window.scrollTo(0, 0)
   }, [])
 
-
   const loadSession = async () => {
     if (!user) return
     
@@ -189,7 +188,6 @@ const LaComunicacion = () => {
       const evaluationPrompt = `
         Analiza las respuestas de este usuario y proporciona feedback directo en primera persona:
 
-        SITUACIÓN DE SOFÍA:
         SITUACIÓN DE VALERIA:
         - Es nueva en el colegio
         - No tiene amigos

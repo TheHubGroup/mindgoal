@@ -6,6 +6,7 @@ import { meditationService } from './meditationService'
 import { angerMenuService } from './angerMenuService'
 import { emotionMatchService } from './emotionMatchService'
 import { emotionLogService } from './emotionLogService'
+import { communicationService } from './communicationService'
 
 export interface LeaderboardUser {
   id: string
@@ -108,6 +109,28 @@ export const leaderboardService = {
         }
       })
 
+      // Obtener sesiones de "La Comunicación"
+      const communicationSessions = await communicationService.getAllSessions(user.id)
+      communicationSessions.forEach(session => {
+        // Puntos por mensajes escritos (1 punto por carácter)
+        if (session.messages && Array.isArray(session.messages)) {
+          session.messages.forEach((message: any) => {
+            if (message.sender === 'user' && message.text) {
+              totalCharacters += message.text.length
+            }
+          })
+        }
+        
+        // Bonus por completar la conversación
+        if (session.completed_at) {
+          totalCharacters += 300 // Bonus por completar la actividad de comunicación
+        }
+        
+        // Bonus por evaluación de IA generada
+        if (session.ai_evaluation) {
+          totalCharacters += 100 // Bonus por recibir evaluación
+        }
+      })
       // Resultados de "Nombra tus Emociones"
       const emotionStats = await emotionMatchService.getUserStats(userId)
       totalCharacters += emotionStats.totalAttempts * 10

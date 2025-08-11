@@ -26,6 +26,7 @@ import { userResponsesService } from '../lib/userResponsesService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
 import { angerMenuService } from '../lib/angerMenuService'
+import { communicationService } from '../lib/communicationService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -147,6 +148,17 @@ const HomePage = () => {
             'Sesión iniciada' : undefined
       }
 
+      // La Comunicación
+      const communicationSessions = await communicationService.getAllSessions(user.id)
+      const completedCommunicationSessions = communicationSessions.filter(s => s.completed_at)
+      statuses['la-comunicacion'] = {
+        hasData: communicationSessions.length > 0,
+        count: completedCommunicationSessions.length,
+        lastActivity: communicationSessions.length > 0 ? 
+          completedCommunicationSessions.length > 0 ? 
+            `${completedCommunicationSessions.length} conversación${completedCommunicationSessions.length > 1 ? 'es' : ''} completada${completedCommunicationSessions.length > 1 ? 's' : ''}` :
+            'Conversación iniciada' : undefined
+      }
       setActivityStatuses(statuses)
     } catch (error) {
       console.error('Error loading activity statuses:', error)

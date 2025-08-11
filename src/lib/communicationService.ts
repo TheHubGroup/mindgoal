@@ -131,13 +131,7 @@ export const communicationService = {
       const { error } = await supabase
         .from('communication_sessions')
         .update({
-          messages: messages.map(msg => ({
-            id: msg.id,
-            text: msg.text,
-            sender: msg.sender,
-            timestamp: msg.timestamp.toISOString(),
-            step: 0
-          })),
+          messages: messages,
           completed_at: new Date().toISOString(),
           ai_evaluation: aiEvaluation,
           updated_at: new Date().toISOString()
