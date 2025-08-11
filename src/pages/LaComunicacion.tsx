@@ -311,6 +311,7 @@ const LaComunicacion = () => {
               💡 Instrucciones
             </h3>
             <div className="text-white font-bold text-opacity-100 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
+              <p>• Hola! Gracias por estar aquí, necesitamos tu ayuda, tenemos un Chat con una alumna nueva llamada Valeria</p>
               <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
               <p>• Responde con empatía y comprensión</p>
               <p>• Ofrece consejos útiles y positivos</p>
