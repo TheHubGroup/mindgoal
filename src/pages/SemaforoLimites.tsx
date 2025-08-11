@@ -48,7 +48,7 @@ const situations: Situation[] = [
   {
     id: 'situacion_4',
     title: 'En un juego, siempre te ponen el último para elegir equipo',
-    imageUrl: 'https://viact.org/imagenes/limite_04.png?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: 'https://viact.org/imagenes/limite_04.png? auto=compress&cs=tinysrgb&w=400',
     description: '¿Qué tan importante es para ti ser el primero en ser elegido?'
   },
   {
