@@ -177,40 +177,6 @@ const TimelineActivity = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
-      {/* Header */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="text-white hover:text-gray-200 transition-colors"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <Clock size={32} className="text-white" />
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-              Mi Línea del Tiempo
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Botón de Guardar */}
-            <button
-              onClick={handleSaveAll}
-              disabled={isSaving || !hasUnsavedChanges}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
-                hasUnsavedChanges 
-                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white animate-pulse' 
-                  : 'bg-green-500 text-white'
-              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <Save size={20} />
-              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
-            </button>
-            <UserMenu />
-          </div>
-        </div>
-      </div>
-
       {/* Mensaje de estado */}
       {saveMessage && (
         <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
@@ -269,6 +235,40 @@ const TimelineActivity = () => {
                 <div className="text-sm opacity-80">Sueños</div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-white hover:text-gray-200 transition-colors"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <Clock size={32} className="text-white" />
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+              Mi Línea del Tiempo
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            {/* Botón de Guardar */}
+            <button
+              onClick={handleSaveAll}
+              disabled={isSaving || !hasUnsavedChanges}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
+                hasUnsavedChanges 
+                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white animate-pulse' 
+                  : 'bg-green-500 text-white'
+              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Save size={20} />
+              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
+            </button>
+            <UserMenu />
           </div>
         </div>
       </div>
