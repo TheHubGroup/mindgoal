@@ -35,9 +35,9 @@ const situations: Situation[] = [
   },
   {
     id: 'situacion_2', 
-    title: 'Te piden hacer algo que no quieres',
-    imageUrl: 'https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Alguien insiste en que hagas algo que te hace sentir incómodo/a.'
+    title: 'Intervienes en clase y un compañero se burla de tu respuesta',
+    imageUrl: 'https://viact.org/imagenes/limite_02.png?auto=compress&cs=tinysrgb&w=400',
+    description: '¿Cómo te sientes con esa acción?'
   },
   {
     id: 'situacion_3',
