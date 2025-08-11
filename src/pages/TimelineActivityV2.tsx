@@ -304,56 +304,6 @@ const TimelineActivityV2 = () => {
       )}
 
       {/* Main Content */}
-      {/* Header moved to bottom */}
-      <div className="bg-white bg-opacity-80 backdrop-blur-md border-b-4 border-black shadow-lg relative z-10">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="text-black hover:text-gray-700 transition-colors bg-white bg-opacity-80 rounded-full p-3 hover:bg-opacity-100 border-3 border-black shadow-lg transform hover:scale-105"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
-                  <Clock size={24} className="text-black" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-pink-400 rounded-full animate-ping" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-black text-black tracking-tight leading-none" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
-                  MI LÍNEA DEL TIEMPO V2
-                </h1>
-                <div className="flex items-center gap-2 text-gray-800">
-                  <Palette size={16} />
-                  <span className="text-sm font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
-                    VERSIÓN EXPERIMENTAL
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Botón de Guardar */}
-            <button
-              onClick={handleSaveAll}
-              disabled={isSaving || !hasUnsavedChanges}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full font-black transition-all transform hover:scale-105 shadow-lg border-4 border-black tracking-wide ${
-                hasUnsavedChanges 
-                  ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white animate-pulse' 
-                  : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-              style={{ fontFamily: 'Fredoka', fontWeight: '900' }}
-            >
-              <Save size={20} />
-              {isSaving ? 'GUARDANDO...' : hasUnsavedChanges ? 'GUARDAR CAMBIOS' : 'TODO GUARDADO'}
-            </button>
-            <UserMenu />
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
         {/* Instrucciones */}
         <div className="text-center mb-8">
@@ -401,6 +351,7 @@ const TimelineActivityV2 = () => {
             </div>
           ))}
         </div>
+      </div>
 
       {/* Editor Modal */}
       <TimelineNoteEditor
