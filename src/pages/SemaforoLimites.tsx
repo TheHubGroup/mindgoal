@@ -66,7 +66,7 @@ const situations: Situation[] = [
   {
     id: 'situacion_7',
     title: 'Ignoran tus opiniones',
-    imageUrl: 'https://images.pexels.com/photos/8613087/pexels-photo-8613087.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: 'https://viact.org/imagenes/limite_07.png?auto=compress&cs=tinysrgb&w=400',
     description: 'En un grupo, siempre ignoran lo que tienes que decir.'
   },
   {
