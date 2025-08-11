@@ -310,7 +310,7 @@ const LaComunicacion = () => {
             <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
               💡 Instrucciones
             </h3>
-            <div className="text-white font-bold text-opacity-90 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
+            <div className="text-white font-bold text-opacity-100 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
               <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
               <p>• Responde con empatía y comprensión</p>
               <p>• Ofrece consejos útiles y positivos</p>
