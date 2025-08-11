@@ -47,7 +47,7 @@ const LaComunicacion = () => {
   const [isLoading, setIsLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Conversación predefinida de Valeria (la niña ficticia)
+  // Conversación predefinida de Sofia (la niña ficticia)
   const sofiaMessages = [
     "Hola... 😔 Soy nueva en este colegio y me siento muy sola. No tengo amigos y todos ya tienen sus grupos. ¿Me gustaría saber si tienes algún consejo para ayudarme?",
     "En el recreo me quedo sola porque no sé cómo acercarme a los otros niños. Tengo miedo de que me rechacen. ¿Tú que harías en mi lugar?",
