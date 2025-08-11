@@ -41,9 +41,9 @@ const situations: Situation[] = [
   },
   {
     id: 'situacion_3',
-    title: 'Tocan tus cosas sin permiso',
-    imageUrl: 'https://images.pexels.com/photos/8613092/pexels-photo-8613092.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Alguien toma tus pertenencias sin preguntarte primero.'
+    title: 'Un familiar entra a tu cuarto sin tocar la puerta',
+    imageUrl: 'https://viact.org/imagenes/limite_03.png?auto=compress&cs=tinysrgb&w=400',
+    description: '¿Cómo se manejan los espacios en tu entorno?.'
   },
   {
     id: 'situacion_4',
