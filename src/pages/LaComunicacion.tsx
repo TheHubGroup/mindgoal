@@ -62,6 +62,11 @@ const LaComunicacion = () => {
   }, [user])
 
   useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     scrollToBottom()
   }, [messages])
 
@@ -188,6 +193,7 @@ const LaComunicacion = () => {
         Analiza las respuestas de este usuario y proporciona feedback directo en primera persona:
 
         SITUACIÓN DE SOFÍA:
+        SITUACIÓN DE VALERIA:
         - Es nueva en el colegio
         - No tiene amigos
         - Se siente rechazada y sola
@@ -200,7 +206,7 @@ const LaComunicacion = () => {
         Proporciona un feedback directo al usuario (en segunda persona - "tú") considerando:
         1. Nivel de empatía mostrado
         2. Calidad de los consejos dados
-        3. Comprensión de la situación emocional de Sofía
+        3. Comprensión de la situación emocional de Valeria
         4. Habilidades de comunicación demostradas
 
         El feedback debe:
@@ -457,7 +463,7 @@ const LaComunicacion = () => {
                   <span>Analizando tus respuestas...</span>
                 </div>
               ) : (
-                <div className="text-gray-700 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                      Valeria
                   {evaluation.split('\n').map((paragraph, index) => (
                     <p key={index} className="mb-3">
                       {paragraph}
