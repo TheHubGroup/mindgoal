@@ -375,7 +375,7 @@ const HomePage = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Activities Section Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-20">
           <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
             Elige una Actividad
           </h2>
