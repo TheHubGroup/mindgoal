@@ -110,7 +110,7 @@ export const leaderboardService = {
       })
 
       // Obtener sesiones de "La Comunicación"
-      const communicationSessions = await communicationService.getAllSessions(user.id)
+      const communicationSessions = await communicationService.getAllSessions(userId)
       communicationSessions.forEach(session => {
         // Puntos por mensajes escritos (1 punto por carácter)
         if (session.messages && Array.isArray(session.messages)) {
