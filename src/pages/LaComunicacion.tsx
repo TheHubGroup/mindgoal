@@ -51,7 +51,8 @@ const LaComunicacion = () => {
   const sofiaMessages = [
     "Hola... 😔 Soy nueva en este colegio y me siento muy sola. No tengo amigos y todos ya tienen sus grupos.",
     "En el recreo me quedo sola porque no sé cómo acercarme a los otros niños. Tengo miedo de que me rechacen.",
-    "Ayer intenté sentarme con unas niñas en el almuerzo pero me dijeron que ese lugar era de otra persona. Me sentí muy mal 😢"
+    "Ayer intenté sentarme con unas niñas en el almuerzo pero me dijeron que ese lugar era de otra persona. Me sentí muy mal 😢",
+    "Muchas gracias por todos tus consejos... 🥰 Me has ayudado mucho y ahora me siento más confiada. ¡Eres muy amable!"
   ]
 
   useEffect(() => {
@@ -153,8 +154,21 @@ const LaComunicacion = () => {
         setMessages(prev => [...prev, sofiaMessage])
         setCurrentStep(prev => prev + 1)
       } else {
-        // Conversación terminada, generar evaluación
-        generateEvaluation(newMessages)
+        // Mostrar mensaje de que se está generando la evaluación
+        const evaluationMessage: ChatMessage = {
+          id: (Date.now() + 2).toString(),
+          text: "Estoy generando tu evaluación personalizada... ✨",
+          sender: 'sofia',
+          timestamp: new Date(),
+          isTyping: false
+        }
+        
+        setMessages(prev => [...prev, evaluationMessage])
+        
+        // Después de mostrar el mensaje, generar evaluación
+        setTimeout(() => {
+          generateEvaluation(newMessages)
+        }, 2000)
       }
     }, 2500)
   }
@@ -171,7 +185,7 @@ const LaComunicacion = () => {
         .join('\n')
 
       const evaluationPrompt = `
-        Analiza las respuestas de este usuario a una niña de 10 años llamada Sofía que se siente sola en su nuevo colegio:
+        Analiza las respuestas de este usuario y proporciona feedback directo en primera persona:
 
         SITUACIÓN DE SOFÍA:
         - Es nueva en el colegio
@@ -183,20 +197,21 @@ const LaComunicacion = () => {
         RESPUESTAS DEL USUARIO:
         ${conversationContext}
 
-        Por favor, evalúa las respuestas del usuario considerando:
+        Proporciona un feedback directo al usuario (en segunda persona - "tú") considerando:
         1. Nivel de empatía mostrado
         2. Calidad de los consejos dados
         3. Comprensión de la situación emocional de Sofía
         4. Habilidades de comunicación demostradas
 
-        Proporciona una evaluación positiva y constructiva que:
-        - Felicite al usuario por su participación
-        - Destaque los aspectos positivos de sus respuestas
-        - Ofrezca consejos para mejorar la empatía y comunicación
-        - Use un lenguaje apropiado para niños/adolescentes
-        - Sea motivador y educativo
+        El feedback debe:
+        - Hablar directamente al usuario ("Tú mostraste...", "Tu respuesta fue...")
+        - Ser positivo y motivador
+        - Destacar fortalezas específicas
+        - Ofrecer 1-2 consejos concretos para mejorar
+        - Ser conciso (máximo 150 palabras)
+        - Usar lenguaje apropiado para la edad del usuario
 
-        Máximo 300 palabras.
+        Máximo 150 palabras.
       `
 
       const aiEvaluation = await openaiService.analyzeUserBehavior({
@@ -221,7 +236,7 @@ const LaComunicacion = () => {
 
     } catch (error) {
       console.error('Error generating evaluation:', error)
-      setEvaluation('¡Excelente trabajo! Has mostrado mucha empatía y comprensión hacia Sofía. Tus consejos fueron muy thoughtful y demuestran que entiendes cómo se siente. Sigue practicando estas habilidades de comunicación.')
+      setEvaluation('¡Excelente trabajo! Mostraste mucha empatía y comprensión hacia Sofía. Tus consejos fueron muy considerados y demuestran que entiendes cómo se siente. Sigue practicando estas habilidades de comunicación.')
       setShowEvaluation(true)
     } finally {
       setIsLoadingEvaluation(false)
@@ -285,12 +300,12 @@ const LaComunicacion = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-md mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {!showEvaluation ? (
-          /* Mobile Phone Frame */
-          <div className="bg-black rounded-[3rem] p-2 shadow-2xl">
-            {/* Phone Screen */}
-            <div className="bg-white rounded-[2.5rem] overflow-hidden h-[700px] flex flex-col">
+          /* Tablet Frame */
+          <div className="bg-black rounded-[2rem] p-3 shadow-2xl">
+            {/* Tablet Screen */}
+            <div className="bg-white rounded-[1.5rem] overflow-hidden h-[600px] flex flex-col">
               {/* Status Bar */}
               <div className="bg-gray-900 text-white px-6 py-2 flex justify-between items-center text-sm">
                 <div className="flex items-center gap-1">
@@ -311,46 +326,46 @@ const LaComunicacion = () => {
                 >
                   <ArrowLeft size={20} />
                 </button>
-                <div className="w-10 h-10 bg-pink-300 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">👧</span>
+                <div className="w-12 h-12 bg-pink-300 rounded-full flex items-center justify-center">
+                  <span className="text-3xl">👧</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg" style={{ fontFamily: 'Fredoka' }}>
+                  <h3 className="font-bold text-xl" style={{ fontFamily: 'Fredoka' }}>
                     Sofía
                   </h3>
-                  <p className="text-xs text-green-100">
+                  <p className="text-sm text-green-100">
                     {isTyping ? 'escribiendo...' : 'en línea'}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <Phone size={20} />
-                  <MoreVertical size={20} />
+                <div className="flex gap-3">
+                  <Phone size={24} />
+                  <MoreVertical size={24} />
                 </div>
               </div>
 
               {/* Chat Messages */}
-              <div className="flex-1 bg-gray-100 p-4 overflow-y-auto space-y-3">
+              <div className="flex-1 bg-gray-100 p-6 overflow-y-auto space-y-4">
                 {messages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-[80%] p-3 rounded-2xl shadow-sm ${
+                      className={`max-w-[70%] p-4 rounded-2xl shadow-sm ${
                         message.sender === 'user'
                           ? 'bg-green-500 text-white rounded-br-md'
                           : 'bg-white text-gray-800 rounded-bl-md'
                       }`}
                     >
-                      <p className="text-sm leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                      <p className="text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
                         {message.text}
                       </p>
-                      <div className={`text-xs mt-1 flex items-center gap-1 ${
+                      <div className={`text-sm mt-2 flex items-center gap-1 ${
                         message.sender === 'user' ? 'text-green-100 justify-end' : 'text-gray-500'
                       }`}>
                         <span>{message.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
                         {message.sender === 'user' && (
-                          <CheckCircle size={12} className="text-green-200" />
+                          <CheckCircle size={14} className="text-green-200" />
                         )}
                       </div>
                     </div>
@@ -360,14 +375,14 @@ const LaComunicacion = () => {
                 {/* Typing Indicator */}
                 {isTyping && (
                   <div className="flex justify-start">
-                    <div className="bg-white text-gray-800 rounded-2xl rounded-bl-md p-3 shadow-sm">
+                    <div className="bg-white text-gray-800 rounded-2xl rounded-bl-md p-4 shadow-sm">
                       <div className="flex items-center gap-1">
                         <div className="flex gap-1">
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce"></div>
+                          <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
-                        <span className="text-xs text-gray-500 ml-2">Sofía está escribiendo...</span>
+                        <span className="text-sm text-gray-500 ml-3">Sofía está escribiendo...</span>
                       </div>
                     </div>
                   </div>
@@ -378,32 +393,32 @@ const LaComunicacion = () => {
 
               {/* Chat Input */}
               {currentStep <= sofiaMessages.length && !showEvaluation && (
-                <div className="bg-white border-t border-gray-200 p-3">
-                  <div className="flex items-center gap-2">
+                <div className="bg-white border-t border-gray-200 p-4">
+                  <div className="flex items-center gap-3">
                     <button className="text-gray-500 hover:text-gray-700">
-                      <Smile size={24} />
+                      <Smile size={28} />
                     </button>
-                    <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 flex items-center gap-2">
+                    <div className="flex-1 bg-gray-100 rounded-full px-5 py-3 flex items-center gap-3">
                       <input
                         type="text"
                         value={currentMessage}
                         onChange={(e) => setCurrentMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                         placeholder="Escribe un mensaje..."
-                        className="flex-1 bg-transparent outline-none text-gray-800"
+                        className="flex-1 bg-transparent outline-none text-gray-800 text-lg"
                         style={{ fontFamily: 'Comic Neue' }}
                         disabled={isTyping}
                       />
                       <button className="text-gray-500 hover:text-gray-700">
-                        <Camera size={20} />
+                        <Camera size={24} />
                       </button>
                     </div>
                     <button
                       onClick={sendMessage}
                       disabled={!currentMessage.trim() || isTyping}
-                      className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {currentMessage.trim() ? <Send size={20} /> : <Mic size={20} />}
+                      {currentMessage.trim() ? <Send size={24} /> : <Mic size={24} />}
                     </button>
                   </div>
                 </div>
@@ -485,11 +500,11 @@ const LaComunicacion = () => {
 
         {/* Instructions */}
         {!showEvaluation && (
-          <div className="mt-6 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 text-center">
+          <div className="mt-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center">
             <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
               💡 Instrucciones
             </h3>
-            <div className="text-white text-opacity-90 text-sm space-y-2" style={{ fontFamily: 'Comic Neue' }}>
+            <div className="text-white text-opacity-90 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
               <p>• Lee cuidadosamente lo que Sofía te cuenta</p>
               <p>• Responde con empatía y comprensión</p>
               <p>• Ofrece consejos útiles y positivos</p>
@@ -497,16 +512,16 @@ const LaComunicacion = () => {
               <p>• Al final recibirás una evaluación de tu empatía</p>
             </div>
             
-            <div className="mt-4 bg-white bg-opacity-20 rounded-lg p-3">
+            <div className="mt-6 bg-white bg-opacity-20 rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 text-white">
-                <Heart size={16} className="text-red-300" />
-                <span className="text-sm font-bold">
+                <Heart size={20} className="text-red-300" />
+                <span className="text-base font-bold">
                   Progreso: {Math.min(currentStep, sofiaMessages.length)}/{sofiaMessages.length} conversaciones
                 </span>
               </div>
-              <div className="w-full bg-white bg-opacity-30 rounded-full h-2 mt-2">
+              <div className="w-full bg-white bg-opacity-30 rounded-full h-3 mt-3">
                 <div 
-                  className="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
                   style={{ width: `${(Math.min(currentStep, sofiaMessages.length) / sofiaMessages.length) * 100}%` }}
                 />
               </div>
