@@ -30,7 +30,7 @@ const situations: Situation[] = [
   {
     id: 'situacion_1',
     title: 'Alguien te quita algo sin tu permiso',
-    imageUrl: 'https://images.pexels.com/photos/5474028/pexels-photo-5474028.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: 'https://viact.org/imagenes/limite_01.png?auto=compress&cs=tinysrgb&w=400',
     description: 'Alguien de tu salón toma algo que es tuyo, no te avisó que lo necesitaba. ¿Qué te parece ese comportamiento? Exprésalo en el Semáforo.'
   },
   {
