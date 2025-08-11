@@ -279,7 +279,7 @@ const HomePage = () => {
       {/* Splash Screen Section - Embedded at top */}
       <div className="relative overflow-hidden">
         <div 
-          className="w-full h-[60vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 relative"
+          className="w-full h-[120vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 relative"
           style={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
           }}
