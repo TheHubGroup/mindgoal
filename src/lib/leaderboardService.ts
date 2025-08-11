@@ -8,6 +8,7 @@ import { emotionMatchService } from './emotionMatchService'
 import { emotionLogService } from './emotionLogService'
 import { communicationService } from './communicationService'
 import { semaforoLimitesService } from './semaforoLimitesService'
+import { semaforoLimitesService } from './semaforoLimitesService'
 
 export interface LeaderboardUser {
   id: string
