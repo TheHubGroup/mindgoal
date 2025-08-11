@@ -131,7 +131,16 @@ const SemaforoLimites = () => {
 
   const viewExistingSession = (session: SemaforoSession) => {
     setActiveSession(session)
-    setViewMode('results')
+    
+    if (session.completed_at) {
+      // Si está completada, mostrar resultados
+      setViewMode('results')
+    } else {
+      // Si no está completada, continuar desde donde se quedó
+      setCurrentSituationIndex(session.completed_situations)
+      setSelectedChoice(null)
+      setViewMode('activity')
+    }
   }
 
   const deleteSession = async (sessionId: string) => {
