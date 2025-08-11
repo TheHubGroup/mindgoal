@@ -71,9 +71,9 @@ const situations: Situation[] = [
   },
   {
     id: 'situacion_8',
-    title: 'Te obligan a guardar secretos',
-    imageUrl: 'https://images.pexels.com/photos/5474027/pexels-photo-5474027.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Alguien te dice algo inapropiado y te pide que no se lo digas a nadie.'
+    title: 'Te piden a guardar secretos',
+    imageUrl: 'https://viact.org/imagenes/limite_08.jpg?auto=compress&cs=tinysrgb&w=400',
+    description: 'Alguien te dice algo y te pide que no se lo digas a nadie.'
   }
 ]
 
