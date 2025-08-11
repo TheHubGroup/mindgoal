@@ -335,7 +335,7 @@ const HomePage = () => {
               >
                 Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>.
               </div> 
-              <span className="font-bold text-yellow-300">Haz clic en la X de la esquina para continuar</span>.
+              <span className="font-bold text-yellow-500">Haz clic en la X de la esquina para continuar</span>.
             </div>
 
             {/* Elementos decorativos */}
