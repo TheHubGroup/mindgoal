@@ -647,34 +647,6 @@ const SemaforoLimites = () => {
           </div>
         )}
       </div>
-
-      {/* Footer Container */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div 
-            className="text-black"
-            style={{ 
-              fontFamily: 'Comic Neue', 
-              fontSize: '16px',
-              color: 'rgb(0, 0, 0)',
-              background: 'rgba(0, 0, 0, 0)'
-            }}
-          >
-            Semáforo de los Límites
-          </div>
-          <div 
-            className="text-black"
-            style={{ 
-              fontFamily: 'Comic Neue', 
-              fontSize: '16px',
-              color: 'rgb(0, 0, 0)',
-              background: 'rgba(0, 0, 0, 0)'
-            }}
-          >
-            Hugo Eduardo Castro
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
