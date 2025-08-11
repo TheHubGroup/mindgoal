@@ -334,7 +334,8 @@ const HomePage = () => {
                 }}
               >
                 Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>.
-              </div> Bienvenido a
+              </div> 
+              Haz clic en la X de la esquina para continuar
             </div>
 
             {/* Elementos decorativos */}
