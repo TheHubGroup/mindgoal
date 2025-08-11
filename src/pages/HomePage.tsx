@@ -19,7 +19,8 @@ import {
   BarChart3,
   Trophy,
   Flame,
-  MessageCircle
+  MessageCircle,
+  Calculator
 } from 'lucide-react'
 import { Shield } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
@@ -29,6 +30,8 @@ import { meditationService } from '../lib/meditationService'
 import { angerMenuService } from '../lib/angerMenuService'
 import { communicationService } from '../lib/communicationService'
 import { semaforoLimitesService } from '../lib/semaforoLimitesService'
+import { emotionMatchService } from '../lib/emotionMatchService'
+import { emotionLogService } from '../lib/emotionLogService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -150,6 +153,24 @@ const HomePage = () => {
             'Sesión iniciada' : undefined
       }
 
+      // Nombra tus Emociones
+      const emotionStats = await emotionMatchService.getUserStats(user.id)
+      statuses['nombra-tus-emociones'] = {
+        hasData: emotionStats.totalAttempts > 0,
+        count: emotionStats.completedEmotions.length,
+        lastActivity: emotionStats.totalAttempts > 0 ? 
+          `${emotionStats.completedEmotions.length}/10 emociones completadas` : undefined
+      }
+
+      // Calculadora de Emociones
+      const emotionLogs = await emotionLogService.getEmotionHistory(user.id)
+      statuses['calculadora-emociones'] = {
+        hasData: emotionLogs.length > 0,
+        count: emotionLogs.length,
+        lastActivity: emotionLogs.length > 0 ? 
+          `${emotionLogs.length} registro${emotionLogs.length > 1 ? 's' : ''} de emociones` : undefined
+      }
+
       // La Comunicación
       const communicationSessions = await communicationService.getAllSessions(user.id)
       const completedCommunicationSessions = communicationSessions.filter(s => s.completed_at)
@@ -227,6 +248,24 @@ const HomePage = () => {
       color: 'from-indigo-500 to-purple-500',
       available: true,
       route: '/actividad/meditacion-autoconocimiento'
+    },
+    {
+      id: 'nombra-tus-emociones',
+      title: 'Nombra tus Emociones',
+      description: 'Conecta imágenes de niños con las emociones que expresan',
+      icon: Heart,
+      color: 'from-pink-500 to-purple-500',
+      available: true,
+      route: '/actividad/nombra-tus-emociones'
+    },
+    {
+      id: 'calculadora-emociones',
+      title: 'Calculadora de Emociones',
+      description: 'Registra y explora tus sentimientos de la última semana',
+      icon: Calculator,
+      color: 'from-blue-500 to-green-500',
+      available: true,
+      route: '/actividad/calculadora-emociones'
     },
     {
       id: 'menu-ira',
