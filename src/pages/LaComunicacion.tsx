@@ -36,15 +36,16 @@ interface ChatMessage {
 const LaComunicacion = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const [allSessions, setAllSessions] = useState<CommunicationSession[]>([])
+  const [activeSession, setActiveSession] = useState<CommunicationSession | null>(null)
+  const [viewMode, setViewMode] = useState<'cards' | 'chat' | 'evaluation'>('cards')
+  const [isLoading, setIsLoading] = useState(true)
+  
+  // Chat state (solo cuando está en modo chat)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [currentMessage, setCurrentMessage] = useState('')
   const [currentStep, setCurrentStep] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
-  const [showEvaluation, setShowEvaluation] = useState(false)
-  const [evaluation, setEvaluation] = useState('')
-  const [isLoadingEvaluation, setIsLoadingEvaluation] = useState(false)
-  const [session, setSession] = useState<CommunicationSession | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Conversación predefinida de Sofia (la niña ficticia)
@@ -57,49 +58,106 @@ const LaComunicacion = () => {
 
   useEffect(() => {
     if (user) {
-      loadSession()
+      loadAllSessions()
     }
   }, [user])
 
-  useEffect(() => {
-    // Only scroll to top when component mounts, don't auto-scroll during chat
-    window.scrollTo(0, 0)
-  }, [])
-
-  const loadSession = async () => {
+  const loadAllSessions = async () => {
     if (!user) return
     
     setIsLoading(true)
     try {
-      const userSession = await communicationService.getOrCreateSession(user.id)
-      setSession(userSession)
+      const sessions = await communicationService.getAllSessions(user.id)
+      setAllSessions(sessions)
       
-      if (userSession && userSession.messages && userSession.messages.length > 0) {
-        // Cargar conversación existente
-        setMessages(userSession.messages.map((msg: any) => ({
-          id: msg.id,
-          text: msg.text,
-          sender: msg.sender,
-          timestamp: new Date(msg.timestamp)
-        })))
-        setCurrentStep(userSession.current_step || 0)
-        
-        if (userSession.completed_at) {
-          setShowEvaluation(true)
-          setEvaluation(userSession.ai_evaluation || '')
-        }
-      } else {
-        // Iniciar nueva conversación
-        startConversation()
+      // Si no hay sesiones, mostrar vista de tarjetas por defecto
+      if (sessions.length === 0) {
+        setViewMode('cards')
       }
     } catch (error) {
-      console.error('Error loading session:', error)
-      startConversation()
+      console.error('Error loading sessions:', error)
     } finally {
       setIsLoading(false)
     }
   }
 
+  const startNewConversation = async () => {
+    if (!user) return
+    
+    try {
+      // Crear nueva sesión
+      const newSession = await communicationService.createNewSession(user.id)
+      if (newSession) {
+        setActiveSession(newSession)
+        setMessages([])
+        setCurrentStep(0)
+        setCurrentMessage('')
+        setIsTyping(false)
+        setViewMode('chat')
+        
+        // Iniciar con el primer mensaje de Sofia
+        setTimeout(() => {
+          const initialMessage: ChatMessage = {
+            id: '1',
+            text: sofiaMessages[0],
+            sender: 'sofia',
+            timestamp: new Date()
+          }
+          setMessages([initialMessage])
+          setCurrentStep(1)
+        }, 500)
+      }
+    } catch (error) {
+      console.error('Error starting new conversation:', error)
+    }
+  }
+  
+  const viewExistingSession = (session: CommunicationSession) => {
+    setActiveSession(session)
+    
+    if (session.completed_at) {
+      // Mostrar evaluación si está completada
+      setViewMode('evaluation')
+    } else {
+      // Continuar conversación si no está completada
+      setMessages(session.messages.map((msg: any) => ({
+        id: msg.id,
+        text: msg.text,
+        sender: msg.sender,
+        timestamp: new Date(msg.timestamp)
+      })))
+      setCurrentStep(session.current_step || 0)
+      setViewMode('chat')
+    }
+  }
+  
+  const deleteSession = async (sessionId: string) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar esta conversación?')) return
+    
+    try {
+      const success = await communicationService.deleteSession(sessionId)
+      if (success) {
+        await loadAllSessions()
+        // Si estamos viendo la sesión que se eliminó, volver a tarjetas
+        if (activeSession?.id === sessionId) {
+          setActiveSession(null)
+          setViewMode('cards')
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error)
+    }
+  }
+  
+  const backToCards = () => {
+    setActiveSession(null)
+    setViewMode('cards')
+    setMessages([])
+    setCurrentStep(0)
+    setCurrentMessage('')
+    setIsTyping(false)
+  }
+  
   const startConversation = () => {
     const initialMessage: ChatMessage = {
       id: '1',
@@ -147,8 +205,10 @@ const LaComunicacion = () => {
     setMessages(newMessages)
     setCurrentMessage('')
 
-    // Guardar mensaje del usuario
-    await communicationService.saveUserMessage(user.id, messageText, currentStep)
+    // Guardar mensaje del usuario en la sesión activa
+    if (activeSession?.id) {
+      await communicationService.saveUserMessage(user.id, messageText, currentStep)
+    }
 
     // Simular que Sofía está escribiendo
     simulateTyping()
@@ -188,7 +248,6 @@ const LaComunicacion = () => {
   const generateEvaluation = async (conversationMessages: ChatMessage[]) => {
     if (!user) return
 
-    setIsLoadingEvaluation(true)
     try {
       // Preparar contexto de la conversación para la IA
       const conversationContext = conversationMessages
@@ -240,33 +299,22 @@ const LaComunicacion = () => {
         avatar_url: ''
       }, evaluationPrompt)
 
-      setEvaluation(aiEvaluation)
-      setShowEvaluation(true)
 
       // Guardar sesión completa
       await communicationService.completeSession(user.id, conversationMessages, aiEvaluation)
+      
+      // Recargar sesiones y mostrar evaluación
+      await loadAllSessions()
+      setViewMode('evaluation')
 
     } catch (error) {
       console.error('Error generating evaluation:', error)
-      setEvaluation('¡Excelente trabajo! Mostraste mucha empatía y comprensión hacia Valeria. Tus consejos fueron muy considerados y demuestran que entiendes cómo se siente. Sigue practicando estas habilidades de comunicación.')
-      setShowEvaluation(true)
-    } finally {
-      setIsLoadingEvaluation(false)
-    }
-  }
-
-  const restartActivity = async () => {
-    if (!user) return
-    
-    try {
-      await communicationService.resetSession(user.id)
-      setMessages([])
-      setCurrentStep(0)
-      setShowEvaluation(false)
-      setEvaluation('')
-      startConversation()
-    } catch (error) {
-      console.error('Error restarting activity:', error)
+      
+      // Guardar evaluación por defecto en caso de error
+      const defaultEvaluation = '¡Excelente trabajo! Mostraste mucha empatía y comprensión hacia Valeria. Tus consejos fueron muy considerados y demuestran que entiendes cómo se siente. Sigue practicando estas habilidades de comunicación.'
+      await communicationService.completeSession(user.id, conversationMessages, defaultEvaluation)
+      await loadAllSessions()
+      setViewMode('evaluation')
     }
   }
 
@@ -274,6 +322,16 @@ const LaComunicacion = () => {
     return new Date().toLocaleTimeString('es-ES', { 
       hour: '2-digit', 
       minute: '2-digit' 
+    })
+  }
+  
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     })
   }
 

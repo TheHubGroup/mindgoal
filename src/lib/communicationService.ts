@@ -231,6 +231,61 @@ export const communicationService = {
     }
   },
 
+  // Crear nueva sesión
+  async createNewSession(userId: string): Promise<CommunicationSession | null> {
+    if (!supabase) {
+      console.warn('Supabase not configured')
+      return null
+    }
+
+    try {
+      const { data: newSession, error: createError } = await supabase
+        .from('communication_sessions')
+        .insert([{
+          user_id: userId,
+          messages: [],
+          current_step: 0
+        }])
+        .select()
+        .single()
+
+      if (createError) {
+        console.error('Error creating new communication session:', createError)
+        return null
+      }
+
+      return newSession
+    } catch (error) {
+      console.error('Error in createNewSession:', error)
+      return null
+    }
+  },
+
+  // Eliminar sesión
+  async deleteSession(sessionId: string): Promise<boolean> {
+    if (!supabase) {
+      console.warn('Supabase not configured')
+      return false
+    }
+
+    try {
+      const { error } = await supabase
+        .from('communication_sessions')
+        .delete()
+        .eq('id', sessionId)
+
+      if (error) {
+        console.error('Error deleting communication session:', error)
+        return false
+      }
+
+      return true
+    } catch (error) {
+      console.error('Error in deleteSession:', error)
+      return false
+    }
+  },
+
   // Obtener todas las sesiones del usuario (para estadísticas)
   async getAllSessions(userId: string): Promise<CommunicationSession[]> {
     if (!supabase) {
