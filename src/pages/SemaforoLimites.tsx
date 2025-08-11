@@ -60,7 +60,7 @@ const situations: Situation[] = [
   {
     id: 'situacion_6',
     title: 'Te presionan para mentir',
-    imageUrl: 'https://images.pexels.com/photos/5212320/pexels-photo-5212320.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: 'https://viact.org/imagenes/limite_06.jpg?auto=compress&cs=tinysrgb&w=400',
     description: 'Te piden que mientas para cubrir a alguien o para evitar consecuencias.'
   },
   {
