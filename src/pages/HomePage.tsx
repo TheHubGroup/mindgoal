@@ -18,7 +18,8 @@ import {
   AlertCircle,
   BarChart3,
   Trophy,
-  Flame
+  Flame,
+  MessageCircle
 } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
 import { userResponsesService } from '../lib/userResponsesService'
@@ -209,6 +210,15 @@ const HomePage = () => {
       color: 'from-red-500 to-orange-500',
       available: true,
       route: '/actividad/menu-ira'
+    },
+    {
+      id: 'la-comunicacion',
+      title: 'La Comunicación',
+      description: 'Practica la empatía ayudando a Sofía, una niña que se siente sola en su nuevo colegio',
+      icon: MessageCircle,
+      color: 'from-green-500 to-blue-500',
+      available: true,
+      route: '/actividad/la-comunicacion'
     }
   ]
 
