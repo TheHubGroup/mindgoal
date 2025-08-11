@@ -310,12 +310,12 @@ const HomePage = () => {
           {/* Contenido principal del splash */}
           <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-8">
             {/* Emoji de saludo animado */}
-            <div className="mb-6 animate-bounce" style={{ fontSize: '6rem' }}>
+            <div className="mb-4 animate-bounce" style={{ fontSize: '72rem' }}>
               👋
             </div>
 
             {/* Mensaje principal */}
-            <div className="space-y-2 max-w-2xl">
+            <div className="space-y-4 max-w-4xl">
               <h1 
                 className="text-3xl md:text-5xl lg:text-7xl font-bold text-white leading-tight"
                 style={{ 
@@ -338,15 +338,15 @@ const HomePage = () => {
               <span className="text-2xl font-bold text-yellow-500"> Haz clic en la X de la esquina para continuar </span>.
             </div>
 
-                  {/* Mensaje adicional sutil */}
+            {/* Mensaje adicional sutil */}
             <div 
-              className="mt-12 text-white text-opacity-80 text-xl md:text-2xl"
+              className="mt-8 text-white text-opacity-80 text-xl md:text-2xl"
               style={{ fontFamily: 'Comic Neue' }}
             >
               ✨ Explora actividades increíbles diseñadas especialmente para ti ✨
             </div>
-          </div>
 
+            
             {/* Elementos decorativos */}
             <div className="mt-16 flex justify-center space-x-12">
               <div className="animate-pulse">
@@ -365,6 +365,7 @@ const HomePage = () => {
                 <div className="w-8 h-8 bg-purple-300 rounded-full" />
               </div>
             </div>
+          </div>
 
 
           {/* Efecto de brillo en los bordes */}
