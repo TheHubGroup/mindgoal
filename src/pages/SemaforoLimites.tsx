@@ -54,7 +54,7 @@ const situations: Situation[] = [
   {
     id: 'situacion_5',
     title: 'No respetan tu espacio personal',
-    imageUrl: 'https://images.pexels.com/photos/8613088/pexels-photo-8613088.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: 'https://viact.org/imagenes/limite_05.png?auto=compress&cs=tinysrgb&w=400',
     description: 'Alguien se acerca demasiado o te toca sin tu consentimiento.'
   },
   {
