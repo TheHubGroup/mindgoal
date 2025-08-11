@@ -310,14 +310,14 @@ const HomePage = () => {
           {/* Contenido principal del splash */}
           <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-8">
             {/* Emoji de saludo animado */}
-            <div className="mb-6 text-6xl animate-bounce">
+            <div className="mb-12 text-12xl animate-bounce">
               👋
             </div>
 
             {/* Mensaje principal */}
-            <div className="space-y-4 max-w-2xl">
+            <div className="space-y-8 max-w-4xl">
               <h1 
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight"
+                className="text-6xl md:text-8xl lg:text-10xl font-bold text-white leading-tight"
                 style={{ 
                   fontFamily: 'Fredoka',
                   textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
@@ -327,7 +327,7 @@ const HomePage = () => {
               </h1>
 
               <div 
-                className="text-lg md:text-xl lg:text-2xl text-white text-opacity-95 leading-relaxed"
+                className="text-2xl md:text-4xl lg:text-6xl text-white text-opacity-95 leading-relaxed"
                 style={{ 
                   fontFamily: 'Comic Neue',
                   textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
@@ -338,27 +338,27 @@ const HomePage = () => {
             </div>
 
             {/* Elementos decorativos */}
-            <div className="mt-8 flex justify-center space-x-6">
+            <div className="mt-16 flex justify-center space-x-12">
               <div className="animate-pulse">
-                <div className="w-4 h-4 bg-yellow-300 rounded-full" />
+                <div className="w-8 h-8 bg-yellow-300 rounded-full" />
               </div>
               <div className="animate-pulse" style={{ animationDelay: '0.2s' }}>
-                <div className="w-4 h-4 bg-pink-300 rounded-full" />
+                <div className="w-8 h-8 bg-pink-300 rounded-full" />
               </div>
               <div className="animate-pulse" style={{ animationDelay: '0.4s' }}>
-                <div className="w-4 h-4 bg-blue-300 rounded-full" />
+                <div className="w-8 h-8 bg-blue-300 rounded-full" />
               </div>
               <div className="animate-pulse" style={{ animationDelay: '0.6s' }}>
-                <div className="w-4 h-4 bg-green-300 rounded-full" />
+                <div className="w-8 h-8 bg-green-300 rounded-full" />
               </div>
               <div className="animate-pulse" style={{ animationDelay: '0.8s' }}>
-                <div className="w-4 h-4 bg-purple-300 rounded-full" />
+                <div className="w-8 h-8 bg-purple-300 rounded-full" />
               </div>
             </div>
 
             {/* Mensaje adicional sutil */}
             <div 
-              className="mt-6 text-white text-opacity-80 text-sm md:text-base"
+              className="mt-12 text-white text-opacity-80 text-xl md:text-2xl"
               style={{ fontFamily: 'Comic Neue' }}
             >
               ✨ Explora actividades increíbles diseñadas especialmente para ti ✨
