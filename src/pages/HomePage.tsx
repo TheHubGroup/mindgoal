@@ -375,9 +375,9 @@ const HomePage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-10 py-10">
+      <div className="max-w-7xl mx-auto px-20 py-20">
         {/* Activities Section Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
             Elige una Actividad
           </h2>
@@ -387,7 +387,7 @@ const HomePage = () => {
         </div>
 
         {/* Activities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12 max-w-6xl mx-auto mb-16">
           {activities.map((activity) => {
             const IconComponent = activity.icon
             return (
@@ -447,7 +447,7 @@ const HomePage = () => {
 
         {/* Summary Stats */}
         {!isLoadingStatuses && (
-          <div className="mt-12 text-center">
+          <div className="mt-20 text-center">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto">
               <h3 className="text-xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
                 📊 Tu Progreso General
@@ -471,7 +471,7 @@ const HomePage = () => {
         )}
 
         {/* Footer Message */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-20 mb-16">
           <p className="text-white text-opacity-80" style={{ fontFamily: 'Comic Neue' }}>
             ¡Explora cada actividad y descubre nuevas formas de conocerte mejor! 🌟
           </p>
