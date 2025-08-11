@@ -21,12 +21,14 @@ import {
   Flame,
   MessageCircle
 } from 'lucide-react'
+import { Shield } from 'lucide-react'
 import { timelineService } from '../lib/timelineService'
 import { userResponsesService } from '../lib/userResponsesService'
 import { letterService } from '../lib/letterService'
 import { meditationService } from '../lib/meditationService'
 import { angerMenuService } from '../lib/angerMenuService'
 import { communicationService } from '../lib/communicationService'
+import { semaforoLimitesService } from '../lib/semaforoLimitesService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -159,6 +161,18 @@ const HomePage = () => {
             `${completedCommunicationSessions.length} conversación${completedCommunicationSessions.length > 1 ? 'es' : ''} completada${completedCommunicationSessions.length > 1 ? 's' : ''}` :
             'Conversación iniciada' : undefined
       }
+      
+      // Semáforo de los Límites
+      const semaforoSessions = await semaforoLimitesService.getAllSessions(user.id)
+      const completedSemaforoSessions = semaforoSessions.filter(s => s.completed_at)
+      statuses['semaforo-limites'] = {
+        hasData: semaforoSessions.length > 0,
+        count: completedSemaforoSessions.length,
+        lastActivity: semaforoSessions.length > 0 ? 
+          completedSemaforoSessions.length > 0 ? 
+            `${completedSemaforoSessions.length} sesión${completedSemaforoSessions.length > 1 ? 'es' : ''} completada${completedSemaforoSessions.length > 1 ? 's' : ''}` :
+            'Sesión iniciada' : undefined
+      }
       setActivityStatuses(statuses)
     } catch (error) {
       console.error('Error loading activity statuses:', error)
@@ -231,6 +245,15 @@ const HomePage = () => {
       color: 'from-green-500 to-blue-500',
       available: true,
       route: '/actividad/la-comunicacion'
+    },
+    {
+      id: 'semaforo-limites',
+      title: 'Semáforo de los Límites',
+      description: 'Aprende a establecer límites saludables evaluando diferentes situaciones con el semáforo',
+      icon: Shield,
+      color: 'from-red-500 via-yellow-500 to-green-500',
+      available: true,
+      route: '/actividad/semaforo-limites'
     }
   ]
 

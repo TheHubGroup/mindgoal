@@ -7,6 +7,7 @@ import { angerMenuService } from './angerMenuService'
 import { emotionMatchService } from './emotionMatchService'
 import { emotionLogService } from './emotionLogService'
 import { communicationService } from './communicationService'
+import { semaforoLimitesService } from './semaforoLimitesService'
 
 export interface LeaderboardUser {
   id: string
@@ -131,6 +132,19 @@ export const leaderboardService = {
           totalCharacters += 100 // Bonus por recibir evaluación
         }
       })
+      
+      // Obtener sesiones de "Semáforo de los Límites"
+      const semaforoSessions = await semaforoLimitesService.getAllSessions(userId)
+      semaforoSessions.forEach(session => {
+        // Puntos por situaciones respondidas (50 puntos por situación)
+        totalCharacters += session.completed_situations * 50
+        
+        // Bonus por completar toda la sesión
+        if (session.completed_at) {
+          totalCharacters += 200 // Bonus por completar todas las situaciones
+        }
+      })
+      
       // Resultados de "Nombra tus Emociones"
       const emotionStats = await emotionMatchService.getUserStats(userId)
       totalCharacters += emotionStats.totalAttempts * 10

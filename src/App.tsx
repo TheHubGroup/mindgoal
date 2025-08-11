@@ -21,6 +21,7 @@ import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
 import LeaderboardPage from './pages/LeaderboardPage'
 import UserDetailPage from './pages/UserDetailPage'
 import LaComunicacion from './pages/LaComunicacion'
+import SemaforoLimites from './pages/SemaforoLimites'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -139,6 +140,11 @@ function App() {
             <Route path="/actividad/la-comunicacion" element={
               <ProtectedRoute>
                 <LaComunicacion />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/semaforo-limites" element={
+              <ProtectedRoute>
+                <SemaforoLimites />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={
