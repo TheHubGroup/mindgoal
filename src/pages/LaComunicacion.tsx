@@ -22,7 +22,10 @@ import {
   Heart,
   Sparkles,
   Award,
-  ThumbsUp
+  ThumbsUp,
+  Plus,
+  Eye,
+  Trash2
 } from 'lucide-react'
 
 interface ChatMessage {
@@ -371,165 +374,303 @@ const LaComunicacion = () => {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Instructions - Moved to top */}
-        {!showEvaluation && (
+        {/* Vista de Tarjetas */}
+        {viewMode === 'cards' && (
           <div className="mb-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center">
             <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
-              💡 Instrucciones
+              💬 Mis Conversaciones con Valeria
             </h3>
-            <div className="text-white font-bold text-opacity-100 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
-              <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
-              <p>• Responde con empatía y comprensión</p>
-              <p>• Ofrece consejos útiles y positivos</p>
-              <p>• Ayúdala a sentirse mejor y más confiada</p>
-              <p>• Al final recibirás una evaluación de tu empatía</p>
+            
+            {allSessions.length === 0 ? (
+              <div>
+                <div className="text-white font-bold text-opacity-100 text-base space-y-2 mb-6" style={{ fontFamily: 'Comic Neue' }}>
+                  <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
+                  <p>• Responde con empatía y comprensión</p>
+                  <p>• Ofrece consejos útiles y positivos</p>
+                  <p>• Ayúdala a sentirse mejor y más confiada</p>
+                  <p>• Al final recibirás una evaluación de tu empatía</p>
+                </div>
+                
+                <button
+                  onClick={startNewConversation}
+                  className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all transform hover:scale-105 flex items-center justify-center gap-3 mx-auto"
+                  style={{ fontFamily: 'Fredoka' }}
+                >
+                  <MessageCircle size={24} />
+                  Comenzar Nueva Conversación
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                  {/* Tarjeta Nueva Conversación */}
+                  <div
+                    onClick={startNewConversation}
+                    className="bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105 border-4 border-white border-opacity-30"
+                  >
+                    <div className="text-center text-white">
+                      <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Plus size={32} />
+                      </div>
+                      <h4 className="text-xl font-bold mb-2" style={{ fontFamily: 'Fredoka' }}>
+                        Nueva Conversación
+                      </h4>
+                      <p className="text-sm opacity-90" style={{ fontFamily: 'Comic Neue' }}>
+                        Inicia una nueva charla con Valeria
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Tarjetas de Conversaciones Existentes */}
+                  {allSessions.map((session, index) => (
+                    <div
+                      key={session.id}
+                      className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 border-2 border-white border-opacity-20 hover:bg-opacity-20 transition-all relative group"
+                    >
+                      {/* Botón eliminar */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          deleteSession(session.id!)
+                        }}
+                        className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all transform hover:scale-110"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                      
+                      <div className="text-white">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-12 h-12 bg-pink-300 rounded-full flex items-center justify-center">
+                            <span className="text-2xl">👧</span>
+                          </div>
+                          <div>
+                            <h4 className="text-lg font-bold" style={{ fontFamily: 'Fredoka' }}>
+                              Conversación #{index + 1}
+                            </h4>
+                            <p className="text-sm opacity-80" style={{ fontFamily: 'Comic Neue' }}>
+                              {formatDate(session.created_at!)}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <MessageCircle size={16} />
+                            <span className="text-sm font-medium">
+                              {session.messages?.length || 0} mensajes
+                            </span>
+                          </div>
+                          
+                          {session.completed_at ? (
+                            <div className="flex items-center gap-2 text-green-300">
+                              <CheckCircle size={16} />
+                              <span className="text-sm font-medium">Completada</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 text-yellow-300">
+                              <Clock size={16} />
+                              <span className="text-sm font-medium">En progreso</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <button
+                          onClick={() => viewExistingSession(session)}
+                          className="w-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-bold py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
+                          style={{ fontFamily: 'Fredoka' }}
+                        >
+                          <Eye size={16} />
+                          {session.completed_at ? 'Ver Conversación y Feedback' : 'Continuar Conversación'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Vista de Chat */}
+        {viewMode === 'chat' && (
+          <div>
+            {/* Instructions */}
+            <div className="mb-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center">
+              <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
+                💡 Instrucciones
+              </h3>
+              <div className="text-white font-bold text-opacity-100 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
+                <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
+                <p>• Responde con empatía y comprensión</p>
+                <p>• Ofrece consejos útiles y positivos</p>
+                <p>• Ayúdala a sentirse mejor y más confiada</p>
+                <p>• Al final recibirás una evaluación de tu empatía</p>
+              </div>
+              
+              <div className="mt-6 bg-white bg-opacity-20 rounded-lg p-4">
+                <div className="flex items-center justify-center gap-2 text-white">
+                  <Heart size={20} className="text-red-300" />
+                  <span className="text-base font-bold">
+                    Progreso: {Math.min(currentStep, sofiaMessages.length)}/{sofiaMessages.length} conversaciones
+                  </span>
+                </div>
+                <div className="w-full bg-white bg-opacity-30 rounded-full h-3 mt-3">
+                  <div 
+                    className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
+                    style={{ width: `${(Math.min(currentStep, sofiaMessages.length) / sofiaMessages.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+              
+              <button
+                onClick={backToCards}
+                className="mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                ← Volver a Mis Conversaciones
+              </button>
             </div>
             
-            <div className="mt-6 bg-white bg-opacity-20 rounded-lg p-4">
-              <div className="flex items-center justify-center gap-2 text-white">
-                <Heart size={20} className="text-red-300" />
-                <span className="text-base font-bold">
-                  Progreso: {Math.min(currentStep, sofiaMessages.length)}/{sofiaMessages.length} conversaciones
-                </span>
-              </div>
-              <div className="w-full bg-white bg-opacity-30 rounded-full h-3 mt-3">
-                <div 
-                  className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${(Math.min(currentStep, sofiaMessages.length) / sofiaMessages.length) * 100}%` }}
-                />
+            {/* Tablet Frame */}
+            <div className="bg-black rounded-[2rem] p-3 shadow-2xl">
+              {/* Tablet Screen */}
+              <div className="bg-white rounded-[1.5rem] overflow-hidden h-[600px] flex flex-col">
+                {/* Status Bar */}
+                <div className="bg-gray-900 text-white px-6 py-2 flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">{getCurrentTime()}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Signal size={16} />
+                    <Wifi size={16} />
+                    <Battery size={16} />
+                  </div>
+                </div>
+
+                {/* WhatsApp Header */}
+                <div className="bg-green-500 text-white px-4 py-3 flex items-center gap-3 shadow-lg">
+                  <button
+                    onClick={backToCards}
+                    className="text-white hover:text-gray-200"
+                  >
+                    <ArrowLeft size={20} />
+                  </button>
+                  <div className="w-12 h-12 bg-pink-300 rounded-full flex items-center justify-center">
+                    <span className="text-3xl">👧</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-xl" style={{ fontFamily: 'Fredoka' }}>
+                      Valeria
+                    </h3>
+                    <p className="text-sm text-green-100">
+                      {isTyping ? 'escribiendo...' : 'en línea'}
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Phone size={24} />
+                    <MoreVertical size={24} />
+                  </div>
+                </div>
+
+                {/* Chat Messages */}
+                <div className="flex-1 bg-gray-100 p-6 overflow-y-auto space-y-4">
+                  {messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[70%] p-4 rounded-2xl shadow-sm ${
+                          message.sender === 'user'
+                            ? 'bg-green-500 text-white rounded-br-md'
+                            : 'bg-white text-gray-800 rounded-bl-md'
+                        }`}
+                      >
+                        <p className="text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                          {message.text}
+                        </p>
+                        <div className={`text-sm mt-2 flex items-center gap-1 ${
+                          message.sender === 'user' ? 'text-green-100 justify-end' : 'text-gray-500'
+                        }`}>
+                          <span>{message.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                          {message.sender === 'user' && (
+                            <CheckCircle size={14} className="text-green-200" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Typing Indicator */}
+                  {isTyping && (
+                    <div className="flex justify-start">
+                      <div className="bg-white text-gray-800 rounded-2xl rounded-bl-md p-4 shadow-sm">
+                        <div className="flex items-center gap-1">
+                          <div className="flex gap-1">
+                            <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          </div>
+                          <span className="text-sm text-gray-500 ml-3">Valeria está escribiendo...</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Chat Input */}
+                {currentStep <= sofiaMessages.length && (
+                  <div className="bg-white border-t border-gray-200 p-4">
+                    <div className="flex items-center gap-3">
+                      <button className="text-gray-500 hover:text-gray-700">
+                        <Smile size={28} />
+                      </button>
+                      <div className="flex-1 bg-gray-100 rounded-full px-5 py-3 flex items-center gap-3">
+                        <input
+                          type="text"
+                          value={currentMessage}
+                          onChange={(e) => setCurrentMessage(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                          placeholder="Escribe un mensaje..."
+                          className="flex-1 bg-transparent outline-none text-gray-800 text-lg"
+                          style={{ fontFamily: 'Comic Neue' }}
+                          disabled={isTyping}
+                          autoComplete="off"
+                        />
+                        <button className="text-gray-500 hover:text-gray-700">
+                          <Camera size={24} />
+                        </button>
+                      </div>
+                      <button
+                        onClick={sendMessage}
+                        disabled={!currentMessage.trim() || isTyping}
+                        className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {currentMessage.trim() ? <Send size={24} /> : <Mic size={24} />}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         )}
-
-        {!showEvaluation ? (
-          /* Tablet Frame - Now horizontal */
-          <div className="bg-black rounded-[2rem] p-3 shadow-2xl">
-            {/* Tablet Screen - Horizontal */}
-            <div className="bg-white rounded-[1.5rem] overflow-hidden h-[600px] flex flex-col">
-              {/* Status Bar */}
-              <div className="bg-gray-900 text-white px-6 py-2 flex justify-between items-center text-sm">
-                <div className="flex items-center gap-1">
-                  <span className="font-medium">{getCurrentTime()}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Signal size={16} />
-                  <Wifi size={16} />
-                  <Battery size={16} />
-                </div>
-              </div>
-
-              {/* WhatsApp Header */}
-              <div className="bg-green-500 text-white px-4 py-3 flex items-center gap-3 shadow-lg">
-                <button
-                  onClick={() => navigate('/')}
-                  className="text-white hover:text-gray-200"
-                >
-                  <ArrowLeft size={20} />
-                </button>
-                <div className="w-12 h-12 bg-pink-300 rounded-full flex items-center justify-center">
-                  <span className="text-3xl">👧</span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-xl" style={{ fontFamily: 'Fredoka' }}>
-                    Valeria
-                  </h3>
-                  <p className="text-sm text-green-100">
-                    {isTyping ? 'escribiendo...' : 'en línea'}
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <Phone size={24} />
-                  <MoreVertical size={24} />
-                </div>
-              </div>
-
-              {/* Chat Messages */}
-              <div className="flex-1 bg-gray-100 p-6 overflow-y-auto space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[70%] p-4 rounded-2xl shadow-sm ${
-                        message.sender === 'user'
-                          ? 'bg-green-500 text-white rounded-br-md'
-                          : 'bg-white text-gray-800 rounded-bl-md'
-                      }`}
-                    >
-                      <p className="text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
-                        {message.text}
-                      </p>
-                      <div className={`text-sm mt-2 flex items-center gap-1 ${
-                        message.sender === 'user' ? 'text-green-100 justify-end' : 'text-gray-500'
-                      }`}>
-                        <span>{message.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
-                        {message.sender === 'user' && (
-                          <CheckCircle size={14} className="text-green-200" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Typing Indicator */}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-white text-gray-800 rounded-2xl rounded-bl-md p-4 shadow-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="flex gap-1">
-                          <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce"></div>
-                          <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        </div>
-                        <span className="text-sm text-gray-500 ml-3">Valeria está escribiendo...</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Chat Input */}
-              {currentStep <= sofiaMessages.length && !showEvaluation && (
-                <div className="bg-white border-t border-gray-200 p-4">
-                  <div className="flex items-center gap-3">
-                    <button className="text-gray-500 hover:text-gray-700">
-                      <Smile size={28} />
-                    </button>
-                    <div className="flex-1 bg-gray-100 rounded-full px-5 py-3 flex items-center gap-3">
-                      <input
-                        type="text"
-                        value={currentMessage}
-                        onChange={(e) => setCurrentMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                        placeholder="Escribe un mensaje..."
-                        className="flex-1 bg-transparent outline-none text-gray-800 text-lg"
-                        style={{ fontFamily: 'Comic Neue' }}
-                        disabled={isTyping}
-                        autoComplete="off"
-                      />
-                      <button className="text-gray-500 hover:text-gray-700">
-                        <Camera size={24} />
-                      </button>
-                    </div>
-                    <button
-                      onClick={sendMessage}
-                      disabled={!currentMessage.trim() || isTyping}
-                      className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {currentMessage.trim() ? <Send size={24} /> : <Mic size={24} />}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          /* Evaluation Screen */
+        
+        {/* Vista de Evaluación */}
+        {viewMode === 'evaluation' && activeSession && (
           <div className="bg-white rounded-3xl shadow-2xl p-8">
+            {/* Botón volver */}
+            <div className="mb-6">
+              <button
+                onClick={backToCards}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <ArrowLeft size={16} />
+                Volver a Mis Conversaciones
+              </button>
+            </div>
+            
             {/* Show Previous Conversation */}
             <div className="mb-8 bg-gray-50 rounded-2xl p-6 border-l-4 border-blue-500">
               <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
@@ -537,7 +678,7 @@ const LaComunicacion = () => {
                 Tu Conversación con Valeria
               </h3>
               <div className="max-h-64 overflow-y-auto space-y-3">
-                {messages.map((message) => (
+                {activeSession.messages?.map((message: any) => (
                   <div
                     key={message.id}
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -581,32 +722,13 @@ const LaComunicacion = () => {
                 </h3>
               </div>
               
-              {isLoadingEvaluation ? (
-                <div className="flex items-center gap-3 text-gray-600">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-                  <span>Analizando tus respuestas...</span>
-                </div>
-              ) : (
-                <div className="text-gray-700 text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
-                  {evaluation.split('\n').map((paragraph, index) => (
-                    <p key={index} className="mb-3">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <button
-                onClick={restartActivity}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                style={{ fontFamily: 'Fredoka' }}
-              >
-                <MessageCircle size={20} />
-                Practicar de Nuevo
-              </button>
+              <div className="text-gray-700 text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                {activeSession.ai_evaluation?.split('\n').map((paragraph, index) => (
+                  <p key={index} className="mb-3">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
 
             {/* Close Activity Message */}
