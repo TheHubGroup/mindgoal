@@ -161,36 +161,6 @@ const CartaMiMismo = () => {
       )}
 
       {/* Main Content */}
-      {/* Header moved to bottom */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="text-amber-800 hover:text-amber-600 transition-colors"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <Mail size={32} className="text-amber-800" />
-            <h1 className="text-2xl font-bold text-amber-800" style={{ fontFamily: 'Fredoka' }}>
-              Carta a mí mismo
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            {!isWriting && (
-              <button
-                onClick={handleNewLetter}
-                className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105"
-              >
-                <Plus size={20} />
-                Nueva Carta
-              </button>
-            )}
-            <UserMenu />
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 py-8">
         {!isWriting && !showPreview ? (
           // Lista de cartas
@@ -359,6 +329,36 @@ const CartaMiMismo = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-amber-800 hover:text-amber-600 transition-colors"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <Mail size={32} className="text-amber-800" />
+            <h1 className="text-2xl font-bold text-amber-800" style={{ fontFamily: 'Fredoka' }}>
+              Carta a mí mismo
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            {!isWriting && (
+              <button
+                onClick={handleNewLetter}
+                className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105"
+              >
+                <Plus size={20} />
+                Nueva Carta
+              </button>
+            )}
+            <UserMenu />
+          </div>
+        </div>
       </div>
 
       <style jsx>{`

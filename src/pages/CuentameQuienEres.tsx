@@ -200,41 +200,6 @@ const CuentameQuienEres = () => {
       )}
 
       {/* Main Content */}
-      {/* Header moved to bottom */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-white hover:text-opacity-80 transition-colors"
-            >
-              <ArrowLeft size={24} />
-              <span className="font-bold">Volver</span>
-            </button>
-            <div className="flex items-center gap-3">
-              <Heart size={32} className="text-white" />
-              <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-                Cuéntame quien eres
-              </h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={savePreferences}
-              disabled={isSaving || !hasUnsavedChanges}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
-                hasUnsavedChanges 
-                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white animate-pulse' 
-                  : 'bg-green-500 text-white'
-              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <Save size={20} />
-              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
-            </button>
-            <UserMenu />
-          </div>
-        </div>
-      </div>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Debug Info */}
         <div className="mb-4 text-white text-sm opacity-70">
@@ -417,6 +382,42 @@ const CuentameQuienEres = () => {
                 <div className="text-sm opacity-80">No Me Gusta</div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-white hover:text-opacity-80 transition-colors"
+            >
+              <ArrowLeft size={24} />
+              <span className="font-bold">Volver</span>
+            </button>
+            <div className="flex items-center gap-3">
+              <Heart size={32} className="text-white" />
+              <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+                Cuéntame quien eres
+              </h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={savePreferences}
+              disabled={isSaving || !hasUnsavedChanges}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
+                hasUnsavedChanges 
+                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white animate-pulse' 
+                  : 'bg-green-500 text-white'
+              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Save size={20} />
+              {isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Guardar Cambios' : 'Todo Guardado'}
+            </button>
+            <UserMenu />
           </div>
         </div>
       </div>
