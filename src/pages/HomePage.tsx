@@ -334,7 +334,7 @@ const HomePage = () => {
                 }}
               >
                 Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>.
-              </div>
+              </div> Bienvenido a
             </div>
 
             {/* Elementos decorativos */}
