@@ -317,7 +317,7 @@ const HomePage = () => {
             {/* Mensaje principal */}
             <div className="space-y-8 max-w-4xl">
               <h1 
-                className="text-6xl md:text-8xl lg:text-10xl font-bold text-white leading-tight"
+                className="text-4xl md:text-6xl lg:text-8xl font-bold text-white leading-tight"
                 style={{ 
                   fontFamily: 'Fredoka',
                   textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
