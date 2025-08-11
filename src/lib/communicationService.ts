@@ -75,15 +75,23 @@ export const communicationService = {
     }
 
     try {
-      // Obtener sesión actual
+      // Obtener sesión activa más reciente
       const { data: session, error: fetchError } = await supabase
         .from('communication_sessions')
-        .select('messages')
+        .select('id, messages')
         .eq('user_id', userId)
-        .single()
+        .is('completed_at', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
 
       if (fetchError) {
         console.error('Error fetching session for message save:', fetchError)
+        return false
+      }
+
+      if (!session) {
+        console.error('No active session found for user')
         return false
       }
 
@@ -106,7 +114,7 @@ export const communicationService = {
           current_step: step,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', userId)
+        .eq('id', session.id)
 
       if (updateError) {
         console.error('Error updating session with user message:', updateError)
@@ -128,6 +136,27 @@ export const communicationService = {
     }
 
     try {
+      // Obtener sesión activa más reciente
+      const { data: session, error: fetchError } = await supabase
+        .from('communication_sessions')
+        .select('id')
+        .eq('user_id', userId)
+        .is('completed_at', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (fetchError) {
+        console.error('Error fetching session for completion:', fetchError)
+        return false
+      }
+
+      if (!session) {
+        console.error('No active session found for user')
+        return false
+      }
+
+      // Completar sesión específica por ID
       const { error } = await supabase
         .from('communication_sessions')
         .update({
@@ -136,7 +165,7 @@ export const communicationService = {
           ai_evaluation: aiEvaluation,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', userId)
+        .eq('id', session.id)
 
       if (error) {
         console.error('Error completing session:', error)
@@ -158,6 +187,27 @@ export const communicationService = {
     }
 
     try {
+      // Obtener sesión activa más reciente
+      const { data: session, error: fetchError } = await supabase
+        .from('communication_sessions')
+        .select('id')
+        .eq('user_id', userId)
+        .is('completed_at', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (fetchError) {
+        console.error('Error fetching session for reset:', fetchError)
+        return false
+      }
+
+      if (!session) {
+        console.error('No active session found for user')
+        return false
+      }
+
+      // Reiniciar sesión específica por ID
       const { error } = await supabase
         .from('communication_sessions')
         .update({
@@ -167,7 +217,7 @@ export const communicationService = {
           ai_evaluation: null,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', userId)
+        .eq('id', session.id)
 
       if (error) {
         console.error('Error resetting session:', error)
