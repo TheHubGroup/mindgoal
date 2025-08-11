@@ -637,8 +637,6 @@ const MenuDeLaIra = () => {
           </div>
         )}
       </div>
-    </div>
-  )
       {/* Header moved to bottom */}
       <div className="bg-black bg-opacity-30 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
@@ -657,6 +655,8 @@ const MenuDeLaIra = () => {
           <UserMenu />
         </div>
       </div>
+    </div>
+  )
 }
 
 export default MenuDeLaIra

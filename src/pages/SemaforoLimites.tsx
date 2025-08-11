@@ -637,8 +637,6 @@ const SemaforoLimites = () => {
           </div>
         )}
       </div>
-    </div>
-  )
       {/* Header moved to bottom */}
       <div className="bg-white bg-opacity-10 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
@@ -657,6 +655,8 @@ const SemaforoLimites = () => {
           <UserMenu />
         </div>
       </div>
+    </div>
+  )
 }
 
 export default SemaforoLimites
