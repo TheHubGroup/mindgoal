@@ -472,6 +472,34 @@ const LaComunicacion = () => {
         ) : (
           /* Evaluation Screen */
           <div className="bg-white rounded-3xl shadow-2xl p-8">
+            {/* Show Previous Conversation */}
+            <div className="mb-8 bg-gray-50 rounded-2xl p-6 border-l-4 border-blue-500">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
+                <MessageCircle size={24} className="text-blue-500" />
+                Tu Conversación con Valeria
+              </h3>
+              <div className="max-h-64 overflow-y-auto space-y-3">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] p-3 rounded-lg text-sm ${
+                        message.sender === 'user'
+                          ? 'bg-blue-500 text-white rounded-br-md'
+                          : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md'
+                      }`}
+                    >
+                      <p className="leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                        {message.text}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="text-center mb-8">
               <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award size={40} className="text-white" />
@@ -521,13 +549,13 @@ const LaComunicacion = () => {
                 <MessageCircle size={20} />
                 Practicar de Nuevo
               </button>
-              <button
-                onClick={() => navigate('/')}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
-                style={{ fontFamily: 'Fredoka' }}
-              >
-                Volver al Inicio
-              </button>
+            </div>
+
+            {/* Close Activity Message */}
+            <div className="mt-6 text-center">
+              <p className="text-lg text-gray-600 font-medium" style={{ fontFamily: 'Comic Neue' }}>
+                💡 Para cerrar esta actividad, haz clic en la <span className="font-bold text-gray-800">X</span> de la esquina superior derecha
+              </p>
             </div>
 
             {/* Fun Elements */}
