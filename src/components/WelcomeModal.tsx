@@ -35,7 +35,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center p-4 pt-8">
       {/* Overlay con efecto de desenfoque */}
       <div 
         className={`absolute inset-0 bg-black transition-opacity duration-500 ${
@@ -46,7 +46,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
       
       {/* Modal Content */}
       <div 
-        className={`relative w-full max-w-4xl h-[80vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 cursor-pointer ${
+        className={`relative w-full max-w-4xl h-[60vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform transition-all duration-700 cursor-pointer ${
           showContent ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
         style={{
@@ -79,16 +79,16 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Contenido principal */}
-        <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-12">
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-8">
           {/* Emoji de saludo animado */}
-          <div className="mb-8 text-8xl animate-bounce">
+          <div className="mb-6 text-6xl animate-bounce">
             👋
           </div>
 
           {/* Mensaje principal */}
-          <div className="space-y-6 max-w-2xl">
+          <div className="space-y-4 max-w-2xl">
             <h1 
-              className={`text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight transform transition-all duration-1000 ${
+              className={`text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight transform transition-all duration-1000 ${
                 showContent ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               }`}
               style={{ 
@@ -101,7 +101,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
             </h1>
 
             <div 
-              className={`text-xl md:text-2xl lg:text-3xl text-white text-opacity-95 leading-relaxed transform transition-all duration-1000 ${
+              className={`text-lg md:text-xl lg:text-2xl text-white text-opacity-95 leading-relaxed transform transition-all duration-1000 ${
                 showContent ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               }`}
               style={{ 
@@ -112,14 +112,14 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
             >
               Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>. 
               <br />
-              <span className="text-lg md:text-xl lg:text-2xl text-yellow-200 font-semibold animate-pulse">
+              <span className="text-base md:text-lg lg:text-xl text-yellow-200 font-semibold animate-pulse">
                 Haz clic en la X de la esquina para continuar
               </span>
             </div>
           </div>
 
           {/* Elementos decorativos adicionales */}
-          <div className="mt-12 flex justify-center space-x-8">
+          <div className="mt-8 flex justify-center space-x-6">
             <div className="animate-pulse">
               <div className="w-4 h-4 bg-yellow-300 rounded-full" />
             </div>
@@ -139,7 +139,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
 
           {/* Mensaje adicional sutil */}
           <div 
-            className={`mt-8 text-white text-opacity-80 text-sm md:text-base transform transition-all duration-1000 ${
+            className={`mt-6 text-white text-opacity-80 text-sm md:text-base transform transition-all duration-1000 ${
               showContent ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
             style={{ 
