@@ -647,6 +647,21 @@ const SemaforoLimites = () => {
           </div>
         )}
       </div>
+
+      {/* Footer Container */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Shield size={24} className="text-white" />
+            <span className="text-white font-medium" style={{ fontFamily: 'Comic Neue' }}>
+              Aprende a establecer límites saludables
+            </span>
+          </div>
+          <div className="text-white text-sm opacity-80" style={{ fontFamily: 'Comic Neue' }}>
+            Mind Goal - Desarrollo Socioemocional
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
