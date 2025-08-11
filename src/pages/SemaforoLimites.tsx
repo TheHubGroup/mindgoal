@@ -47,9 +47,9 @@ const situations: Situation[] = [
   },
   {
     id: 'situacion_4',
-    title: 'Te critican constantemente',
-    imageUrl: 'https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Una persona siempre encuentra algo negativo que decir sobre ti.'
+    title: 'En un juego, siempre te ponen el último para elegir equipo',
+    imageUrl: 'https://viact.org/imagenes/limite_04.png?auto=compress&cs=tinysrgb&w=400',
+    description: '¿Qué tan importante es para ti ser el primero en ser elegido?'
   },
   {
     id: 'situacion_5',
