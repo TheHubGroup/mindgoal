@@ -310,7 +310,7 @@ const HomePage = () => {
           {/* Contenido principal del splash */}
           <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-8">
             {/* Emoji de saludo animado */}
-            <div className="mb-12 text-12xl animate-bounce">
+            <div className="mb-40 text-40xl animate-bounce">
               👋
             </div>
 
