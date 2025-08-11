@@ -31,14 +31,16 @@ export const communicationService = {
         .from('communication_sessions')
         .select('*')
         .eq('user_id', userId)
-        .single()
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
 
       if (existingSession) {
         return existingSession
       }
 
       // Si no existe, crear nueva sesión
-      if (fetchError && fetchError.code === 'PGRST116') { // No rows returned
+      if (!existingSession) {
         const { data: newSession, error: createError } = await supabase
           .from('communication_sessions')
           .insert([{
