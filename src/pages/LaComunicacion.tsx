@@ -66,9 +66,6 @@ const LaComunicacion = () => {
     window.scrollTo(0, 0)
   }, [])
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
 
   const loadSession = async () => {
     if (!user) return
@@ -307,10 +304,41 @@ const LaComunicacion = () => {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Instructions - Moved to top */}
+        {!showEvaluation && (
+          <div className="mb-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center">
+            <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
+              💡 Instrucciones
+            </h3>
+            <div className="text-white text-opacity-90 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
+              <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
+              <p>• Responde con empatía y comprensión</p>
+              <p>• Ofrece consejos útiles y positivos</p>
+              <p>• Ayúdala a sentirse mejor y más confiada</p>
+              <p>• Al final recibirás una evaluación de tu empatía</p>
+            </div>
+            
+            <div className="mt-6 bg-white bg-opacity-20 rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 text-white">
+                <Heart size={20} className="text-red-300" />
+                <span className="text-base font-bold">
+                  Progreso: {Math.min(currentStep, sofiaMessages.length)}/{sofiaMessages.length} conversaciones
+                </span>
+              </div>
+              <div className="w-full bg-white bg-opacity-30 rounded-full h-3 mt-3">
+                <div 
+                  className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
+                  style={{ width: `${(Math.min(currentStep, sofiaMessages.length) / sofiaMessages.length) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {!showEvaluation ? (
-          /* Tablet Frame */
+          /* Tablet Frame - Now horizontal */
           <div className="bg-black rounded-[2rem] p-3 shadow-2xl">
-            {/* Tablet Screen */}
+            {/* Tablet Screen - Horizontal */}
             <div className="bg-white rounded-[1.5rem] overflow-hidden h-[600px] flex flex-col">
               {/* Status Bar */}
               <div className="bg-gray-900 text-white px-6 py-2 flex justify-between items-center text-sm">
@@ -337,7 +365,7 @@ const LaComunicacion = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-xl" style={{ fontFamily: 'Fredoka' }}>
-                    Sofía
+                    Valeria
                   </h3>
                   <p className="text-sm text-green-100">
                     {isTyping ? 'escribiendo...' : 'en línea'}
@@ -388,7 +416,7 @@ const LaComunicacion = () => {
                           <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                           <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
-                        <span className="text-sm text-gray-500 ml-3">Sofía está escribiendo...</span>
+                        <span className="text-sm text-gray-500 ml-3">Valeria está escribiendo...</span>
                       </div>
                     </div>
                   </div>
@@ -442,7 +470,7 @@ const LaComunicacion = () => {
                 ¡Excelente Trabajo!
               </h2>
               <p className="text-lg text-gray-600" style={{ fontFamily: 'Comic Neue' }}>
-                Has completado la actividad de comunicación con Sofía
+                Has completado la actividad de comunicación con Valeria
               </p>
             </div>
 
@@ -504,36 +532,6 @@ const LaComunicacion = () => {
           </div>
         )}
 
-        {/* Instructions */}
-        {!showEvaluation && (
-          <div className="mt-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center">
-            <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
-              💡 Instrucciones
-            </h3>
-            <div className="text-white text-opacity-90 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
-              <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
-              <p>• Responde con empatía y comprensión</p>
-              <p>• Ofrece consejos útiles y positivos</p>
-              <p>• Ayúdala a sentirse mejor y más confiada</p>
-              <p>• Al final recibirás una evaluación de tu empatía</p>
-            </div>
-            
-            <div className="mt-6 bg-white bg-opacity-20 rounded-lg p-4">
-              <div className="flex items-center justify-center gap-2 text-white">
-                <Heart size={20} className="text-red-300" />
-                <span className="text-base font-bold">
-                  Progreso: {Math.min(currentStep, sofiaMessages.length)}/{sofiaMessages.length} conversaciones
-                </span>
-              </div>
-              <div className="w-full bg-white bg-opacity-30 rounded-full h-3 mt-3">
-                <div 
-                  className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${(Math.min(currentStep, sofiaMessages.length) / sofiaMessages.length) * 100}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
