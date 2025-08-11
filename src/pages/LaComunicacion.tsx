@@ -463,7 +463,7 @@ const LaComunicacion = () => {
                   <span>Analizando tus respuestas...</span>
                 </div>
               ) : (
-                      Valeria
+                <div className="text-gray-700 text-lg leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
                   {evaluation.split('\n').map((paragraph, index) => (
                     <p key={index} className="mb-3">
                       {paragraph}
@@ -511,7 +511,7 @@ const LaComunicacion = () => {
               💡 Instrucciones
             </h3>
             <div className="text-white text-opacity-90 text-base space-y-2" style={{ fontFamily: 'Comic Neue' }}>
-              <p>• Lee cuidadosamente lo que Sofía te cuenta</p>
+              <p>• Lee cuidadosamente lo que Valeria te cuenta</p>
               <p>• Responde con empatía y comprensión</p>
               <p>• Ofrece consejos útiles y positivos</p>
               <p>• Ayúdala a sentirse mejor y más confiada</p>

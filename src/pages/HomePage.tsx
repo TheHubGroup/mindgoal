@@ -214,7 +214,7 @@ const HomePage = () => {
     {
       id: 'la-comunicacion',
       title: 'La Comunicación',
-      description: 'Practica la empatía ayudando a Sofía, una niña que se siente sola en su nuevo colegio',
+      description: 'Practica la empatía ayudando a Valeria, una niña que se siente sola en su nuevo colegio',
       icon: MessageCircle,
       color: 'from-green-500 to-blue-500',
       available: true,
