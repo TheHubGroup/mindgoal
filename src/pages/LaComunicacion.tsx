@@ -49,9 +49,9 @@ const LaComunicacion = () => {
 
   // Conversación predefinida de Sofía (la niña ficticia)
   const sofiaMessages = [
-    "Hola... 😔 Soy nueva en este colegio y me siento muy sola. No tengo amigos y todos ya tienen sus grupos.",
-    "En el recreo me quedo sola porque no sé cómo acercarme a los otros niños. Tengo miedo de que me rechacen.",
-    "Ayer intenté sentarme con unas niñas en el almuerzo pero me dijeron que ese lugar era de otra persona. Me sentí muy mal 😢",
+    "Hola... 😔 Soy nueva en este colegio y me siento muy sola. No tengo amigos y todos ya tienen sus grupos. ¿Me gustaría saber si tienes algún consejo para ayudarme?",
+    "En el recreo me quedo sola porque no sé cómo acercarme a los otros niños. Tengo miedo de que me rechacen. ¿Tú que harías en mi lugar?",
+    "Ayer intenté sentarme con unas niñas en el almuerzo pero me dijeron que ese lugar era de otra persona. Me sentí muy mal 😢, ¿Crees que deba intertar de nuevo acercarme a ellas?",
     "Muchas gracias por todos tus consejos... 🥰 Me has ayudado mucho y ahora me siento más confiada. ¡Eres muy amable!"
   ]
 
