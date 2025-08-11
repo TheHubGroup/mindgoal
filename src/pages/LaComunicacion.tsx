@@ -62,7 +62,7 @@ const LaComunicacion = () => {
   }, [user])
 
   useEffect(() => {
-    // Scroll to top when component mounts
+    // Only scroll to top when component mounts, don't auto-scroll during chat
     window.scrollTo(0, 0)
   }, [])
 
@@ -112,7 +112,17 @@ const LaComunicacion = () => {
   }
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // Only scroll if user is near bottom to avoid interrupting typing
+    if (messagesEndRef.current) {
+      const container = messagesEndRef.current.closest('.overflow-y-auto')
+      if (container) {
+        const { scrollTop, scrollHeight, clientHeight } = container
+        const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100
+        if (isNearBottom) {
+          messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
+    }
   }
 
   const simulateTyping = (duration: number = 2000) => {
@@ -125,9 +135,10 @@ const LaComunicacion = () => {
   const sendMessage = async () => {
     if (!currentMessage.trim() || !user) return
 
+    const messageText = currentMessage.trim()
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      text: currentMessage.trim(),
+      text: messageText,
       sender: 'user',
       timestamp: new Date()
     }
@@ -137,7 +148,7 @@ const LaComunicacion = () => {
     setCurrentMessage('')
 
     // Guardar mensaje del usuario
-    await communicationService.saveUserMessage(user.id, currentMessage.trim(), currentStep)
+    await communicationService.saveUserMessage(user.id, messageText, currentStep)
 
     // Simular que Sofía está escribiendo
     simulateTyping()
@@ -169,9 +180,9 @@ const LaComunicacion = () => {
         // Después de mostrar el mensaje, generar evaluación
         setTimeout(() => {
           generateEvaluation(newMessages)
-        }, 2000)
+        }, 1500)
       }
-    }, 2500)
+    }, 2000)
   }
 
   const generateEvaluation = async (conversationMessages: ChatMessage[]) => {
@@ -440,6 +451,7 @@ const LaComunicacion = () => {
                         className="flex-1 bg-transparent outline-none text-gray-800 text-lg"
                         style={{ fontFamily: 'Comic Neue' }}
                         disabled={isTyping}
+                        autoComplete="off"
                       />
                       <button className="text-gray-500 hover:text-gray-700">
                         <Camera size={24} />
