@@ -338,6 +338,15 @@ const HomePage = () => {
               <span className="font-bold text-yellow-500">Haz clic en la X de la esquina para continuar</span>.
             </div>
 
+                  {/* Mensaje adicional sutil */}
+            <div 
+              className="mt-12 text-white text-opacity-80 text-xl md:text-2xl"
+              style={{ fontFamily: 'Comic Neue' }}
+            >
+              ✨ Explora actividades increíbles diseñadas especialmente para ti ✨
+            </div>
+          </div>
+
             {/* Elementos decorativos */}
             <div className="mt-16 flex justify-center space-x-12">
               <div className="animate-pulse">
@@ -357,14 +366,6 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Mensaje adicional sutil */}
-            <div 
-              className="mt-12 text-white text-opacity-80 text-xl md:text-2xl"
-              style={{ fontFamily: 'Comic Neue' }}
-            >
-              ✨ Explora actividades increíbles diseñadas especialmente para ti ✨
-            </div>
-          </div>
 
           {/* Efecto de brillo en los bordes */}
           <div className="absolute inset-0 pointer-events-none">
