@@ -315,7 +315,7 @@ const HomePage = () => {
             </div>
 
             {/* Mensaje principal */}
-            <div className="space-y-2 max-w-3xl">
+            <div className="space-y-2 max-w-2xl">
               <h1 
                 className="text-4xl md:text-6xl lg:text-8xl font-bold text-white leading-tight"
                 style={{ 
