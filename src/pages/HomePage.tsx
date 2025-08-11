@@ -261,21 +261,111 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
-      {/* Welcome Modal - Se mantiene hasta que el usuario haga clic */}
-      <WelcomeModal 
-        isOpen={showWelcomeModal} 
-        onClose={handleCloseWelcome} 
-      />
+      {/* Splash Screen Section - Embedded at top */}
+      <div className="relative overflow-hidden">
+        <div 
+          className="w-full h-[60vh] bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 relative"
+          style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
+          }}
+        >
+          {/* Efectos de fondo animados */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Círculos flotantes */}
+            <div className="absolute top-10 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full animate-pulse" />
+            <div className="absolute top-32 right-20 w-16 h-16 bg-yellow-300 bg-opacity-20 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute bottom-20 left-20 w-24 h-24 bg-pink-300 bg-opacity-15 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute bottom-32 right-16 w-12 h-12 bg-blue-300 bg-opacity-20 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }} />
+            
+            {/* Estrellas brillantes */}
+            <div className="absolute top-20 left-1/4 text-yellow-300 animate-pulse">
+              <Star size={16} fill="currentColor" />
+            </div>
+            <div className="absolute top-40 right-1/3 text-white animate-pulse" style={{ animationDelay: '0.7s' }}>
+              <Sparkles size={20} />
+            </div>
+            <div className="absolute bottom-40 left-1/3 text-pink-300 animate-pulse" style={{ animationDelay: '1.2s' }}>
+              <Heart size={18} fill="currentColor" />
+            </div>
+            <div className="absolute bottom-24 right-1/4 text-blue-300 animate-pulse" style={{ animationDelay: '0.3s' }}>
+              <Star size={14} fill="currentColor" />
+            </div>
+          </div>
+
+          {/* Contenido principal del splash */}
+          <div className="relative h-full flex flex-col items-center justify-center text-center px-8 py-8">
+            {/* Emoji de saludo animado */}
+            <div className="mb-6 text-6xl animate-bounce">
+              👋
+            </div>
+
+            {/* Mensaje principal */}
+            <div className="space-y-4 max-w-2xl">
+              <h1 
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight"
+                style={{ 
+                  fontFamily: 'Fredoka',
+                  textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
+                }}
+              >
+                ¡Hola, {getDisplayName()}!
+              </h1>
+
+              <div 
+                className="text-lg md:text-xl lg:text-2xl text-white text-opacity-95 leading-relaxed"
+                style={{ 
+                  fontFamily: 'Comic Neue',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                Bienvenido a <span className="font-bold text-yellow-300">Mind Goal</span>.
+              </div>
+            </div>
+
+            {/* Elementos decorativos */}
+            <div className="mt-8 flex justify-center space-x-6">
+              <div className="animate-pulse">
+                <div className="w-4 h-4 bg-yellow-300 rounded-full" />
+              </div>
+              <div className="animate-pulse" style={{ animationDelay: '0.2s' }}>
+                <div className="w-4 h-4 bg-pink-300 rounded-full" />
+              </div>
+              <div className="animate-pulse" style={{ animationDelay: '0.4s' }}>
+                <div className="w-4 h-4 bg-blue-300 rounded-full" />
+              </div>
+              <div className="animate-pulse" style={{ animationDelay: '0.6s' }}>
+                <div className="w-4 h-4 bg-green-300 rounded-full" />
+              </div>
+              <div className="animate-pulse" style={{ animationDelay: '0.8s' }}>
+                <div className="w-4 h-4 bg-purple-300 rounded-full" />
+              </div>
+            </div>
+
+            {/* Mensaje adicional sutil */}
+            <div 
+              className="mt-6 text-white text-opacity-80 text-sm md:text-base"
+              style={{ fontFamily: 'Comic Neue' }}
+            >
+              ✨ Explora actividades increíbles diseñadas especialmente para ti ✨
+            </div>
+          </div>
+
+          {/* Efecto de brillo en los bordes */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10 transform -skew-x-12 animate-pulse" />
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Welcome Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
-            ¡Hola, {user?.email?.split('@')[0]}! 👋
+        {/* Activities Section Title */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
+            Elige una Actividad
           </h2>
-          <p className="text-xl text-white text-opacity-90 max-w-2xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
-            Bienvenido a tu plataforma de aprendizaje. Elige una actividad para comenzar tu aventura educativa.
+          <p className="text-lg text-white text-opacity-90 max-w-2xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
+            Selecciona una actividad para comenzar tu aventura de aprendizaje
           </p>
         </div>
 
