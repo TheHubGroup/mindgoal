@@ -267,39 +267,6 @@ const HomePage = () => {
         onClose={handleCloseWelcome} 
       />
 
-      {/* Header */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Sparkles size={32} className="text-white" />
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-              Mind Goal
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Botón Leaderboard */}
-            <button
-              onClick={() => navigate('/leaderboard')}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
-            >
-              <Trophy size={20} />
-              <span style={{ fontFamily: 'Fredoka' }}>Leaderboard</span>
-            </button>
-            
-            {/* Botón Dashboard */}
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
-            >
-              <BarChart3 size={20} />
-              <span style={{ fontFamily: 'Fredoka' }}>Dashboard</span>
-            </button>
-            
-            <UserMenu />
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Welcome Section */}
@@ -401,6 +368,39 @@ const HomePage = () => {
           <p className="text-white text-opacity-80" style={{ fontFamily: 'Comic Neue' }}>
             ¡Explora cada actividad y descubre nuevas formas de conocerte mejor! 🌟
           </p>
+        </div>
+      </div>
+
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Sparkles size={32} className="text-white" />
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+              Mind Goal
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            {/* Botón Leaderboard */}
+            <button
+              onClick={() => navigate('/leaderboard')}
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
+            >
+              <Trophy size={20} />
+              <span style={{ fontFamily: 'Fredoka' }}>Leaderboard</span>
+            </button>
+            
+            {/* Botón Dashboard */}
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
+            >
+              <BarChart3 size={20} />
+              <span style={{ fontFamily: 'Fredoka' }}>Dashboard</span>
+            </button>
+            
+            <UserMenu />
+          </div>
         </div>
       </div>
     </div>
