@@ -284,25 +284,6 @@ const MeditacionAutoconocimiento = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
-      {/* Header */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="text-indigo-800 hover:text-indigo-600 transition-colors"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <Brain size={32} className="text-indigo-800" />
-            <h1 className="text-2xl font-bold text-indigo-800" style={{ fontFamily: 'Fredoka' }}>
-              Meditación del Autoconocimiento
-            </h1>
-          </div>
-          <UserMenu />
-        </div>
-      </div>
-
       {/* Mensajes de estado */}
       {saveMessage && (
         <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
@@ -555,6 +536,24 @@ const MeditacionAutoconocimiento = () => {
       </div>
     </div>
   )
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-indigo-800 hover:text-indigo-600 transition-colors"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <Brain size={32} className="text-indigo-800" />
+            <h1 className="text-2xl font-bold text-indigo-800" style={{ fontFamily: 'Fredoka' }}>
+              Meditación del Autoconocimiento
+            </h1>
+          </div>
+          <UserMenu />
+        </div>
+      </div>
 }
 
 export default MeditacionAutoconocimiento

@@ -317,25 +317,6 @@ const MenuDeLaIra = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-800 via-orange-700 to-amber-600">
-      {/* Header */}
-      <div className="bg-black bg-opacity-30 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="text-white hover:text-gray-200 transition-colors"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <Flame size={32} className="text-orange-400" />
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-              Menú de la Ira
-            </h1>
-          </div>
-          <UserMenu />
-        </div>
-      </div>
-
       {/* Status messages */}
       {saveMessage && (
         <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
@@ -658,6 +639,24 @@ const MenuDeLaIra = () => {
       </div>
     </div>
   )
+      {/* Header moved to bottom */}
+      <div className="bg-black bg-opacity-30 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-white hover:text-gray-200 transition-colors"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <Flame size={32} className="text-orange-400" />
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+              Menú de la Ira
+            </h1>
+          </div>
+          <UserMenu />
+        </div>
+      </div>
 }
 
 export default MenuDeLaIra

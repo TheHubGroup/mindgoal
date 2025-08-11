@@ -289,41 +289,6 @@ const NombraTusEmociones = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400">
-      {/* Header */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="text-white hover:text-gray-200 transition-colors"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <Heart size={32} className="text-white" />
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-              Nombra tus Emociones
-            </h1>
-            {/* Indicador de guardado */}
-            {isSavingProgress && (
-              <div className="flex items-center gap-2 bg-white bg-opacity-20 rounded-full px-3 py-1">
-                <Save size={16} className="text-white animate-pulse" />
-                <span className="text-white text-sm font-medium">Guardando...</span>
-              </div>
-            )}
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={resetGame}
-              className="flex items-center gap-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105"
-            >
-              <RotateCcw size={20} />
-              Reiniciar Todo
-            </button>
-            <UserMenu />
-          </div>
-        </div>
-      </div>
-
       {/* Modal de Bienvenida de Regreso */}
       {showWelcomeBack && hasProgress && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -678,6 +643,40 @@ const NombraTusEmociones = () => {
       )}
     </div>
   )
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-white hover:text-gray-200 transition-colors"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <Heart size={32} className="text-white" />
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+              Nombra tus Emociones
+            </h1>
+            {/* Indicador de guardado */}
+            {isSavingProgress && (
+              <div className="flex items-center gap-2 bg-white bg-opacity-20 rounded-full px-3 py-1">
+                <Save size={16} className="text-white animate-pulse" />
+                <span className="text-white text-sm font-medium">Guardando...</span>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={resetGame}
+              className="flex items-center gap-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full font-bold transition-all transform hover:scale-105"
+            >
+              <RotateCcw size={20} />
+              Reiniciar Todo
+            </button>
+            <UserMenu />
+          </div>
+        </div>
+      </div>
 }
 
 export default NombraTusEmociones

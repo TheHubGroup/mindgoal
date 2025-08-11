@@ -213,7 +213,16 @@ const EmotionCalculatorPage = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
-      {/* Header */}
+      {/* Mensaje de estado */}
+      {saveMessage && (
+        <div className="fixed top-24 right-4 z-50 flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl shadow-2xl p-4 border-4 border-white transform animate-bounce">
+          <CheckCircle size={24} />
+          <span className="font-black text-lg tracking-wide" style={{ fontFamily: 'Fredoka' }}>{saveMessage.toUpperCase()}</span>
+        </div>
+      )}
+
+      {/* Main Content */}
+      {/* Header moved to bottom */}
       <div className="bg-black bg-opacity-20 backdrop-blur-lg border-b border-white border-opacity-10 relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -243,16 +252,6 @@ const EmotionCalculatorPage = () => {
           <UserMenu />
         </div>
       </div>
-
-      {/* Mensaje de estado */}
-      {saveMessage && (
-        <div className="fixed top-24 right-4 z-50 flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl shadow-2xl p-4 border-4 border-white transform animate-bounce">
-          <CheckCircle size={24} />
-          <span className="font-black text-lg tracking-wide" style={{ fontFamily: 'Fredoka' }}>{saveMessage.toUpperCase()}</span>
-        </div>
-      )}
-
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
         {/* Estadísticas del usuario */}
         {emotionStats.totalLogs > 0 && (

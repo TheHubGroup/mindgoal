@@ -353,25 +353,6 @@ const LaComunicacion = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-400 to-purple-400">
-      {/* Header */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="text-white hover:text-gray-200 transition-colors"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <MessageCircle size={32} className="text-white" />
-            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
-              La Comunicación
-            </h1>
-          </div>
-          <UserMenu />
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Vista de Tarjetas */}
@@ -753,6 +734,24 @@ const LaComunicacion = () => {
       </div>
     </div>
   )
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-white hover:text-gray-200 transition-colors"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <MessageCircle size={32} className="text-white" />
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Fredoka' }}>
+              La Comunicación
+            </h1>
+          </div>
+          <UserMenu />
+        </div>
+      </div>
 }
 
 export default LaComunicacion

@@ -152,7 +152,16 @@ const CartaMiMismo = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-100 to-red-100">
-      {/* Header */}
+      {/* Mensaje de estado */}
+      {saveMessage && (
+        <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
+          <CheckCircle size={20} className="text-green-500" />
+          <span className="font-medium text-gray-800">{saveMessage}</span>
+        </div>
+      )}
+
+      {/* Main Content */}
+      {/* Header moved to bottom */}
       <div className="bg-white bg-opacity-10 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -182,15 +191,6 @@ const CartaMiMismo = () => {
         </div>
       </div>
 
-      {/* Mensaje de estado */}
-      {saveMessage && (
-        <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
-          <CheckCircle size={20} className="text-green-500" />
-          <span className="font-medium text-gray-800">{saveMessage}</span>
-        </div>
-      )}
-
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {!isWriting && !showPreview ? (
           // Lista de cartas

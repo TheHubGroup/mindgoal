@@ -304,6 +304,56 @@ const TimelineActivityV2 = () => {
       )}
 
       {/* Main Content */}
+      {/* Header moved to bottom */}
+      <div className="bg-white bg-opacity-80 backdrop-blur-md border-b-4 border-black shadow-lg relative z-10">
+        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate('/')}
+              className="text-black hover:text-gray-700 transition-colors bg-white bg-opacity-80 rounded-full p-3 hover:bg-opacity-100 border-3 border-black shadow-lg transform hover:scale-105"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
+                  <Clock size={24} className="text-black" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-pink-400 rounded-full animate-ping" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-black text-black tracking-tight leading-none" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+                  MI LÍNEA DEL TIEMPO V2
+                </h1>
+                <div className="flex items-center gap-2 text-gray-800">
+                  <Palette size={16} />
+                  <span className="text-sm font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
+                    VERSIÓN EXPERIMENTAL
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            {/* Botón de Guardar */}
+            <button
+              onClick={handleSaveAll}
+              disabled={isSaving || !hasUnsavedChanges}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full font-black transition-all transform hover:scale-105 shadow-lg border-4 border-black tracking-wide ${
+                hasUnsavedChanges 
+                  ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white animate-pulse' 
+                  : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+              style={{ fontFamily: 'Fredoka', fontWeight: '900' }}
+            >
+              <Save size={20} />
+              {isSaving ? 'GUARDANDO...' : hasUnsavedChanges ? 'GUARDAR CAMBIOS' : 'TODO GUARDADO'}
+            </button>
+            <UserMenu />
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
         {/* Instrucciones */}
         <div className="text-center mb-8">
@@ -351,56 +401,6 @@ const TimelineActivityV2 = () => {
             </div>
           ))}
         </div>
-
-        {/* Estadísticas */}
-        <div className="mt-12 text-center">
-          <div className="bg-[#f4e3d1] backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border-4 border-black shadow-xl relative overflow-hidden">
-            {/* Decorative background elements */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-10">
-              <div className="absolute top-4 left-4 w-8 h-8 bg-yellow-400 rounded-full" />
-              <div className="absolute top-8 right-8 w-6 h-6 bg-pink-400 rounded-lg rotate-45" />
-              <div className="absolute bottom-4 left-8 w-10 h-10 bg-blue-400 rounded-full" />
-              <div className="absolute bottom-8 right-4 w-7 h-7 bg-green-400 rounded-lg" />
-            </div>
-            
-            <div className="relative z-10">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
-                  <Star size={24} className="text-black" />
-                </div>
-                <h3 className="text-3xl font-black text-black tracking-tight" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
-                  📊 TU PROGRESO CREATIVO
-                </h3>
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center border-3 border-black shadow-lg">
-                  <Sparkles size={24} className="text-black" />
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-8">
-                <div className="bg-[#8dba90] rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-5xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('pasado').length}</div>
-                  <div className="text-xl font-black text-white tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>RECUERDOS</div>
-                  <div className="text-sm font-bold text-white mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>DEL PASADO</div>
-                </div>
-                <div className="bg-[#e2ae74] rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-5xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('presente').length}</div>
-                  <div className="text-xl font-black text-white tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>ACTUALIDAD</div>
-                  <div className="text-sm font-bold text-white mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>VIVIENDO AHORA</div>
-                </div>
-                <div className="bg-[#8270a9] rounded-2xl p-6 border-4 border-black shadow-lg transform hover:scale-105 transition-all">
-                  <div className="text-5xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>{getSectionNotes('futuro').length}</div>
-                  <div className="text-xl font-black text-white tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>SUEÑOS</div>
-                  <div className="text-sm font-bold text-white mt-1 tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '700' }}>POR CUMPLIR</div>
-                </div>
-              </div>
-              <div className="mt-6 text-black">
-                <p className="text-xl font-black tracking-wide" style={{ fontFamily: 'Fredoka', fontWeight: '900' }}>
-                  TOTAL DE NOTAS CREADAS: <span className="font-black text-black text-2xl bg-yellow-200 px-4 py-2 rounded-full border-3 border-black shadow-lg">{notes.length}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Editor Modal */}
       <TimelineNoteEditor
