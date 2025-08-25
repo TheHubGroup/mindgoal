@@ -8,7 +8,10 @@ import {
   Heart,
   Zap,
   X,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  User
 } from 'lucide-react'
 
 interface Emotion {
@@ -34,11 +37,13 @@ const allEmotions: Emotion[] = [
 const StandaloneEmotionCalculator = () => {
   const { user } = useAuth()
   const [selectedEmotions, setSelectedEmotions] = useState<Set<string>>(new Set())
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [lastLogDate, setLastLogDate] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
   const [isCompleted, setIsCompleted] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
     // Optimize for iframe
@@ -85,6 +90,40 @@ const StandaloneEmotionCalculator = () => {
     })
   }
 
+  const nextSlide = () => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setCurrentIndex((prev) => (prev + 1) % allEmotions.length)
+    setTimeout(() => setIsAnimating(false), 300)
+  }
+
+  const prevSlide = () => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setCurrentIndex((prev) => (prev - 1 + allEmotions.length) % allEmotions.length)
+    setTimeout(() => setIsAnimating(false), 300)
+  }
+
+  const goToSlide = (index: number) => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setCurrentIndex(index)
+    setTimeout(() => setIsAnimating(false), 300)
+  }
+
+  const getVisibleEmotions = () => {
+    const emotions = []
+    for (let i = -1; i <= 1; i++) {
+      const index = (currentIndex + i + allEmotions.length) % allEmotions.length
+      emotions.push({
+        ...allEmotions[index],
+        position: i,
+        index
+      })
+    }
+    return emotions
+  }
+
   const handleSubmitEmotions = async () => {
     if (!user || selectedEmotions.size === 0) {
       setSaveMessage('Por favor, selecciona al menos una emoción.')
@@ -100,7 +139,7 @@ const StandaloneEmotionCalculator = () => {
           emotion_name: emotionName,
           felt_at: new Date().toISOString(),
           intensity: 3,
-          notes: `Registrado desde widget - ${new Date().toLocaleDateString()}`
+          notes: `Registrado desde widget MindGoal - ${new Date().toLocaleDateString()}`
         }))
 
       for (const entry of logEntries) {
@@ -122,7 +161,7 @@ const StandaloneEmotionCalculator = () => {
         setSelectedEmotions(new Set())
         setIsCompleted(false)
         loadLastLogDate()
-      }, 3000)
+      }, 4000)
     } catch (error) {
       console.error('Error saving emotions:', error)
       setSaveMessage('Error al registrar las emociones.')
@@ -177,9 +216,26 @@ const StandaloneEmotionCalculator = () => {
   }
 
   const daysSinceLastLog = getDaysSinceLastLog()
+  const visibleEmotions = getVisibleEmotions()
 
   return (
-    <div className="h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full opacity-20 animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+
       {/* Status messages */}
       {saveMessage && (
         <div className="fixed top-4 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-3 border-l-4 border-green-500">
@@ -189,24 +245,24 @@ const StandaloneEmotionCalculator = () => {
       )}
 
       {/* Main Content */}
-      <div className="h-full flex flex-col p-4">
+      <div className="h-full flex flex-col p-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Calculator size={24} className="text-yellow-400" />
-            <h1 className="text-2xl font-black text-white tracking-tight" style={{ fontFamily: 'Fredoka' }}>
+            <Calculator size={20} className="text-yellow-400" />
+            <h1 className="text-xl font-black text-white tracking-tight" style={{ fontFamily: 'Fredoka' }}>
               CALCULADORA DE EMOCIONES
             </h1>
-            <Sparkles size={24} className="text-yellow-400" />
+            <Sparkles size={20} className="text-yellow-400" />
           </div>
           
-          <div className="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-4 mb-4">
-            <h2 className="text-lg font-bold text-white mb-2" style={{ fontFamily: 'Fredoka' }}>
+          <div className="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-3 mb-4">
+            <h2 className="text-base font-bold text-white mb-2" style={{ fontFamily: 'Fredoka' }}>
               ¿Qué emociones has sentido desde tu última visita a MindGoal?
             </h2>
             
             {lastLogDate && daysSinceLastLog !== null && (
-              <div className="text-white text-opacity-90 text-sm" style={{ fontFamily: 'Comic Neue' }}>
+              <div className="text-white text-opacity-90 text-xs" style={{ fontFamily: 'Comic Neue' }}>
                 {daysSinceLastLog === 0 ? (
                   <span>Tu último registro fue hoy</span>
                 ) : daysSinceLastLog === 1 ? (
@@ -218,57 +274,146 @@ const StandaloneEmotionCalculator = () => {
             )}
             
             {!lastLogDate && (
-              <div className="text-white text-opacity-90 text-sm" style={{ fontFamily: 'Comic Neue' }}>
+              <div className="text-white text-opacity-90 text-xs" style={{ fontFamily: 'Comic Neue' }}>
                 Este es tu primer registro de emociones
               </div>
             )}
           </div>
         </div>
 
-        {/* Emotions Grid */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-            {allEmotions.map((emotion) => {
+        {/* Emotion Carousel */}
+        <div className="flex-1 relative max-w-md mx-auto">
+          {/* Navigation Buttons */}
+          <button 
+            onClick={prevSlide}
+            disabled={isCompleted}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          
+          <button 
+            onClick={nextSlide}
+            disabled={isCompleted}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50"
+          >
+            <ChevronRight size={20} />
+          </button>
+
+          {/* Carousel */}
+          <div className="relative h-80 overflow-visible">
+            {visibleEmotions.map((emotion) => {
+              // Calculate transformations based on position
+              let scale = 1
+              let opacity = 1
+              let zIndex = 10
+              let translateX = 0
+              
+              if (emotion.position === 0) {
+                scale = 1
+                opacity = 1
+                zIndex = 30
+              } else if (Math.abs(emotion.position) === 1) {
+                scale = 0.7
+                opacity = 0.6
+                zIndex = 20
+                translateX = emotion.position > 0 ? 80 : -80
+              }
+              
               const isSelected = selectedEmotions.has(emotion.name)
               
               return (
-                <div
-                  key={emotion.name}
-                  onClick={() => handleEmotionSelect(emotion.name)}
-                  className={`
-                    cursor-pointer transition-all duration-300 transform hover:scale-105 rounded-2xl p-4 text-center
-                    ${isSelected 
-                      ? 'ring-4 ring-yellow-400 scale-105 shadow-lg' 
-                      : 'hover:shadow-lg'
-                    }
-                    ${isCompleted ? 'opacity-50 cursor-not-allowed' : ''}
-                  `}
+                <div 
+                  key={emotion.index}
+                  className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out`}
+                  style={{ 
+                    transform: `translate(calc(-50% + ${translateX}px), -50%) scale(${scale})`,
+                    opacity,
+                    zIndex
+                  }}
                 >
-                  <div className={`bg-gradient-to-br ${emotion.color} rounded-2xl p-4 h-full flex flex-col items-center justify-center shadow-lg border-2 border-white border-opacity-20`}>
-                    <div className="text-4xl mb-2">{emotion.emoji}</div>
-                    <h3 className="text-white font-bold text-sm leading-tight" style={{ fontFamily: 'Fredoka' }}>
-                      {emotion.name}
-                    </h3>
-                    
-                    {isSelected && (
-                      <div className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-1 shadow-lg">
-                        <CheckCircle size={16} className="text-yellow-900" />
+                  <div 
+                    className={`
+                      w-64 h-72 rounded-2xl shadow-2xl overflow-hidden cursor-pointer
+                      transition-all duration-300 transform
+                      ${isSelected ? 'ring-4 ring-yellow-400 scale-105' : ''}
+                      ${isCompleted ? 'opacity-50 cursor-not-allowed' : ''}
+                    `}
+                  >
+                    <div 
+                      className={`w-full h-full bg-gradient-to-br ${emotion.color} p-6 flex flex-col items-center justify-between`}
+                      onClick={() => emotion.position === 0 && handleEmotionSelect(emotion.name)}
+                    >
+                      {/* Emoji */}
+                      <div className="text-6xl mb-3">{emotion.emoji}</div>
+                      
+                      {/* Content */}
+                      <div className="text-center">
+                        <h3 className="text-2xl font-black text-white mb-2 tracking-tight" style={{ fontFamily: 'Fredoka' }}>
+                          {emotion.name.toUpperCase()}
+                        </h3>
+                        <p className="text-white text-opacity-90 text-sm mb-4" style={{ fontFamily: 'Comic Neue' }}>
+                          {emotion.description}
+                        </p>
+                        
+                        {/* Selection Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (emotion.position === 0) handleEmotionSelect(emotion.name)
+                          }}
+                          disabled={emotion.position !== 0 || isCompleted}
+                          className={`
+                            px-4 py-2 rounded-full font-bold text-sm shadow-lg transition-all transform
+                            ${emotion.position === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}
+                            ${isSelected 
+                              ? 'bg-white text-purple-600 hover:bg-gray-100' 
+                              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                            }
+                          `}
+                          style={{ fontFamily: 'Fredoka' }}
+                        >
+                          {isSelected ? '✓ SELECCIONADA' : 'SELECCIONAR'}
+                        </button>
                       </div>
-                    )}
+                      
+                      {/* Selection Indicator */}
+                      {isSelected && (
+                        <div className="absolute top-3 right-3 bg-white rounded-full p-1 shadow-lg">
+                          <CheckCircle size={16} className="text-green-500" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )
             })}
           </div>
+          
+          {/* Slide Indicators */}
+          <div className="flex justify-center gap-1 mt-4">
+            {allEmotions.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                disabled={isCompleted}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  currentIndex === index 
+                    ? 'bg-white w-6' 
+                    : 'bg-white bg-opacity-30 hover:bg-opacity-50'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Selected Emotions Summary */}
         {selectedEmotions.size > 0 && (
-          <div className="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-4 mb-4">
-            <h3 className="text-white font-bold mb-2 text-center" style={{ fontFamily: 'Fredoka' }}>
+          <div className="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-3 mb-4">
+            <h3 className="text-white font-bold mb-2 text-center text-sm" style={{ fontFamily: 'Fredoka' }}>
               Emociones Seleccionadas ({selectedEmotions.size})
             </h3>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-1 justify-center">
               {Array.from(selectedEmotions).map((emotionName) => {
                 const emotion = allEmotions.find(e => e.name === emotionName)
                 if (!emotion) return null
@@ -276,20 +421,18 @@ const StandaloneEmotionCalculator = () => {
                 return (
                   <div 
                     key={emotionName}
-                    className="bg-white bg-opacity-20 rounded-full px-3 py-1 flex items-center gap-2"
+                    className="bg-white bg-opacity-20 rounded-full px-2 py-1 flex items-center gap-1"
                   >
-                    <span className="text-lg">{emotion.emoji}</span>
-                    <span className="text-white font-medium text-sm" style={{ fontFamily: 'Fredoka' }}>
+                    <span className="text-sm">{emotion.emoji}</span>
+                    <span className="text-white font-medium text-xs" style={{ fontFamily: 'Fredoka' }}>
                       {emotionName}
                     </span>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleEmotionSelect(emotionName)
-                      }}
-                      className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-1"
+                      onClick={() => handleEmotionSelect(emotionName)}
+                      disabled={isCompleted}
+                      className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-0.5 disabled:opacity-50"
                     >
-                      <X size={12} className="text-white" />
+                      <X size={10} className="text-white" />
                     </button>
                   </div>
                 )
@@ -299,47 +442,47 @@ const StandaloneEmotionCalculator = () => {
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <button
             onClick={resetWidget}
             disabled={selectedEmotions.size === 0 || isSaving || isCompleted}
-            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 text-sm"
             style={{ fontFamily: 'Fredoka' }}
           >
-            <X size={16} />
+            <X size={14} />
             LIMPIAR
           </button>
           
           <button
             onClick={handleSubmitEmotions}
             disabled={selectedEmotions.size === 0 || isSaving || isCompleted}
-            className="flex-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+            className="flex-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 shadow-lg flex items-center justify-center gap-1 text-sm"
             style={{ fontFamily: 'Fredoka', flex: '2' }}
           >
-            <Save size={16} />
+            <Save size={14} />
             {isSaving ? 'REGISTRANDO...' : 'REGISTRAR EMOCIONES'}
           </button>
         </div>
 
         {/* Completion Message */}
         {isCompleted && (
-          <div className="mt-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-4 text-center border-2 border-white border-opacity-20 shadow-xl">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <CheckCircle size={20} className="text-white" />
-              <h3 className="text-white font-bold" style={{ fontFamily: 'Fredoka' }}>
+          <div className="mt-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-3 text-center border-2 border-white border-opacity-20 shadow-xl">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <CheckCircle size={16} className="text-white" />
+              <h3 className="text-white font-bold text-sm" style={{ fontFamily: 'Fredoka' }}>
                 ¡Emociones Registradas!
               </h3>
             </div>
-            <p className="text-white text-opacity-90 text-sm" style={{ fontFamily: 'Comic Neue' }}>
+            <p className="text-white text-opacity-90 text-xs" style={{ fontFamily: 'Comic Neue' }}>
               Tus emociones han sido guardadas en MindGoal
             </p>
           </div>
         )}
 
         {/* Instructions */}
-        <div className="mt-4 text-center">
+        <div className="mt-2 text-center">
           <p className="text-white text-opacity-80 text-xs" style={{ fontFamily: 'Comic Neue' }}>
-            💡 Selecciona las emociones que has sentido y haz clic en "Registrar"
+            💡 Desliza por las emociones y selecciona las que sientes
           </p>
         </div>
       </div>
