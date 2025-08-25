@@ -18,6 +18,7 @@ import UserBarPage from './pages/UserBarPage'
 import DashboardPage from './pages/DashboardPage'
 import StandaloneUserBar from './pages/StandaloneUserBar'
 import StandaloneLoginUserBar from './pages/StandaloneLoginUserBar'
+import StandaloneEmotionCalculator from './pages/StandaloneEmotionCalculator'
 import LeaderboardPage from './pages/LeaderboardPage'
 import UserDetailPage from './pages/UserDetailPage'
 import LaComunicacion from './pages/LaComunicacion'
@@ -159,6 +160,9 @@ function App() {
             } />
             <Route path="/standalone-login-bar" element={
               <StandaloneLoginUserBar />
+            } />
+            <Route path="/standalone-emotion-calculator" element={
+              <StandaloneEmotionCalculator />
             } />
             
             {/* Catch all route */}
