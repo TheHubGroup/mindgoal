@@ -71,18 +71,18 @@ const problems: Problem[] = [
     }
   },
   {
-    id: 'conflicto_personal_1',
-    title: 'Fracaso en Examen Importante',
-    imageUrl: 'https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Estudiaste mucho para un examen pero obtuviste una calificación muy baja. Te sientes frustrado y decepcionado contigo mismo.',
+    id: 'conflicto_personal_1', 
+    title: 'Frustración con Ejercicio de Matemáticas',
+    imageUrl: '/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
+    description: 'Estás resolviendo un ejercicio de matemáticas, pero te equivocas varias veces. Empiezas a sentir frustración.',
     type: 'conflicto_personal',
     resilientResponse: {
-      text: 'Analizo qué salió mal, pido ayuda al profesor y creo un mejor plan de estudio para la próxima vez.',
-      feedback: '¡Excelente actitud! Ver los fracasos como oportunidades de aprendizaje y buscar ayuda muestra gran resiliencia y madurez.'
+      text: 'Tomas un descanso corto, pides ayuda o revisas el ejemplo de nuevo.',
+      feedback: '¡Excelente! Buscar estrategias y ayuda demuestra resiliencia. Cada error te acerca más a la solución.'
     },
     impulsiveResponse: {
-      text: 'Me siento terrible conmigo mismo y pienso que no soy lo suficientemente inteligente para esta materia.',
-      feedback: 'Es normal sentirse decepcionado, pero la autocrítica excesiva puede dañar tu autoestima. Recuerda que un examen no define tu inteligencia.'
+      text: 'Cierras el cuaderno y piensas: "Soy malo para esto, no lo intentaré más."',
+      feedback: 'Rendirse rápido no te deja crecer. Los errores son parte del aprendizaje.'
     }
   },
   {
@@ -537,27 +537,8 @@ const ProblemaResuelto = () => {
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold text-gray-800 text-center mb-6" style={{ fontFamily: 'Fredoka' }}>
                     🤔 ¿Cómo reaccionarías?
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Respuesta A */}
-                    <div
-                      onClick={() => handleChoiceSelect('impulsiva')}
-                      className={`p-6 rounded-2xl cursor-pointer transition-all transform hover:scale-105 border-4 ${
-                        selectedChoice === 'impulsiva' 
-                          ? 'border-purple-600 bg-purple-100 shadow-lg scale-105' 
-                          : 'border-purple-300 bg-purple-50 hover:bg-purple-100'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                          <Zap size={32} className="text-white" />
-                        </div>
-                        <h4 className="text-lg font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
-                          Respuesta A
-                        </h4>
                         <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
-                          {problems[currentProblemIndex].impulsiveResponse.text}
+                          {problems[currentProblemIndex].resilientResponse.text}
                         </p>
                       </div>
                     </div>
@@ -578,9 +559,6 @@ const ProblemaResuelto = () => {
                         <h4 className="text-lg font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
                           Respuesta B
                         </h4>
-                        <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
-                          {problems[currentProblemIndex].resilientResponse.text}
-                        </p>
                       </div>
                     </div>
                   </div>
