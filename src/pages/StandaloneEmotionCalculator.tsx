@@ -282,22 +282,26 @@ const StandaloneEmotionCalculator = () => {
         </div>
 
         {/* Emotion Carousel */}
-        <div className="flex-1 relative max-w-md mx-auto">
-          {/* Navigation Buttons */}
+        <div className="flex-1 relative max-w-lg mx-auto">
+          {/* Navigation Buttons with Text */}
           <button 
             onClick={prevSlide}
             disabled={isCompleted}
-            className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
+            className="absolute -left-8 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-4 py-3 rounded-xl shadow-xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30 flex items-center gap-2"
+            style={{ fontFamily: 'Fredoka' }}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={20} />
+            <span className="font-bold text-sm">Atrás</span>
           </button>
           
           <button 
             onClick={nextSlide}
             disabled={isCompleted}
-            className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
+            className="absolute -right-8 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-3 rounded-xl shadow-xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30 flex items-center gap-2"
+            style={{ fontFamily: 'Fredoka' }}
           >
-            <ChevronRight size={24} />
+            <span className="font-bold text-sm">Adelante</span>
+            <ChevronRight size={20} />
           </button>
 
           {/* Navigation Buttons */}
