@@ -41,18 +41,18 @@ interface Problem {
 // Problemas predefinidos (reemplazar con las imágenes y textos reales)
 const problems: Problem[] = [
   {
-    id: 'conflicto_otros_1',
+    id: 'conflicto_otros_1', 
     title: 'Conflicto con Compañero de Clase',
-    imageUrl: 'https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Tu compañero de clase te dice algo hiriente delante de otros estudiantes. Te sientes avergonzado y molesto.',
+    imageUrl: '/Gemini_Generated_Image_bwdal1bwdal1bwda.png',
+    description: 'Estás en clase y necesitas un marcador para tu trabajo en grupo. Le pides a tu compañero, pero él te dice: "¡No! Yo lo necesito".',
     type: 'conflicto_otros',
     resilientResponse: {
-      text: 'Respiro profundo, me alejo un momento para calmarme y luego hablo con él en privado para resolver el conflicto.',
-      feedback: '¡Excelente! Mostraste autocontrol y madurez. Alejarte para calmarte y luego abordar el problema de manera privada es una respuesta muy resiliente.'
+      text: 'Respiras y le dices con calma: "Entiendo que lo necesites, ¿podemos turnarnos para usarlo?"',
+      feedback: '¡Excelente! Usaste la comunicación para buscar una solución. Eso demuestra empatía y colaboración.'
     },
     impulsiveResponse: {
-      text: 'Le respondo inmediatamente con algo igual de hiriente para que sienta lo mismo que yo.',
-      feedback: 'Esta respuesta, aunque comprensible, puede empeorar el conflicto. La resiliencia implica tomarse un momento para pensar antes de reaccionar.'
+      text: 'Te enojas y le gritas: "¡Qué egoísta eres!"',
+      feedback: 'Reaccionar con enojo puede empeorar la situación y romper la amistad. ¿Cómo crees que se sintió tu compañero?'
     }
   },
   {
@@ -155,13 +155,12 @@ const ProblemaResuelto = () => {
         setShowFeedback(false)
         setViewMode('activity')
       } else {
-        console.error('Failed to create new session - database tables may not exist yet')
-        // Show error message to user
-        alert('Error: Las tablas de la base de datos aún no están creadas. Por favor, ejecuta la migración en Supabase Dashboard.')
+        // Show user-friendly error message
+        alert('Error: Las tablas de la base de datos aún no están creadas. Por favor, ejecuta la migración "20250825230500_fix_problema_resuelto_policies.sql" en Supabase Dashboard > SQL Editor.')
       }
     } catch (error) {
       console.error('Error starting new session:', error)
-      alert('Error al crear nueva sesión. Por favor, verifica que las tablas de la base de datos estén creadas.')
+      alert('Error al crear nueva sesión. Por favor, ejecuta la migración "20250825230500_fix_problema_resuelto_policies.sql" en Supabase Dashboard.')
     }
   }
 
