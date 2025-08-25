@@ -73,7 +73,7 @@ const problems: Problem[] = [
   {
     id: 'conflicto_personal_1',
     title: 'Frustración con Ejercicio de Matemáticas',
-    imageUrl: '/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
+    imageUrl: '/public/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
     description: 'Estás resolviendo un ejercicio de matemáticas, pero te equivocas varias veces. Empiezas a sentir frustración.',
     type: 'conflicto_personal',
     resilientResponse: {
