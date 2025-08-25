@@ -87,17 +87,17 @@ const problems: Problem[] = [
   },
   {
     id: 'conflicto_personal_2',
-    title: 'Miedo a Hablar en Público',
-    imageUrl: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Tienes que hacer una presentación frente a toda la clase pero sientes mucho miedo y ansiedad. Tu corazón late muy rápido.',
+    title: 'Decepción por no ser Elegido',
+    imageUrl: '/public/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
+    description: 'Querías participar en un concurso de dibujo, pero no fuiste elegido entre los finalistas.',
     type: 'conflicto_personal',
     resilientResponse: {
-      text: 'Practico técnicas de respiración, me preparo bien y me recuerdo que es normal sentir nervios.',
-      feedback: '¡Perfecto! Reconocer tus emociones, prepararte bien y usar técnicas de relajación son estrategias muy resilientes para manejar la ansiedad.'
+      text: 'Te dices: "Hoy no gané, pero puedo seguir practicando. Tal vez la próxima vez lo logre."',
+      feedback: '¡Muy bien! Ver la experiencia como aprendizaje es resiliencia. No siempre se gana, pero siempre se puede mejorar.'
     },
     impulsiveResponse: {
-      text: 'Invento una excusa para no hacer la presentación porque el miedo es demasiado fuerte.',
-      feedback: 'Evitar las situaciones difíciles puede darte alivio temporal, pero no te ayuda a crecer. La resiliencia se construye enfrentando gradualmente nuestros miedos.'
+      text: 'Piensas: "Nunca más voy a dibujar, no sirvo para esto."',
+      feedback: 'Ese pensamiento te quita fuerzas y no te deja disfrutar lo que te gusta.'
     }
   }
 ]
