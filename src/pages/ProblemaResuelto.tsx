@@ -76,11 +76,11 @@ const problems: Problem[] = [
     imageUrl: '/public/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
     description: 'Estás resolviendo un ejercicio de matemáticas, pero te equivocas varias veces. Empiezas a sentir frustración.',
     type: 'conflicto_personal',
-    resilientResponse: {
+    impulsiveResponse: {
       text: 'Tomas un descanso corto, pides ayuda o revisas el ejemplo de nuevo.',
       feedback: '¡Excelente! Buscar estrategias y ayuda demuestra resiliencia. Cada error te acerca más a la solución.'
     },
-    impulsiveResponse: {
+    resilientResponse: {
       text: 'Cierras el cuaderno y piensas: "Soy malo para esto, no lo intentaré más."',
       feedback: 'Rendirse rápido no te deja crecer. Los errores son parte del aprendizaje.'
     }
@@ -91,13 +91,13 @@ const problems: Problem[] = [
     imageUrl: '/public/Gemini_Generated_Image_9xozmj9xozmj9xoz.png',
     description: 'Querías participar en un concurso de dibujo, pero no fuiste elegido entre los finalistas.',
     type: 'conflicto_personal',
-    resilientResponse: {
-      text: 'Te dices: "Hoy no gané, pero puedo seguir practicando. Tal vez la próxima vez lo logre."',
-      feedback: '¡Muy bien! Ver la experiencia como aprendizaje es resiliencia. No siempre se gana, pero siempre se puede mejorar.'
-    },
     impulsiveResponse: {
       text: 'Piensas: "Nunca más voy a dibujar, no sirvo para esto."',
       feedback: 'Ese pensamiento te quita fuerzas y no te deja disfrutar lo que te gusta.'
+    },
+    resilientResponse: {
+      text: 'Te dices: "Hoy no gané, pero puedo seguir practicando. Tal vez la próxima vez lo logre."',
+      feedback: '¡Muy bien! Ver la experiencia como aprendizaje es resiliencia. No siempre se gana, pero siempre se puede mejorar.'
     }
   }
 ]
@@ -735,7 +735,15 @@ const ProblemaResuelto = () => {
             {/* Mensaje de cierre */}
             <div className="text-center">
               <div className="bg-blue-50 rounded-2xl p-6 border-l-4 border-blue-500">
-                <p className="text-lg text-gray-700 font-medium" style={{ fontFamily: 'Comic Neue' }}>
+                <div className="mb-4">
+                  <p className="text-xl text-gray-800 font-bold leading-relaxed mb-4" style={{ fontFamily: 'Fredoka' }}>
+                    🌟 Reflexión Final
+                  </p>
+                  <p className="text-lg text-gray-700 font-medium leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                    "Cada problema es una oportunidad para practicar tu resiliencia. Cuando eliges la calma, la empatía y la perseverancia, te conviertes en alguien más fuerte y sabio. ¡Recuerda, tú puedes con los problemas!"
+                  </p>
+                </div>
+                <p className="text-base text-gray-600 font-medium" style={{ fontFamily: 'Comic Neue' }}>
                   💡 Para cerrar esta actividad, haz clic en la <span className="font-bold text-gray-800">X</span> de la esquina superior derecha
                 </p>
               </div>
