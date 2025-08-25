@@ -57,17 +57,17 @@ const problems: Problem[] = [
   },
   {
     id: 'conflicto_otros_2',
-    title: 'Exclusión del Grupo',
-    imageUrl: 'https://images.pexels.com/photos/8613092/pexels-photo-8613092.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Tus amigos hacen planes sin incluirte y te enteras por casualidad. Te sientes excluido y triste.',
+    title: 'Acusación Falsa en el Juego',
+    imageUrl: '/Gemini_Generated_Image_nt24l0nt24l0nt24.png',
+    description: 'En el recreo, un amigo te acusa de hacer trampa en un juego, aunque no fue cierto.',
     type: 'conflicto_otros',
     resilientResponse: {
-      text: 'Hablo con mis amigos de manera calmada para entender qué pasó y expresar cómo me siento.',
-      feedback: '¡Muy bien! La comunicación abierta y honesta es clave para resolver malentendidos. Expresar tus sentimientos de manera calmada fortalece las relaciones.'
+      text: 'Le dices: "Entiendo que estés molesto, pero yo no hice trampa. ¿Quieres que juguemos de nuevo para que sea justo?"',
+      feedback: '¡Muy bien! Mostraste calma y ofreciste una solución justa. Eso es resiliencia en acción.'
     },
     impulsiveResponse: {
-      text: 'Los ignoro completamente y busco nuevos amigos porque claramente no me valoran.',
-      feedback: 'Aunque es natural sentirse herido, cortar la comunicación sin intentar resolver el problema puede hacer que pierdas amistades valiosas.'
+      text: 'Te pones a gritar defendiendo que no fue tu culpa.',
+      feedback: 'Cuando gritamos, el otro puede molestarse más y no escucharnos. ¿Realmente te sentirías mejor así?'
     }
   },
   {

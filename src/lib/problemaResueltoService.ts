@@ -53,11 +53,16 @@ export const problemaResueltoService = {
       if (createError) {
         console.error('Error creating problema resuelto session:', createError)
         
-        // If table doesn't exist, return null gracefully
-        if (createError.code === '42P01' || createError.message?.includes('does not exist')) {
+        // If table doesn't exist or other database error, return null gracefully
+        if (createError.code === '42P01' || 
+            createError.message?.includes('does not exist') ||
+            createError.message?.includes('relation') ||
+            !createError.message) {
           console.warn('Database tables not created yet. Please run the migration: 20250825230500_fix_problema_resuelto_policies.sql in Supabase Dashboard.')
           return null
         }
+        
+        console.error('Full error details:', createError)
         return null
       }
 
