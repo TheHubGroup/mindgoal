@@ -553,10 +553,10 @@ const ProblemaResuelto = () => {
                         <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                           <Zap size={32} className="text-white" />
                         </div>
-                        <h4 className="text-lg font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                        <h4 className="text-base font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
                           Respuesta A
                         </h4>
-                        <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
+                        <p className="text-purple-700 leading-relaxed text-xl font-black" style={{ fontFamily: 'Comic Neue' }}>
                           {problems[currentProblemIndex].impulsiveResponse.text}
                         </p>
                       </div>
@@ -575,10 +575,10 @@ const ProblemaResuelto = () => {
                         <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                           <Shield size={32} className="text-white" />
                         </div>
-                        <h4 className="text-lg font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                        <h4 className="text-base font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
                           Respuesta B
                         </h4>
-                        <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
+                        <p className="text-purple-700 leading-relaxed text-xl font-black" style={{ fontFamily: 'Comic Neue' }}>
                           {problems[currentProblemIndex].resilientResponse.text}
                         </p>
                       </div>
