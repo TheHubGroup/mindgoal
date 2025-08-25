@@ -88,7 +88,7 @@ const problems: Problem[] = [
   {
     id: 'conflicto_personal_2',
     title: 'Decepción por no ser Elegido',
-    imageUrl: '/public/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
+    imageUrl: 'public/Gemini_Generated_Image_9xozmj9xozmj9xoz.png',
     description: 'Querías participar en un concurso de dibujo, pero no fuiste elegido entre los finalistas.',
     type: 'conflicto_personal',
     resilientResponse: {
