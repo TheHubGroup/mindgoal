@@ -538,11 +538,12 @@ const ProblemaResuelto = () => {
                   <h3 className="text-2xl font-bold text-gray-800 text-center mb-6" style={{ fontFamily: 'Fredoka' }}>
                     🤔 ¿Cómo reaccionarías?
 
-                        <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
+                        <p className="text-lg font-bold text-purple-700 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
                           {problems[currentProblemIndex].resilientResponse.text}
                         </p>
                       </div>
                     </div>
+                  </div>
                   </div>
                 </div>
               </div>
