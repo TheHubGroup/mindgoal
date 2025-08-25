@@ -283,6 +283,29 @@ const StandaloneEmotionCalculator = () => {
 
         {/* Emotion Carousel */}
         <div className="flex-1 relative max-w-lg mx-auto">
+          {/* Navigation Buttons */}
+          <button 
+            onClick={prevSlide}
+            disabled={isCompleted}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-lg shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div className="flex items-center gap-1">
+              <ChevronLeft size={16} />
+              <span className="text-xs font-bold" style={{ fontFamily: 'Fredoka' }}>Atrás</span>
+            </div>
+          </button>
+          
+          <button 
+            onClick={nextSlide}
+            disabled={isCompleted}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-lg shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div className="flex items-center gap-1">
+              <span className="text-xs font-bold" style={{ fontFamily: 'Fredoka' }}>Adelante</span>
+              <ChevronRight size={16} />
+            </div>
+          </button>
+
           {/* Navigation Buttons with Text */}
           <button 
             onClick={prevSlide}
