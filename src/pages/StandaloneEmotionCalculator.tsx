@@ -287,17 +287,17 @@ const StandaloneEmotionCalculator = () => {
           <button 
             onClick={prevSlide}
             disabled={isCompleted}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50"
+            className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={24} />
           </button>
           
           <button 
             onClick={nextSlide}
             disabled={isCompleted}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50"
+            className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={24} />
           </button>
 
           {/* Carousel */}
