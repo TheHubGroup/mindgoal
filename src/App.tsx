@@ -23,6 +23,7 @@ import LeaderboardPage from './pages/LeaderboardPage'
 import UserDetailPage from './pages/UserDetailPage'
 import LaComunicacion from './pages/LaComunicacion'
 import SemaforoLimites from './pages/SemaforoLimites'
+import ProblemaResuelto from './pages/ProblemaResuelto'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -146,6 +147,11 @@ function App() {
             <Route path="/actividad/semaforo-limites" element={
               <ProtectedRoute>
                 <SemaforoLimites />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/problema-resuelto" element={
+              <ProtectedRoute>
+                <ProblemaResuelto />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={

@@ -32,6 +32,7 @@ import { communicationService } from '../lib/communicationService'
 import { semaforoLimitesService } from '../lib/semaforoLimitesService'
 import { emotionMatchService } from '../lib/emotionMatchService'
 import { emotionLogService } from '../lib/emotionLogService'
+import { problemaResueltoService } from '../lib/problemaResueltoService'
 
 interface ActivityStatus {
   hasData: boolean
@@ -194,6 +195,18 @@ const HomePage = () => {
             `${completedSemaforoSessions.length} sesión${completedSemaforoSessions.length > 1 ? 'es' : ''} completada${completedSemaforoSessions.length > 1 ? 's' : ''}` :
             'Sesión iniciada' : undefined
       }
+      
+      // Problema Resuelto
+      const problemaResueltoSessions = await problemaResueltoService.getAllSessions(user.id)
+      const completedProblemaResueltoSessions = problemaResueltoSessions.filter(s => s.completed_at)
+      statuses['problema-resuelto'] = {
+        hasData: problemaResueltoSessions.length > 0,
+        count: completedProblemaResueltoSessions.length,
+        lastActivity: problemaResueltoSessions.length > 0 ? 
+          completedProblemaResueltoSessions.length > 0 ? 
+            `${completedProblemaResueltoSessions.length} sesión${completedProblemaResueltoSessions.length > 1 ? 'es' : ''} completada${completedProblemaResueltoSessions.length > 1 ? 's' : ''}` :
+            'Sesión iniciada' : undefined
+      }
       setActivityStatuses(statuses)
     } catch (error) {
       console.error('Error loading activity statuses:', error)
@@ -293,6 +306,15 @@ const HomePage = () => {
       color: 'from-red-500 via-yellow-500 to-green-500',
       available: true,
       route: '/actividad/semaforo-limites'
+    },
+    {
+      id: 'problema-resuelto',
+      title: 'Problema Resuelto',
+      description: 'Desarrolla resiliencia aprendiendo a enfrentar conflictos de manera inteligente',
+      icon: Brain,
+      color: 'from-blue-500 to-green-500',
+      available: true,
+      route: '/actividad/problema-resuelto'
     }
   ]
 
