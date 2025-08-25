@@ -135,6 +135,9 @@ const ProblemaResuelto = () => {
       }
     } catch (error) {
       console.error('Error loading sessions:', error)
+      // Set empty sessions array to prevent crashes
+      setAllSessions([])
+      setViewMode('cards')
     } finally {
       setIsLoading(false)
     }
@@ -151,9 +154,14 @@ const ProblemaResuelto = () => {
         setSelectedChoice(null)
         setShowFeedback(false)
         setViewMode('activity')
+      } else {
+        console.error('Failed to create new session - database tables may not exist yet')
+        // Show error message to user
+        alert('Error: Las tablas de la base de datos aún no están creadas. Por favor, ejecuta la migración en Supabase Dashboard.')
       }
     } catch (error) {
       console.error('Error starting new session:', error)
+      alert('Error al crear nueva sesión. Por favor, verifica que las tablas de la base de datos estén creadas.')
     }
   }
 

@@ -52,6 +52,11 @@ export const problemaResueltoService = {
 
       if (createError) {
         console.error('Error creating problema resuelto session:', createError)
+        
+        // If table doesn't exist, provide helpful error message
+        if (createError.code === '42P01') {
+          console.error('Database tables not created yet. Please run the migration in Supabase Dashboard.')
+        }
         return null
       }
 
@@ -168,6 +173,12 @@ export const problemaResueltoService = {
 
       if (sessionsError) {
         console.error('Error fetching problema resuelto sessions:', sessionsError)
+        
+        // If table doesn't exist, return empty array instead of crashing
+        if (sessionsError.code === '42P01') {
+          console.warn('Database tables not created yet. Please run the migration in Supabase Dashboard.')
+          return []
+        }
         return []
       }
 
