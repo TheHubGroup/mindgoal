@@ -72,7 +72,7 @@ const problems: Problem[] = [
   },
   {
     id: 'conflicto_personal_1', 
-    title: 'Frustración con Ejercicio de Matemáticas', 
+    title: 'Frustración con Ejercicio de Matemáticas',
     imageUrl: '/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
     description: 'Estás resolviendo un ejercicio de matemáticas, pero te equivocas varias veces. Empiezas a sentir frustración.',
     type: 'conflicto_personal',
@@ -537,13 +537,30 @@ const ProblemaResuelto = () => {
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold text-gray-800 text-center mb-6" style={{ fontFamily: 'Fredoka' }}>
                     🤔 ¿Cómo reaccionarías?
-
-                        <p className="text-lg font-bold text-purple-700 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                        <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
                           {problems[currentProblemIndex].resilientResponse.text}
                         </p>
                       </div>
                     </div>
-                  </div>
+
+                    {/* Respuesta B */}
+                    <div
+                      onClick={() => handleChoiceSelect('resiliente')}
+                      className={`p-6 rounded-2xl cursor-pointer transition-all transform hover:scale-105 border-4 ${
+                        selectedChoice === 'resiliente' 
+                          ? 'border-purple-600 bg-purple-100 shadow-lg scale-105' 
+                          : 'border-purple-300 bg-purple-50 hover:bg-purple-100'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                          <Shield size={32} className="text-white" />
+                        </div>
+                        <h4 className="text-lg font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                          Respuesta B
+                        </h4>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
