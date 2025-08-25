@@ -44,6 +44,12 @@ const StandaloneEmotionCalculator = () => {
   const [saveMessage, setSaveMessage] = useState('')
   const [isCompleted, setIsCompleted] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  
+  // Drag and swipe state
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [dragOffset, setDragOffset] = useState(0)
+  const [swipeThreshold] = useState(50) // Minimum distance to trigger swipe
 
   useEffect(() => {
     // Optimize for iframe
@@ -109,6 +115,95 @@ const StandaloneEmotionCalculator = () => {
     setIsAnimating(true)
     setCurrentIndex(index)
     setTimeout(() => setIsAnimating(false), 300)
+  }
+
+  // Mouse drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (isCompleted || isAnimating) return
+    
+    setIsDragging(true)
+    setDragStart({ x: e.clientX, y: e.clientY })
+    setDragOffset(0)
+    e.preventDefault()
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || isCompleted || isAnimating) return
+    
+    const deltaX = e.clientX - dragStart.x
+    setDragOffset(deltaX)
+  }
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (!isDragging || isCompleted || isAnimating) return
+    
+    const deltaX = e.clientX - dragStart.x
+    
+    // Determine swipe direction and trigger navigation
+    if (Math.abs(deltaX) > swipeThreshold) {
+      if (deltaX > 0) {
+        // Swiped right - go to previous emotion
+        prevSlide()
+      } else {
+        // Swiped left - go to next emotion
+        nextSlide()
+      }
+    }
+    
+    // Reset drag state
+    setIsDragging(false)
+    setDragStart({ x: 0, y: 0 })
+    setDragOffset(0)
+  }
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false)
+      setDragStart({ x: 0, y: 0 })
+      setDragOffset(0)
+    }
+  }
+
+  // Touch handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isCompleted || isAnimating) return
+    
+    const touch = e.touches[0]
+    setIsDragging(true)
+    setDragStart({ x: touch.clientX, y: touch.clientY })
+    setDragOffset(0)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || isCompleted || isAnimating) return
+    
+    const touch = e.touches[0]
+    const deltaX = touch.clientX - dragStart.x
+    setDragOffset(deltaX)
+    e.preventDefault()
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isDragging || isCompleted || isAnimating) return
+    
+    const touch = e.changedTouches[0]
+    const deltaX = touch.clientX - dragStart.x
+    
+    // Determine swipe direction and trigger navigation
+    if (Math.abs(deltaX) > swipeThreshold) {
+      if (deltaX > 0) {
+        // Swiped right - go to previous emotion
+        prevSlide()
+      } else {
+        // Swiped left - go to next emotion
+        nextSlide()
+      }
+    }
+    
+    // Reset drag state
+    setIsDragging(false)
+    setDragStart({ x: 0, y: 0 })
+    setDragOffset(0)
   }
 
   const getVisibleEmotions = () => {
@@ -345,22 +440,35 @@ const StandaloneEmotionCalculator = () => {
           </button>
 
           {/* Carousel */}
-          <div className="relative h-80 overflow-visible">
+          <div 
+            className={`relative h-80 overflow-visible ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Navigation Arrows */}
             <button 
               onClick={prevSlide}
               disabled={isCompleted}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-4 py-3 rounded-xl shadow-xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30 flex items-center gap-2"
+              style={{ fontFamily: 'Fredoka' }}
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={20} />
+              <span className="font-bold text-sm">Atrás</span>
             </button>
             
             <button 
               onClick={nextSlide}
               disabled={isCompleted}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-3 rounded-xl shadow-xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30 flex items-center gap-2"
+              style={{ fontFamily: 'Fredoka' }}
             >
-              <ChevronRight size={24} />
+              <span className="font-bold text-sm">Adelante</span>
+              <ChevronRight size={20} />
             </button>
 
             {visibleEmotions.map((emotion) => {
@@ -381,12 +489,17 @@ const StandaloneEmotionCalculator = () => {
                 translateX = emotion.position > 0 ? 80 : -80
               }
               
+              // Apply drag offset to center emotion
+              if (emotion.position === 0 && isDragging) {
+                translateX += dragOffset * 0.3 // Reduced sensitivity for better control
+              }
+              
               const isSelected = selectedEmotions.has(emotion.name)
               
               return (
                 <div 
                   key={emotion.index}
-                  className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out`}
+                  className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all ease-in-out ${isDragging ? 'duration-75' : 'duration-300'}`}
                   style={{ 
                     transform: `translate(calc(-50% + ${translateX}px), -50%) scale(${scale})`,
                     opacity,
@@ -396,9 +509,10 @@ const StandaloneEmotionCalculator = () => {
                   <div 
                     className={`
                       w-64 h-72 rounded-2xl shadow-2xl overflow-hidden cursor-pointer
-                      transition-all duration-300 transform
+                      transition-all duration-300 transform select-none
                       ${isSelected ? 'ring-4 ring-yellow-400 scale-105' : ''}
                       ${isCompleted ? 'opacity-50 cursor-not-allowed' : ''}
+                      ${isDragging && emotion.position === 0 ? 'cursor-grabbing' : 'cursor-grab'}
                     `}
                   >
                     <div 
@@ -543,7 +657,7 @@ const StandaloneEmotionCalculator = () => {
         {/* Instructions */}
         <div className="mt-2 text-center">
           <p className="text-white text-opacity-80 text-xs" style={{ fontFamily: 'Comic Neue' }}>
-            💡 Desliza por las emociones y selecciona las que sientes
+            💡 Usa las flechas, arrastra las tarjetas o haz clic para navegar
           </p>
         </div>
       </div>
