@@ -72,17 +72,17 @@ const problems: Problem[] = [
   },
   {
     id: 'conflicto_personal_1',
-    title: 'Fracaso en Examen Importante',
-    imageUrl: 'https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg?auto=compress&cs=tinysrgb&w=400',
-    description: 'Estudiaste mucho para un examen pero obtuviste una calificación muy baja. Te sientes frustrado y decepcionado contigo mismo.',
+    title: 'Frustración con Ejercicio de Matemáticas',
+    imageUrl: '/Gemini_Generated_Image_akdhw9akdhw9akdh.png',
+    description: 'Estás resolviendo un ejercicio de matemáticas, pero te equivocas varias veces. Empiezas a sentir frustración.',
     type: 'conflicto_personal',
     resilientResponse: {
-      text: 'Analizo qué salió mal, pido ayuda al profesor y creo un mejor plan de estudio para la próxima vez.',
-      feedback: '¡Excelente actitud! Ver los fracasos como oportunidades de aprendizaje y buscar ayuda muestra gran resiliencia y madurez.'
+      text: 'Tomas un descanso corto, pides ayuda o revisas el ejemplo de nuevo.',
+      feedback: '¡Excelente! Buscar estrategias y ayuda demuestra resiliencia. Cada error te acerca más a la solución.'
     },
     impulsiveResponse: {
-      text: 'Me siento terrible conmigo mismo y pienso que no soy lo suficientemente inteligente para esta materia.',
-      feedback: 'Es normal sentirse decepcionado, pero la autocrítica excesiva puede dañar tu autoestima. Recuerda que un examen no define tu inteligencia.'
+      text: 'Cierras el cuaderno y piensas: "Soy malo para esto, no lo intentaré más."',
+      feedback: 'Rendirse rápido no te deja crecer. Los errores son parte del aprendizaje.'
     }
   },
   {
