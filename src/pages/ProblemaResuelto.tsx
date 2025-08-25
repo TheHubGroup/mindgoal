@@ -540,46 +540,46 @@ const ProblemaResuelto = () => {
                   </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Opción Resiliente */}
-                    <div
-                      onClick={() => handleChoiceSelect('resiliente')}
-                      className={`p-6 rounded-2xl cursor-pointer transition-all transform hover:scale-105 border-4 ${
-                        selectedChoice === 'resiliente' 
-                          ? 'border-green-600 bg-green-100 shadow-lg scale-105' 
-                          : 'border-green-300 bg-green-50 hover:bg-green-100'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                          <Shield size={32} className="text-white" />
-                        </div>
-                        <h4 className="text-xl font-bold text-green-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
-                          💪 Respuesta Resiliente
-                        </h4>
-                        <p className="text-green-700 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
-                          {problems[currentProblemIndex].resilientResponse.text}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Opción Impulsiva */}
+                    {/* Respuesta A */}
                     <div
                       onClick={() => handleChoiceSelect('impulsiva')}
                       className={`p-6 rounded-2xl cursor-pointer transition-all transform hover:scale-105 border-4 ${
                         selectedChoice === 'impulsiva' 
-                          ? 'border-red-600 bg-red-100 shadow-lg scale-105' 
-                          : 'border-red-300 bg-red-50 hover:bg-red-100'
+                          ? 'border-purple-600 bg-purple-100 shadow-lg scale-105' 
+                          : 'border-purple-300 bg-purple-50 hover:bg-purple-100'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                           <Zap size={32} className="text-white" />
                         </div>
-                        <h4 className="text-xl font-bold text-red-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
-                          ⚡ Respuesta Impulsiva
+                        <h4 className="text-lg font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                          Respuesta A
                         </h4>
-                        <p className="text-red-700 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                        <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
                           {problems[currentProblemIndex].impulsiveResponse.text}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Respuesta B */}
+                    <div
+                      onClick={() => handleChoiceSelect('resiliente')}
+                      className={`p-6 rounded-2xl cursor-pointer transition-all transform hover:scale-105 border-4 ${
+                        selectedChoice === 'resiliente' 
+                          ? 'border-purple-600 bg-purple-100 shadow-lg scale-105' 
+                          : 'border-purple-300 bg-purple-50 hover:bg-purple-100'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                          <Shield size={32} className="text-white" />
+                        </div>
+                        <h4 className="text-lg font-bold text-purple-800 mb-4" style={{ fontFamily: 'Fredoka' }}>
+                          Respuesta B
+                        </h4>
+                        <p className="text-purple-700 leading-relaxed text-lg font-bold" style={{ fontFamily: 'Comic Neue' }}>
+                          {problems[currentProblemIndex].resilientResponse.text}
                         </p>
                       </div>
                     </div>
