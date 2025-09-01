@@ -111,8 +111,10 @@ const DulcesMagicos = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Imagen de Martín */}
           <div className="order-2 lg:order-1">
-             style={{ width: 'fit-content', maxWidth: '90vw' }}
-                 style={{ width: 'fit-content', maxWidth: '90vw' }}>
+            <div 
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden"
+              style={{ width: 'fit-content', maxWidth: '90vw' }}
+            >
               <img
                 src="/Intro.png"
                 alt="Martín - Introducción"
