@@ -207,13 +207,13 @@ const HomePage = () => {
           completedProblemaResueltoSessions.length > 0 ? 
             `${completedProblemaResueltoSessions.length} sesión${completedProblemaResueltoSessions.length > 1 ? 'es' : ''} completada${completedProblemaResueltoSessions.length > 1 ? 's' : ''}` :
             'Sesión iniciada' : undefined
+      }
       
       // Dulces Mágicos (nueva actividad - sin datos por ahora)
       statuses['dulces-magicos'] = {
         hasData: false,
         count: 0,
         lastActivity: undefined
-      }
       }
       setActivityStatuses(statuses)
     } catch (error) {
