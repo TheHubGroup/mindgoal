@@ -60,7 +60,7 @@ const DulcesMagicos = () => {
               style={{
                 width: '944px',
                 height: '500px',
-                maxWidth: '90vw',
+                maxWidth: '100vw',
                 height: 'auto'
               }}
               onError={(e) => {
