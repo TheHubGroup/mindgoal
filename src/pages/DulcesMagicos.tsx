@@ -47,7 +47,7 @@ const DulcesMagicos = () => {
           <div 
             className="mx-auto bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden"
             style={{ 
-              width: '500px', 
+              width: '944px', 
               height: '500px', 
               maxWidth: '100%', 
               maxHeight: '70vh'
@@ -58,7 +58,7 @@ const DulcesMagicos = () => {
               alt="Dulces Mágicos - Portada"
               className="block rounded-2xl"
               style={{
-                width: '500px',
+                width: '944px',
                 height: '500px',
                 maxWidth: '90vw',
                 height: 'auto'
