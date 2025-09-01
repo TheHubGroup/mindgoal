@@ -46,9 +46,11 @@ const DulcesMagicos = () => {
         <div className="mb-8">
           <div 
             className="mx-auto bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden"
-            style={{ width: '500px', height: '500px', maxWidth: '100%', maxHeight: '70vh' }}
-              width: 'fit-content',
-              maxWidth: '90vw'
+            style={{ 
+              width: '500px', 
+              height: '500px', 
+              maxWidth: '100%', 
+              maxHeight: '70vh'
             }}
           >
             <img
