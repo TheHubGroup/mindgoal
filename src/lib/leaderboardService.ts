@@ -8,6 +8,7 @@ import { emotionMatchService } from './emotionMatchService'
 import { emotionLogService } from './emotionLogService'
 import { communicationService } from './communicationService'
 import { semaforoLimitesService } from './semaforoLimitesService'
+import { problemaResueltoService } from './problemaResueltoService'
 import { dulcesMagicosService } from './dulcesMagicosService'
 
 export interface LeaderboardUser {
@@ -144,6 +145,25 @@ export const leaderboardService = {
         if (session.completed_at) {
           totalCharacters += 200 // Bonus por completar todas las situaciones
         }
+      })
+      
+      // Obtener sesiones de "Problema Resuelto"
+      const problemaResueltoSessions = await problemaResueltoService.getAllSessions(userId)
+      problemaResueltoSessions.forEach(session => {
+        // Puntos por problemas resueltos (100 puntos por problema)
+        totalCharacters += session.completed_problems * 100
+        
+        // Bonus por completar toda la sesión
+        if (session.completed_at) {
+          totalCharacters += 300 // Bonus por completar todos los problemas
+        }
+        
+        // Bonus adicional según el nivel de resiliencia
+        const resilienceBonus = Math.round(session.resilience_score * 2) // 2 puntos por cada % de resiliencia
+        totalCharacters += resilienceBonus
+        
+        // Bonus por respuestas resilientes
+        totalCharacters += session.resilient_responses * 50 // 50 puntos por respuesta resiliente
       })
       
       // Obtener sesiones de "Dulces Mágicos"

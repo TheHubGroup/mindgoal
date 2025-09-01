@@ -69,6 +69,41 @@ export interface UserActivityDetails {
     completed_at: string | null
     created_at: string
   }> | null
+  communication_sessions?: Array<{
+    id: string
+    messages: any[]
+    current_step: number
+    completed_at: string | null
+    ai_evaluation: string | null
+    created_at: string
+  }> | null
+  semaforo_limites_sessions?: Array<{
+    id: string
+    completed_at: string | null
+    total_situations: number
+    completed_situations: number
+    responses: any[]
+    created_at: string
+  }> | null
+  problema_resuelto_sessions?: Array<{
+    id: string
+    completed_at: string | null
+    total_problems: number
+    completed_problems: number
+    resilient_responses: number
+    impulsive_responses: number
+    resilience_score: number
+    responses: any[]
+    created_at: string
+  }> | null
+  dulces_magicos_sessions?: Array<{
+    id: string
+    completed_at: string | null
+    ending_reached: string
+    resilience_level: string
+    decision_path: string[]
+    created_at: string
+  }> | null
 }
 
 export interface DashboardData {
@@ -436,6 +471,14 @@ export const dashboardService = {
           return userDetails.emotion_logs || []
         case 'anger':
           return userDetails.anger_management_sessions || []
+        case 'communication':
+          return userDetails.communication_sessions || []
+        case 'semaforo_limites':
+          return userDetails.semaforo_limites_sessions || []
+        case 'problema_resuelto':
+          return userDetails.problema_resuelto_sessions || []
+        case 'dulces_magicos':
+          return userDetails.dulces_magicos_sessions || []
         default:
           return []
       }
