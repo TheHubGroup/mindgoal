@@ -24,6 +24,7 @@ import UserDetailPage from './pages/UserDetailPage'
 import LaComunicacion from './pages/LaComunicacion'
 import SemaforoLimites from './pages/SemaforoLimites'
 import ProblemaResuelto from './pages/ProblemaResuelto'
+import DulcesMagicos from './pages/DulcesMagicos'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -152,6 +153,11 @@ function App() {
             <Route path="/actividad/problema-resuelto" element={
               <ProtectedRoute>
                 <ProblemaResuelto />
+              </ProtectedRoute>
+            } />
+            <Route path="/actividad/dulces-magicos" element={
+              <ProtectedRoute>
+                <DulcesMagicos />
               </ProtectedRoute>
             } />
             <Route path="/user-bar" element={

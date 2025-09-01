@@ -33,6 +33,7 @@ import { semaforoLimitesService } from '../lib/semaforoLimitesService'
 import { emotionMatchService } from '../lib/emotionMatchService'
 import { emotionLogService } from '../lib/emotionLogService'
 import { problemaResueltoService } from '../lib/problemaResueltoService'
+import { Candy } from 'lucide-react'
 
 interface ActivityStatus {
   hasData: boolean
@@ -206,6 +207,13 @@ const HomePage = () => {
           completedProblemaResueltoSessions.length > 0 ? 
             `${completedProblemaResueltoSessions.length} sesión${completedProblemaResueltoSessions.length > 1 ? 'es' : ''} completada${completedProblemaResueltoSessions.length > 1 ? 's' : ''}` :
             'Sesión iniciada' : undefined
+      
+      // Dulces Mágicos (nueva actividad - sin datos por ahora)
+      statuses['dulces-magicos'] = {
+        hasData: false,
+        count: 0,
+        lastActivity: undefined
+      }
       }
       setActivityStatuses(statuses)
     } catch (error) {
@@ -315,6 +323,16 @@ const HomePage = () => {
       color: 'from-blue-500 to-green-500',
       available: true,
       route: '/actividad/problema-resuelto'
+    },
+    {
+      id: 'dulces-magicos',
+      title: 'Dulces Mágicos',
+      description: 'Una aventura interactiva donde ayudas a Martín a tomar decisiones saludables sobre los dulces',
+      icon: Candy,
+      color: 'from-pink-500 to-purple-500',
+      available: true,
+      route: '/actividad/dulces-magicos',
+      isNew: true
     }
   ]
 
@@ -512,6 +530,14 @@ const HomePage = () => {
                   <div className="absolute top-4 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                     <Palette size={12} />
                     Experimental
+                  </div>
+                )}
+
+                {/* New Badge */}
+                {activity.isNew && (
+                  <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Sparkles size={12} />
+                    Nuevo
                   </div>
                 )}
 
