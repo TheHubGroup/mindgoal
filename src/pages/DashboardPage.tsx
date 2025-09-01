@@ -782,69 +782,11 @@ const DashboardPage = () => {
                             {userData.dulces_magicos_stats?.count || 0} aventuras
                             {userData.dulces_magicos_stats?.resilience_level && (
                               <span className="text-purple-400 ml-1">
-                        {/* Comunicación */}
-                        <div className="flex items-center gap-2">
-                          <MessageCircle size={16} className="text-green-400" />
-                          <span className="text-white text-sm">
-                            {userData.communication_stats?.count || 0} conversaciones
-                          </span>
-                        </div>
-                        
-                        {/* Semáforo de Límites - Detallado */}
-                        <div className="bg-white bg-opacity-10 rounded-lg p-2">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Shield size={16} className="text-yellow-400" />
-                            <span className="text-white text-sm font-bold">
-                              Semáforo: {userData.semaforo_stats?.count || 0} sesiones
-                            </span>
-                          </div>
-                          
-                          {userData.semaforo_stats?.count > 0 && (
-                            <div className="grid grid-cols-3 gap-1 text-xs">
-                              <div className="bg-red-500 bg-opacity-30 rounded px-2 py-1 text-center">
-                                <div className="text-red-200 font-bold">🔴</div>
-                                <div className="text-white">No Permito</div>
-                              </div>
-                              <div className="bg-yellow-500 bg-opacity-30 rounded px-2 py-1 text-center">
-                                <div className="text-yellow-200 font-bold">🟡</div>
-                                <div className="text-white">Más o Menos</div>
-                              </div>
-                              <div className="bg-green-500 bg-opacity-30 rounded px-2 py-1 text-center">
-                                <div className="text-green-200 font-bold">🟢</div>
-                                <div className="text-white">Permitido</div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Problema Resuelto */}
-                        <div className="flex items-center gap-2">
-                          <Brain size={16} className="text-blue-400" />
-                          <span className="text-white text-sm">
-                            {userData.problema_resuelto_stats?.count || 0} problemas
-                            {userData.problema_resuelto_stats?.resilience_score > 0 && (
-                              <span className="text-green-400 ml-1">
-                                ({Math.round(userData.problema_resuelto_stats.resilience_score)}% resiliente)
+                                ({userData.dulces_magicos_stats.resilience_level})
                               </span>
                             )}
                           </span>
                         </div>
-                        
-                        {/* Dulces Mágicos */}
-                        <div className="flex items-center gap-2">
-                          <Candy size={16} className="text-pink-400" />
-                          <span className="text-white text-sm">
-                            {userData.dulces_magicos_stats?.count || 0} aventuras
-                            {userData.dulces_magicos_stats?.resilience_level && (
-                              <span className="text-purple-400 ml-1">
-                        <Trophy size={14} />
-                        {userData.total_score.toLocaleString()}
-                      </div>
-                      <div className="text-xs text-white text-opacity-70 mt-1">
-                        {userData.level}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </td>
                     <td className="px-4 py-4">
