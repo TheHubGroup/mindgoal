@@ -185,7 +185,7 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
-              style={{ width: 'fit-content', maxWidth: '400px' }}
+              style={{ width: '500px', height: '500px', maxWidth: '100%' }}
             >
               <img
                 src="/pregunta_01.png"
@@ -283,11 +283,11 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
-              style={{ width: '500px', height: '500px', maxWidth: '90vw', maxHeight: '70vh' }}
+              style={{ width: '500px', height: '500px', maxWidth: '100%' }}
             >
               <img
                 src="/pregunta_01.png"
-                alt="Martín se siente mal"
+                alt="Las Consecuencias - Martín se siente mal"
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
@@ -297,9 +297,9 @@ const DulcesMagicos = () => {
                     parent.innerHTML = `
                       <div class="w-full h-full flex items-center justify-center text-white">
                         <div class="text-center">
-                          <div style="font-size: 80px; margin-bottom: 16px; opacity: 0.7;">😵</div>
-                          <p class="text-xl font-bold" style="font-family: Fredoka;">
-                            Martín se siente mal
+                          <div style="font-size: 80px; margin-bottom: 16px; opacity: 0.7;">🍬</div>
+                          <p class="text-sm opacity-60" style="font-family: Comic Neue;">
+                            Decision_A_01.png
                           </p>
                         </div>
                       </div>
