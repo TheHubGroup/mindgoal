@@ -135,50 +135,182 @@ const UserDetailPage = () => {
           </button>
           
           <button
-            onClick={() => setActiveTab('dulces_magicos')}
-            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
-              activeTab === 'dulces_magicos' 
-                ? 'bg-pink-500 text-white' 
-                : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
-            }`}
-          >
-            Dulces Mágicos ({userDetails.dulces_magicos_sessions?.length || 0})
-          </button>
+                    {userData.semaforo_limites_sessions.map((session: any, sessionIndex: number) => (
+                      <div key={session.id} className="mb-6">
+                        <div className="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+                          <div className="flex justify-between items-center mb-3">
+                            <h4 className="font-bold text-gray-800">Sesión #{sessionIndex + 1}</h4>
+                            <div className="flex items-center gap-2">
+                              {session.completed_at ? (
+                                <div className="flex items-center gap-1 text-green-600">
+                                  <CheckCircle size={16} />
+                                  <span className="text-sm font-medium">Completada</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1 text-yellow-600">
+                                  <Clock size={16} />
+                                  <span className="text-sm font-medium">En progreso</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="text-sm text-gray-600 mb-3">
+                            Situaciones completadas: {session.completed_situations}/{session.total_situations}
+                          </div>
+                          
+                          {/* Progress bar */}
+                          <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                            <div 
+                              className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full transition-all"
+                              style={{ width: `${(session.completed_situations / session.total_situations) * 100}%` }}
+                            />
+                          </div>
+                          
+                          <div className="text-xs text-gray-500">
+                            {new Date(session.created_at).toLocaleDateString('es-ES', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        </div>
 
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all"
-          >
-            Volver al Dashboard
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      {/* Header */}
-      <div className="bg-black bg-opacity-20 backdrop-blur-lg border-b border-white border-opacity-10">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="text-white hover:text-gray-300 transition-colors bg-white bg-opacity-10 rounded-full p-3 hover:bg-opacity-20 backdrop-blur-sm"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex-shrink-0 border-2 border-white">
-                {userDetails.avatar_url ? (
-                  <img
-                    src={userDetails.avatar_url}
-                    alt="Avatar"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <User size={24} className="text-white" />
+                        {/* Detailed Responses */}
+                        {session.responses && session.responses.length > 0 && (
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <h5 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                              <Shield size={18} />
+                              Respuestas Detalladas por Situación
+                            </h5>
+                            
+                            {/* Summary by color */}
+                            <div className="grid grid-cols-3 gap-3 mb-6">
+                              {(() => {
+                                const colorCounts = {
+                                  rojo: session.responses.filter((r: any) => r.user_choice === 'rojo').length,
+                                  amarillo: session.responses.filter((r: any) => r.user_choice === 'amarillo').length,
+                                  verde: session.responses.filter((r: any) => r.user_choice === 'verde').length
+                                }
+                                const total = session.responses.length
+                                
+                                return (
+                                  <>
+                                    <div className="bg-red-100 rounded-lg p-3 text-center border-2 border-red-300">
+                                      <div className="text-2xl font-bold text-red-700 mb-1">{colorCounts.rojo}</div>
+                                      <div className="text-xs text-red-600 font-medium">🔴 No lo Permito</div>
+                                      <div className="text-xs text-red-500 mt-1">
+                                        {total > 0 ? Math.round((colorCounts.rojo / total) * 100) : 0}%
+                                      </div>
+                                    </div>
+                                    <div className="bg-yellow-100 rounded-lg p-3 text-center border-2 border-yellow-300">
+                                      <div className="text-2xl font-bold text-yellow-700 mb-1">{colorCounts.amarillo}</div>
+                                      <div className="text-xs text-yellow-600 font-medium">🟡 Más o Menos</div>
+                                      <div className="text-xs text-yellow-500 mt-1">
+                                        {total > 0 ? Math.round((colorCounts.amarillo / total) * 100) : 0}%
+                                      </div>
+                                    </div>
+                                    <div className="bg-green-100 rounded-lg p-3 text-center border-2 border-green-300">
+                                      <div className="text-2xl font-bold text-green-700 mb-1">{colorCounts.verde}</div>
+                                      <div className="text-xs text-green-600 font-medium">🟢 Permitido</div>
+                                      <div className="text-xs text-green-500 mt-1">
+                                        {total > 0 ? Math.round((colorCounts.verde / total) * 100) : 0}%
+                                      </div>
+                                    </div>
+                                  </>
+                                )
+                              })()}
+                            </div>
+                            
+                            {/* Individual responses */}
+                            <div className="space-y-3">
+                              {session.responses.map((response: any, responseIndex: number) => {
+                                const getChoiceColor = (choice: string) => {
+                                  switch (choice) {
+                                    case 'rojo': return 'bg-red-100 border-red-300 text-red-800'
+                                    case 'amarillo': return 'bg-yellow-100 border-yellow-300 text-yellow-800'
+                                    case 'verde': return 'bg-green-100 border-green-300 text-green-800'
+                                    default: return 'bg-gray-100 border-gray-300 text-gray-800'
+                                  }
+                                }
+                                
+                                const getChoiceEmoji = (choice: string) => {
+                                  switch (choice) {
+                                    case 'rojo': return '🔴'
+                                    case 'amarillo': return '🟡'
+                                    case 'verde': return '🟢'
+                                    default: return '⚪'
+                                  }
+                                }
+                                
+                                const getChoiceText = (choice: string) => {
+                                  switch (choice) {
+                                    case 'rojo': return 'No lo Permito'
+                                    case 'amarillo': return 'Más o Menos'
+                                    case 'verde': return 'Permitido'
+                                    default: return 'Sin respuesta'
+                                  }
+                                }
+                                
+                                return (
+                                  <div key={response.id} className={`rounded-lg p-4 border-2 ${getChoiceColor(response.user_choice)}`}>
+                                    <div className="flex items-start justify-between mb-2">
+                                      <div className="flex-1">
+                                        <h6 className="font-bold text-sm mb-1">
+                                          Situación #{responseIndex + 1}: {response.situation_title}
+                                        </h6>
+                                      </div>
+                                      <div className="flex items-center gap-2 ml-4">
+                                        <span className="text-lg">{getChoiceEmoji(response.user_choice)}</span>
+                                        <span className="font-bold text-sm">
+                                          {getChoiceText(response.user_choice)}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="text-xs text-gray-600">
+                                      Respondido el {new Date(response.created_at).toLocaleDateString('es-ES', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      })}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                            
+                            {/* Analysis */}
+                            <div className="mt-6 bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                              <h6 className="font-bold text-blue-800 mb-2">📊 Análisis de Límites</h6>
+                              <div className="text-sm text-blue-700">
+                                {(() => {
+                                  const colorCounts = {
+                                    rojo: session.responses.filter((r: any) => r.user_choice === 'rojo').length,
+                                    amarillo: session.responses.filter((r: any) => r.user_choice === 'amarillo').length,
+                                    verde: session.responses.filter((r: any) => r.user_choice === 'verde').length
+                                  }
+                                  const total = session.responses.length
+                                  
+                                  if (colorCounts.rojo > colorCounts.verde && colorCounts.rojo > colorCounts.amarillo) {
+                                    return `Tiende a establecer límites firmes (${Math.round((colorCounts.rojo / total) * 100)}% de respuestas "No lo Permito"). Muestra una personalidad que valora el respeto y las reglas claras.`
+                                  } else if (colorCounts.verde > colorCounts.rojo && colorCounts.verde > colorCounts.amarillo) {
+                                    return `Tiende a ser permisivo con las situaciones (${Math.round((colorCounts.verde / total) * 100)}% de respuestas "Permitido"). Muestra una personalidad flexible y tolerante.`
+                                  } else if (colorCounts.amarillo > colorCounts.rojo && colorCounts.amarillo > colorCounts.verde) {
+                                    return `Tiende a evaluar cada situación individualmente (${Math.round((colorCounts.amarillo / total) * 100)}% de respuestas "Más o Menos"). Muestra una personalidad reflexiva y contextual.`
+                                  } else {
+                                    return `Muestra un equilibrio en el establecimiento de límites, adaptándose según la situación. Esto indica flexibilidad emocional y capacidad de análisis.`
+                                  }
+                                })()}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
