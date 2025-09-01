@@ -291,6 +291,7 @@ const DulcesMagicos = () => {
                 <p className="text-2xl font-bold" style={{ fontFamily: 'Fredoka' }}>
                   Martín se siente mal
                 </p>
+                
                 <p className="text-lg opacity-80" style={{ fontFamily: 'Comic Neue' }}>
                   1024px × 1024px
                 </p>
