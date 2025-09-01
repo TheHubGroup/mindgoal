@@ -50,7 +50,7 @@ const DulcesMagicos = () => {
               width: '944px', 
               height: '500px', 
               maxWidth: '100%', 
-              maxHeight: '70vh'
+              maxHeight: '80vh'
             }}
           >
             <img
