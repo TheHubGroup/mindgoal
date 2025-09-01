@@ -192,8 +192,8 @@ const DulcesMagicos = () => {
                 alt="Martín se siente mal"
                 className="block rounded-2xl"
                 style={{
-                  width: '400px',
-                  height: '400px',
+                  width: '500px',
+                  height: '500px',
                   maxWidth: '100%',
                   height: 'auto'
                 }}
