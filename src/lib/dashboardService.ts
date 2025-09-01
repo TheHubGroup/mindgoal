@@ -324,6 +324,10 @@ export const dashboardService = {
       let totalEmotionMatches = 0
       let totalEmotionLogs = 0
       let totalAngerSessions = 0
+      let totalCommunicationSessions = 0
+      let totalSemaforoSessions = 0
+      let totalProblemaResueltoSessions = 0
+      let totalDulcesMagicosSessions = 0
       let totalScore = 0
 
       data.forEach(user => {
@@ -333,6 +337,10 @@ export const dashboardService = {
         totalEmotionMatches += user.emotion_matches_stats?.attempts || 0
         totalEmotionLogs += user.emotion_logs_stats?.count || 0
         totalAngerSessions += user.anger_stats?.count || 0
+        totalCommunicationSessions += user.communication_stats?.count || 0
+        totalSemaforoSessions += user.semaforo_stats?.count || 0
+        totalProblemaResueltoSessions += user.problema_resuelto_stats?.count || 0
+        totalDulcesMagicosSessions += user.dulces_magicos_stats?.count || 0
         totalScore += user.total_score || 0
       })
 
@@ -350,6 +358,10 @@ export const dashboardService = {
         totalSemaforoSessions,
         totalProblemaResueltoSessions,
         totalDulcesMagicosSessions,
+        totalCommunicationSessions,
+        totalSemaforoSessions,
+        totalProblemaResueltoSessions,
+        totalDulcesMagicosSessions,
         averageScore
       }
     } catch (error) {
@@ -362,6 +374,10 @@ export const dashboardService = {
         totalEmotionMatches: 0,
         totalEmotionLogs: 0,
         totalAngerSessions: 0,
+        totalCommunicationSessions: 0,
+        totalSemaforoSessions: 0,
+        totalProblemaResueltoSessions: 0,
+        totalDulcesMagicosSessions: 0,
         averageScore: 0
       }
     }
