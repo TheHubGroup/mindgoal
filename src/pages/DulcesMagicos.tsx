@@ -48,15 +48,29 @@ const DulcesMagicos = () => {
             className="mx-auto bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
             style={{ width: '1497px', height: '793px', maxWidth: '90vw', maxHeight: '50vh' }}
           >
-            <div className="text-center text-white">
-              <Candy size={120} className="mx-auto mb-4 opacity-70" />
-              <p className="text-2xl font-bold" style={{ fontFamily: 'Fredoka' }}>
-                Imagen de Portada
-              </p>
-              <p className="text-lg opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-                1497px × 793px
-              </p>
-            </div>
+            <img
+              src="/portada.jpg"
+              alt="Dulces Mágicos - Portada"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement
+                target.style.display = 'none'
+                const parent = target.parentElement
+                if (parent) {
+                  parent.innerHTML = `
+                    <div class="text-center text-white">
+                      <div style="font-size: 120px; margin-bottom: 16px; opacity: 0.7;">🍭</div>
+                      <p class="text-2xl font-bold" style="font-family: Fredoka;">
+                        Imagen de Portada
+                      </p>
+                      <p class="text-lg opacity-80" style="font-family: Comic Neue;">
+                        1497px × 793px
+                      </p>
+                    </div>
+                  `
+                }
+              }}
+            />
           </div>
         </div>
 
