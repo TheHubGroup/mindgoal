@@ -8,7 +8,7 @@ import { emotionMatchService } from './emotionMatchService'
 import { emotionLogService } from './emotionLogService'
 import { communicationService } from './communicationService'
 import { semaforoLimitesService } from './semaforoLimitesService'
-import { semaforoLimitesService } from './semaforoLimitesService'
+import { dulcesMagicosService } from './dulcesMagicosService'
 
 export interface LeaderboardUser {
   id: string
@@ -143,6 +143,29 @@ export const leaderboardService = {
         // Bonus por completar toda la sesión
         if (session.completed_at) {
           totalCharacters += 200 // Bonus por completar todas las situaciones
+        }
+      })
+      
+      // Obtener sesiones de "Dulces Mágicos"
+      const dulcesMagicosSessions = await dulcesMagicosService.getAllSessions(userId)
+      dulcesMagicosSessions.forEach(session => {
+        // Puntos base por completar la actividad
+        totalCharacters += 300 // Bonus por completar la historia interactiva
+        
+        // Bonus adicional según el nivel de resiliencia alcanzado
+        switch (session.resilience_level) {
+          case 'Muy Resiliente':
+            totalCharacters += 200 // Bonus máximo por mejor final
+            break
+          case 'Resiliente':
+            totalCharacters += 150 // Bonus alto
+            break
+          case 'Poco Resiliente':
+            totalCharacters += 100 // Bonus moderado
+            break
+          case 'Nada Resiliente':
+            totalCharacters += 50 // Bonus mínimo (aún así completó la actividad)
+            break
         }
       })
       

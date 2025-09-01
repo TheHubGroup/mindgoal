@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import UserMenu from '../components/UserMenu'
+import { dulcesMagicosService, DulcesMagicosSession } from '../lib/dulcesMagicosService'
 import { 
   ArrowLeft, 
   Candy, 
@@ -10,7 +11,11 @@ import {
   Heart,
   AlertTriangle,
   Sparkles,
-  Star
+  Star,
+  Save,
+  CheckCircle,
+  RotateCcw,
+  Trophy
 } from 'lucide-react'
 
 type Scene = 'cover' | 'intro' | 'scene1' | 'scene2a' | 'scene2b' | 'ending_sad' | 'ending_resilient' | 'ending_sharing' | 'ending_control'
@@ -20,13 +25,73 @@ const DulcesMagicos = () => {
   const { user } = useAuth()
   const [currentScene, setCurrentScene] = useState<Scene>('cover')
   const [isLoading, setIsLoading] = useState(false)
+  const [lastSession, setLastSession] = useState<DulcesMagicosSession | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState('')
+
+  useEffect(() => {
+    if (user) {
+      loadLastSession()
+    }
+  }, [user])
+
+  const loadLastSession = async () => {
+    if (!user) return
+    
+    try {
+      const session = await dulcesMagicosService.getLatestSession(user.id)
+      setLastSession(session)
+    } catch (error) {
+      console.error('Error loading last session:', error)
+    }
+  }
+
+  const saveSessionResult = async (ending: Scene) => {
+    if (!user) return
+
+    setIsSaving(true)
+    try {
+      const resilienceLevel = dulcesMagicosService.getResilienceLevel(ending)
+      const decisionPath = dulcesMagicosService.getDecisionPath(ending)
+      
+      const sessionData = {
+        ending_reached: ending,
+        resilience_level: resilienceLevel,
+        decision_path: decisionPath
+      }
+
+      const savedSession = await dulcesMagicosService.saveSession(user.id, sessionData)
+      
+      if (savedSession) {
+        setLastSession(savedSession)
+        setSaveMessage('¡Sesión guardada correctamente!')
+        setTimeout(() => setSaveMessage(''), 3000)
+      }
+    } catch (error) {
+      console.error('Error saving session:', error)
+      setSaveMessage('Error al guardar la sesión')
+      setTimeout(() => setSaveMessage(''), 3000)
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   const handleSceneTransition = (nextScene: Scene) => {
     setIsLoading(true)
     setTimeout(() => {
       setCurrentScene(nextScene)
       setIsLoading(false)
+      
+      // Guardar sesión cuando se llega a un final
+      if (['ending_sad', 'ending_resilient', 'ending_sharing', 'ending_control'].includes(nextScene)) {
+        saveSessionResult(nextScene as Scene)
+      }
     }, 300)
+  }
+
+  const restartActivity = () => {
+    setCurrentScene('cover')
+    setSaveMessage('')
   }
 
   const renderCoverScene = () => (
@@ -84,6 +149,38 @@ const DulcesMagicos = () => {
             />
           </div>
         </div>
+
+        {/* Previous Session Info */}
+        {lastSession && (
+          <div className="mb-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto border-2 border-white border-opacity-20">
+            <div className="text-center">
+              <h3 className="text-xl font-bold text-white mb-3 flex items-center justify-center gap-2" style={{ fontFamily: 'Fredoka' }}>
+                <Trophy size={24} className="text-yellow-300" />
+                Tu Última Aventura
+              </h3>
+              <div className="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
+                <div className="text-white font-bold text-lg" style={{ fontFamily: 'Fredoka' }}>
+                  Nivel de Resiliencia: <span className="text-yellow-300">{lastSession.resilience_level}</span>
+                </div>
+                <div className="text-white text-opacity-80 text-sm mt-2" style={{ fontFamily: 'Comic Neue' }}>
+                  Decisiones: {lastSession.decision_path.join(' → ')}
+                </div>
+                <div className="text-white text-opacity-70 text-xs mt-1">
+                  {new Date(lastSession.completed_at!).toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </div>
+              </div>
+              <p className="text-white text-opacity-90 text-sm" style={{ fontFamily: 'Comic Neue' }}>
+                ¡Puedes jugar de nuevo para explorar diferentes finales!
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Botón Comenzar */}
         <button
@@ -438,12 +535,12 @@ const DulcesMagicos = () => {
               </div>
 
               <button
-                onClick={() => handleSceneTransition('cover')}
+                onClick={restartActivity}
                 className="mt-6 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 flex items-center gap-2 mx-auto lg:mx-0"
                 style={{ fontFamily: 'Fredoka' }}
               >
-                <ChevronRight size={20} />
-                Volver al Inicio
+                <RotateCcw size={20} />
+                Jugar de Nuevo
               </button>
             </div>
           </div>
@@ -519,12 +616,12 @@ const DulcesMagicos = () => {
               </div>
 
               <button
-                onClick={() => handleSceneTransition('cover')}
-                className="mt-6 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 flex items-center gap-2 mx-auto lg:mx-0"
+                onClick={restartActivity}
+                className="mt-6 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 flex items-center gap-2 mx-auto lg:mx-0"
                 style={{ fontFamily: 'Fredoka' }}
               >
-                <Star size={20} />
-                Volver al Inicio
+                <RotateCcw size={20} />
+                Jugar de Nuevo
               </button>
             </div>
           </div>
@@ -695,12 +792,12 @@ const DulcesMagicos = () => {
               </div>
 
               <button
-                onClick={() => handleSceneTransition('cover')}
+                onClick={restartActivity}
                 className="mt-6 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 flex items-center gap-2 mx-auto lg:mx-0"
                 style={{ fontFamily: 'Fredoka' }}
               >
-                <Sparkles size={20} />
-                Volver al Inicio
+                <RotateCcw size={20} />
+                Jugar de Nuevo
               </button>
             </div>
           </div>
@@ -775,12 +872,12 @@ const DulcesMagicos = () => {
               </div>
 
               <button
-                onClick={() => handleSceneTransition('cover')}
+                onClick={restartActivity}
                 className="mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 flex items-center gap-2 mx-auto lg:mx-0"
                 style={{ fontFamily: 'Fredoka' }}
               >
-                <ChevronRight size={20} />
-                Volver al Inicio
+                <RotateCcw size={20} />
+                Jugar de Nuevo
               </button>
             </div>
           </div>
@@ -816,6 +913,22 @@ const DulcesMagicos = () => {
 
   return (
     <div className="relative">
+      {/* Save Message */}
+      {saveMessage && (
+        <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-white rounded-lg shadow-lg p-4 border-l-4 border-green-500">
+          <CheckCircle size={20} className="text-green-500" />
+          <span className="font-medium text-gray-800">{saveMessage}</span>
+        </div>
+      )}
+
+      {/* Saving Indicator */}
+      {isSaving && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2 bg-blue-500 text-white rounded-lg shadow-lg p-4">
+          <Save size={20} className="animate-pulse" />
+          <span className="font-medium">Guardando tu aventura...</span>
+        </div>
+      )}
+
       {/* Loading Overlay */}
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
