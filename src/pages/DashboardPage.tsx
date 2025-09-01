@@ -154,9 +154,6 @@ const DashboardPage = () => {
     
     // Skip other filters if no search match
     if (!matchesSearch) return false;
-  }
-  )
-}
     
     // Apply grade filter
     if (filters.grado && userData.profile_info.grado !== filters.grado) {
@@ -785,6 +782,15 @@ const DashboardPage = () => {
                             {userData.dulces_magicos_stats?.count || 0} aventuras
                             {userData.dulces_magicos_stats?.resilience_level && (
                               <span className="text-purple-400 ml-1">
+                                ({userData.dulces_magicos_stats.resilience_level})
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full font-bold inline-flex items-center gap-2">
                         <Trophy size={14} />
                         {userData.total_score.toLocaleString()}
                       </div>
