@@ -182,18 +182,38 @@ const DulcesMagicos = () => {
           {/* Imagen de la escena */}
           <div>
             <div 
-              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
-              style={{ width: '1024px', height: '1024px', maxWidth: '90vw', maxHeight: '70vh' }}
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
+              style={{ width: 'fit-content', maxWidth: '90vw' }}
             >
-              <div className="text-center text-white">
-                <div className="text-8xl mb-4">🍬</div>
-                <p className="text-2xl font-bold" style={{ fontFamily: 'Fredoka' }}>
-                  El Exceso de Dulces
-                </p>
-                <p className="text-lg opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-                  1024px × 1024px
-                </p>
-              </div>
+              <img
+                src="/pregunta_01.png"
+                alt="El Exceso de Dulces"
+                className="block rounded-2xl"
+                style={{
+                  width: '1024px',
+                  height: '1024px',
+                  maxWidth: '90vw',
+                  height: 'auto'
+                }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="text-center text-white p-8">
+                        <div style="font-size: 120px; margin-bottom: 16px; opacity: 0.7;">🍬</div>
+                        <p class="text-2xl font-bold" style="font-family: Fredoka;">
+                          El Exceso de Dulces
+                        </p>
+                        <p class="text-lg opacity-80" style="font-family: Comic Neue;">
+                          1024px × 1024px
+                        </p>
+                      </div>
+                    `
+                  }
+                }}
+              />
             </div>
           </div>
 
