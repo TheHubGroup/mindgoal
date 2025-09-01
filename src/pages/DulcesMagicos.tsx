@@ -197,6 +197,7 @@ const DulcesMagicos = () => {
                   maxWidth: '100%',
                   height: 'auto',
                   objectFit: 'cover'
+                  objectFit: 'cover'
                 }}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
