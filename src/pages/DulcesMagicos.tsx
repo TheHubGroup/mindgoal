@@ -184,8 +184,8 @@ const DulcesMagicos = () => {
           {/* Imagen de la escena */}
           <div>
             <div 
-              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
-              style={{ width: '500px', height: '500px', maxWidth: '100%' }}
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl mx-auto overflow-hidden"
+              style={{ width: '500px', maxWidth: '100%' }}
             >
               <img
                 src="/pregunta_01.png"
@@ -257,6 +257,72 @@ const DulcesMagicos = () => {
                 {/* Opción B */}
                 <button
                   onClick={() => handleSceneTransition('scene2b')}
+                alt="Scene1: El Exceso de Dulces - pregunta_01.png"
+                className="w-full h-auto object-contain rounded-2xl"
+                style={{ maxHeight: '500px' }}
+                onLoad={() => console.log('✅ Scene1: pregunta_01.png loaded successfully')}
+                onError={(e) => {
+                  console.error('❌ Scene1: Error loading pregunta_01.png')
+                  const target = e.target as HTMLImageElement
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="w-full h-64 flex items-center justify-center text-white bg-orange-500 bg-opacity-50 rounded-2xl">
+                        <div class="text-center">
+                          <div style="font-size: 80px; margin-bottom: 16px;">🍬</div>
+                          <p class="text-xl font-bold" style="font-family: Fredoka;">
+                            SCENE1: pregunta_01.png
+                          </p>
+                          <p class="text-sm opacity-80" style="font-family: Comic Neue;">
+                            El Exceso de Dulces
+                          </p>
+                        </div>
+                      </div>
+                    `
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Historia y opciones */}
+          <div className="text-center lg:text-left">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-8 border-2 border-white border-opacity-20">
+              <h2 className="text-3xl font-black text-white mb-6 flex items-center gap-3" style={{ fontFamily: 'Fredoka' }}>
+                <Candy size={32} />
+                El Exceso de Dulces
+              </h2>
+              
+              <div className="bg-white bg-opacity-20 rounded-2xl p-6 mb-8">
+                <p className="text-xl text-white leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                  Martín llega a casa con una bolsa llena de caramelos. Está feliz y empieza a comer sin parar.
+                  <br /><br />
+                  <span className="font-bold text-yellow-300">De repente, le duele la barriga.</span>
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
+                  ¿Qué debería hacer Martín?
+                </h3>
+                
+                {/* Opción A */}
+                <button
+                  onClick={() => handleSceneTransition('scene2a')}
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-2xl text-lg transition-all transform hover:scale-105 shadow-lg border-2 border-white border-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ fontFamily: 'Fredoka' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-black">A</span>
+                    <span className="flex-1 text-center">Seguir comiendo porque "son muy ricos"</span>
+                    <ChevronRight size={24} />
+                  </div>
+                </button>
+
+                {/* Opción B */}
+                <button
+                  onClick={() => handleSceneTransition('scene2b')}
                   disabled={isLoading}
                   className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-4 px-6 rounded-2xl text-lg transition-all transform hover:scale-105 shadow-lg border-2 border-white border-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ fontFamily: 'Fredoka' }}
@@ -282,24 +348,31 @@ const DulcesMagicos = () => {
           {/* Imagen de la escena */}
           <div>
             <div 
-              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
-              style={{ width: '500px', height: '500px', maxWidth: '100%' }}
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl mx-auto overflow-hidden"
+              style={{ width: '500px', maxWidth: '100%' }}
             >
               <img
                 src="/pregunta_01.png"
-                alt="Las Consecuencias - Martín se siente mal"
-                className="w-full h-full object-cover"
+                alt="Scene2A: Las Consecuencias - Decision_A_01.png"
+                className="w-full h-auto object-contain rounded-2xl"
+                style={{ maxHeight: '500px' }}
+                onLoad={() => console.log('✅ Scene2A: Decision_A_01.png loaded successfully')}
                 onError={(e) => {
+                  console.error('❌ Scene2A: Error loading Decision_A_01.png')
                   const target = e.target as HTMLImageElement
-                  target.style.display = 'none'
                   const parent = target.parentElement
                   if (parent) {
                     parent.innerHTML = `
-                      <div class="w-full h-full flex items-center justify-center text-white">
+                      <div class="w-full h-64 flex items-center justify-center text-white bg-red-500 bg-opacity-50 rounded-2xl">
                         <div class="text-center">
                           <div style="font-size: 80px; margin-bottom: 16px; opacity: 0.7;">🍬</div>
                           <p class="text-sm opacity-60" style="font-family: Comic Neue;">
-                            Decision_A_01.png
+                          <div style="font-size: 80px; margin-bottom: 16px;">😵</div>
+                          <p class="text-xl font-bold" style="font-family: Fredoka;">
+                            SCENE2A: Decision_A_01.png
+                          </p>
+                          <p class="text-sm opacity-80" style="font-family: Comic Neue;">
+                            Las Consecuencias
                           </p>
                         </div>
                       </div>
