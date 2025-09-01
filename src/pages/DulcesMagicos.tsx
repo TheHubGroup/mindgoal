@@ -188,8 +188,8 @@ const DulcesMagicos = () => {
               style={{ width: 'fit-content', maxWidth: '400px' }}
             >
               <img
-                src="/pregunta_01.png"
-                alt="El Exceso de Dulces"
+                src="/Decision_A_01.png"
+                alt="Martín se siente mal"
                 className="block rounded-2xl"
                 style={{
                   width: '400px',
@@ -204,9 +204,9 @@ const DulcesMagicos = () => {
                   if (parent) {
                     parent.innerHTML = `
                       <div class="text-center text-white p-8">
-                        <div style="font-size: 120px; margin-bottom: 16px; opacity: 0.7;">🍬</div>
+                        <div style="font-size: 120px; margin-bottom: 16px; opacity: 0.7;">😵</div>
                         <p class="text-2xl font-bold" style="font-family: Fredoka;">
-                          El Exceso de Dulces
+                          Martín se siente mal
                         </p>
                         <p class="text-lg opacity-80" style="font-family: Comic Neue;">
                           1024px × 1024px
@@ -359,17 +359,37 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
-              style={{ width: '400px', height: '400px', maxWidth: '100%', maxHeight: '70vh' }}
+              style={{ width: 'fit-content', maxWidth: '500px' }}
             >
-              <div className="text-center text-white">
-                <div className="text-8xl mb-4">😢</div>
-                <p className="text-2xl font-bold" style={{ fontFamily: 'Fredoka' }}>
-                  Final Triste
-                </p>
-                <p className="text-lg opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-                  1024px × 1024px
-                </p>
-              </div>
+              <img
+                src="/Decision_A_02.png"
+                alt="Final: Aprendiendo la Lección"
+                className="block rounded-2xl"
+                style={{
+                  width: '500px',
+                  height: '500px',
+                  maxWidth: '100%',
+                  height: 'auto'
+                }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="text-center text-white p-8">
+                        <div style="font-size: 120px; margin-bottom: 16px; opacity: 0.7;">😢</div>
+                        <p class="text-2xl font-bold" style="font-family: Fredoka;">
+                          Final: Aprendiendo la Lección
+                        </p>
+                        <p class="text-lg opacity-80" style="font-family: Comic Neue;">
+                          1024px × 1024px
+                        </p>
+                      </div>
+                    `
+                  }
+                }}
+              />
             </div>
           </div>
 
@@ -420,17 +440,37 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
-              style={{ width: '400px', height: '400px', maxWidth: '100%', maxHeight: '70vh' }}
+              style={{ width: 'fit-content', maxWidth: '500px' }}
             >
-              <div className="text-center text-white">
-                <div className="text-8xl mb-4">🤗</div>
-                <p className="text-2xl font-bold" style={{ fontFamily: 'Fredoka' }}>
-                  Final Resiliente
-                </p>
-                <p className="text-lg opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-                  1024px × 1024px
-                </p>
-              </div>
+              <img
+                src="/Decision_A_03.png"
+                alt="Final: ¡Buena Decisión!"
+                className="block rounded-2xl"
+                style={{
+                  width: '500px',
+                  height: '500px',
+                  maxWidth: '100%',
+                  height: 'auto'
+                }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="text-center text-white p-8">
+                        <div style="font-size: 120px; margin-bottom: 16px; opacity: 0.7;">🤗</div>
+                        <p class="text-2xl font-bold" style="font-family: Fredoka;">
+                          Final: ¡Buena Decisión!
+                        </p>
+                        <p class="text-lg opacity-80" style="font-family: Comic Neue;">
+                          1024px × 1024px
+                        </p>
+                      </div>
+                    `
+                  }
+                }}
+              />
             </div>
           </div>
 
