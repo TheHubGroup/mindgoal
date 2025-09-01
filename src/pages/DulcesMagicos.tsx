@@ -188,7 +188,7 @@ const DulcesMagicos = () => {
               style={{ width: 'fit-content', maxWidth: '400px' }}
             >
               <img
-                src="/pregunta_01.png"
+                src="/Decision_A_01.png"
                 alt="Martín se siente mal"
                 className="block rounded-2xl"
                 style={{
