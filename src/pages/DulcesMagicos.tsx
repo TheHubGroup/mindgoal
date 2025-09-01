@@ -286,7 +286,7 @@ const DulcesMagicos = () => {
               style={{ width: '500px', height: '500px', maxWidth: '90vw', maxHeight: '70vh' }}
             >
               <img
-                src="/Decision_A_01.png"
+                src="/pregunta_01.png"
                 alt="Martín se siente mal"
                 className="w-full h-full object-cover"
                 onError={(e) => {
