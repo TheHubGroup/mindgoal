@@ -268,6 +268,10 @@ export const dashboardService = {
     totalEmotionMatches: number
     totalEmotionLogs: number
     totalAngerSessions: number
+    totalCommunicationSessions: number
+    totalSemaforoSessions: number
+    totalProblemaResueltoSessions: number
+    totalDulcesMagicosSessions: number
     averageScore: number
   }> {
     if (!supabase) {
@@ -280,6 +284,10 @@ export const dashboardService = {
         totalEmotionMatches: 0,
         totalEmotionLogs: 0,
         totalAngerSessions: 0,
+        totalCommunicationSessions: 0,
+        totalSemaforoSessions: 0,
+        totalProblemaResueltoSessions: 0,
+        totalDulcesMagicosSessions: 0,
         averageScore: 0
       }
     }
@@ -299,6 +307,10 @@ export const dashboardService = {
           totalEmotionMatches: 0,
           totalEmotionLogs: 0,
           totalAngerSessions: 0,
+          totalCommunicationSessions: 0,
+          totalSemaforoSessions: 0,
+          totalProblemaResueltoSessions: 0,
+          totalDulcesMagicosSessions: 0,
           averageScore: 0
         }
       }
@@ -312,6 +324,10 @@ export const dashboardService = {
           totalEmotionMatches: 0,
           totalEmotionLogs: 0,
           totalAngerSessions: 0,
+          totalCommunicationSessions: 0,
+          totalSemaforoSessions: 0,
+          totalProblemaResueltoSessions: 0,
+          totalDulcesMagicosSessions: 0,
           averageScore: 0
         }
       }
@@ -346,6 +362,10 @@ export const dashboardService = {
         totalEmotionMatches,
         totalEmotionLogs,
         totalAngerSessions,
+        totalCommunicationSessions: 0,
+        totalSemaforoSessions: 0,
+        totalProblemaResueltoSessions: 0,
+        totalDulcesMagicosSessions: 0,
         averageScore
       }
     } catch (error) {
@@ -358,6 +378,10 @@ export const dashboardService = {
         totalEmotionMatches: 0,
         totalEmotionLogs: 0,
         totalAngerSessions: 0,
+        totalCommunicationSessions: 0,
+        totalSemaforoSessions: 0,
+        totalProblemaResueltoSessions: 0,
+        totalDulcesMagicosSessions: 0,
         averageScore: 0
       }
     }
