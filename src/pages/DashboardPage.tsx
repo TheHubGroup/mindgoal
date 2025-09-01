@@ -653,6 +653,7 @@ const DashboardPage = () => {
                   <th className="px-4 py-3">Línea Tiempo</th>
                   <th className="px-4 py-3">Cartas</th>
                   <th className="px-4 py-3">Meditación</th>
+                  <th className="px-4 py-3">Comunicación</th>
                   <th className="px-4 py-3">Score</th>
                   <th className="px-4 py-3">Acciones</th>
                 </tr>
