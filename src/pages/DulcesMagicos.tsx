@@ -113,16 +113,16 @@ const DulcesMagicos = () => {
           <div className="order-2 lg:order-1">
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
-              style={{ width: 'fit-content', maxWidth: '90vw' }}
+              style={{ width: 'fit-content', maxWidth: '400px' }}
             >
               <img
                 src="/Intro.png"
                 alt="Martín - Introducción"
                 className="block rounded-2xl"
                 style={{
-                 width: '717px',
-                 height: '717px',
-                  maxWidth: '90vw',
+                 width: '400px',
+                 height: '400px',
+                  maxWidth: '100%',
                   height: 'auto'
                 }}
                 onError={(e) => {
@@ -183,16 +183,16 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
-              style={{ width: 'fit-content', maxWidth: '90vw' }}
+              style={{ width: 'fit-content', maxWidth: '400px' }}
             >
               <img
                 src="/pregunta_01.png"
                 alt="El Exceso de Dulces"
                 className="block rounded-2xl"
                 style={{
-                  width: '1024px',
-                  height: '1024px',
-                  maxWidth: '90vw',
+                  width: '400px',
+                  height: '400px',
+                  maxWidth: '100%',
                   height: 'auto'
                 }}
                 onError={(e) => {
@@ -357,7 +357,7 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
-              style={{ width: '1024px', height: '1024px', maxWidth: '90vw', maxHeight: '70vh' }}
+              style={{ width: '400px', height: '400px', maxWidth: '100%', maxHeight: '70vh' }}
             >
               <div className="text-center text-white">
                 <div className="text-8xl mb-4">😢</div>
@@ -418,7 +418,7 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
-              style={{ width: '1024px', height: '1024px', maxWidth: '90vw', maxHeight: '70vh' }}
+              style={{ width: '400px', height: '400px', maxWidth: '100%', maxHeight: '70vh' }}
             >
               <div className="text-center text-white">
                 <div className="text-8xl mb-4">🤗</div>
