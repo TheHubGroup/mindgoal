@@ -115,7 +115,7 @@ const DulcesMagicos = () => {
           <div className="order-2 lg:order-1">
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
-              style={{ width: 'fit-content', maxWidth: '400px' }}
+              style={{ width: 'fit-content', maxWidth: '500px' }}
             >
               <img
                 src="/Intro.png"
