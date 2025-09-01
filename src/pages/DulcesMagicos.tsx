@@ -45,13 +45,22 @@ const DulcesMagicos = () => {
         {/* Contenedor para imagen central */}
         <div className="mb-8">
           <div 
-            className="mx-auto bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden flex items-center justify-center"
-            style={{ width: '1497px', height: '793px', maxWidth: '90vw', maxHeight: '50vh' }}
+            className="mx-auto bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden"
+            style={{ 
+              width: 'fit-content',
+              maxWidth: '90vw'
+            }}
           >
             <img
               src="/portada.jpg"
               alt="Dulces Mágicos - Portada"
-              className="max-w-full max-h-full object-contain"
+              className="block rounded-2xl"
+              style={{
+                width: '1497px',
+                height: '793px',
+                maxWidth: '90vw',
+                height: 'auto'
+              }}
               onError={(e) => {
                 const target = e.target as HTMLImageElement
                 target.style.display = 'none'
