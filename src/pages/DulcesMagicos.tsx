@@ -282,19 +282,31 @@ const DulcesMagicos = () => {
           {/* Imagen de la escena */}
           <div>
             <div 
-              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
-              style={{ width: '400px', height: '400px', maxWidth: '90vw', maxHeight: '70vh' }}
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl overflow-hidden mx-auto"
+              style={{ width: '500px', height: '500px', maxWidth: '90vw', maxHeight: '70vh' }}
             >
-              <div className="text-center text-white">
-                <div className="text-8xl mb-4">😵</div>
-                <p className="text-2xl font-bold" style={{ fontFamily: 'Fredoka' }}>
-                  Martín se siente mal
-                </p>
-                
-                <p className="text-lg opacity-80" style={{ fontFamily: 'Comic Neue' }}>
-                  1024px × 1024px
-                </p>
-              </div>
+              <img
+                src="/Decision_A_01.png"
+                alt="Martín se siente mal"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="w-full h-full flex items-center justify-center text-white">
+                        <div class="text-center">
+                          <div style="font-size: 80px; margin-bottom: 16px; opacity: 0.7;">😵</div>
+                          <p class="text-xl font-bold" style="font-family: Fredoka;">
+                            Martín se siente mal
+                          </p>
+                        </div>
+                      </div>
+                    `
+                  }
+                }}
+              />
             </div>
           </div>
 
