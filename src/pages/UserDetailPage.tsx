@@ -22,7 +22,9 @@ import {
   AlertCircle,
   BarChart3,
   Smile,
-  MessageCircle
+  MessageCircle,
+  Shield,
+  Candy
 } from 'lucide-react'
 
 const UserDetailPage = () => {
@@ -316,6 +318,50 @@ const UserDetailPage = () => {
               }`}
             >
               Nombra tus Emociones ({userDetails.emotion_matches?.length || 0})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('communication')}
+              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+                activeTab === 'communication' 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+              }`}
+            >
+              La Comunicación ({userDetails.communication_sessions?.length || 0})
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('semaforo_limites')}
+              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+                activeTab === 'semaforo_limites' 
+                  ? 'bg-red-500 text-white' 
+                  : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+              }`}
+            >
+              Semáforo de Límites ({userDetails.semaforo_limites_sessions?.length || 0})
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('problema_resuelto')}
+              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+                activeTab === 'problema_resuelto' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+              }`}
+            >
+              Problema Resuelto ({userDetails.problema_resuelto_sessions?.length || 0})
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('dulces_magicos')}
+              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+                activeTab === 'dulces_magicos' 
+                  ? 'bg-pink-500 text-white' 
+                  : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+              }`}
+            >
+              Dulces Mágicos ({userDetails.dulces_magicos_sessions?.length || 0})
             </button>
 
             <button
@@ -702,6 +748,253 @@ const UserDetailPage = () => {
                 <div className="text-center py-6 text-white text-opacity-70 bg-black bg-opacity-20 rounded-lg">
                   <Heart size={64} className="mx-auto mb-4 opacity-50" />
                   <p className="text-xl" style={{ fontFamily: 'Comic Neue' }}>No hay registros de "Calculadora de Emociones"</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Communication Sessions */}
+          {activeTab === 'communication' && (
+            <div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
+                <MessageCircle size={24} className="text-green-400" />
+                La Comunicación
+              </h3>
+              
+              {userDetails.communication_sessions && userDetails.communication_sessions.length > 0 ? (
+                <div className="space-y-6">
+                  {userDetails.communication_sessions.map(session => (
+                    <div 
+                      key={session.id} 
+                      className="bg-green-100 p-6 rounded-lg border-l-4 border-green-500"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                          <div className="text-sm text-gray-600">Mensajes:</div>
+                          <div className="font-bold text-green-700">
+                            {session.messages?.length || 0} mensajes
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Estado:</div>
+                          <div className="font-bold text-green-700">
+                            {session.completed_at ? 'Completada' : 'En progreso'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Fecha:</div>
+                          <div className="font-bold text-green-700">
+                            {new Date(session.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {session.ai_evaluation && (
+                        <div className="mt-4 bg-white p-4 rounded-lg">
+                          <div className="text-sm text-gray-600 mb-2">Evaluación de IA:</div>
+                          <p className="text-gray-800">{session.ai_evaluation}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-white text-opacity-70">
+                  <MessageCircle size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-xl" style={{ fontFamily: 'Comic Neue' }}>No hay sesiones de La Comunicación</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Semáforo de Límites */}
+          {activeTab === 'semaforo_limites' && (
+            <div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
+                <Shield size={24} className="text-red-400" />
+                Semáforo de los Límites
+              </h3>
+              
+              {userDetails.semaforo_limites_sessions && userDetails.semaforo_limites_sessions.length > 0 ? (
+                <div className="space-y-6">
+                  {userDetails.semaforo_limites_sessions.map(session => (
+                    <div 
+                      key={session.id} 
+                      className="bg-red-100 p-6 rounded-lg border-l-4 border-red-500"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                          <div className="text-sm text-gray-600">Situaciones:</div>
+                          <div className="font-bold text-red-700">
+                            {session.completed_situations}/{session.total_situations}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Estado:</div>
+                          <div className="font-bold text-red-700">
+                            {session.completed_at ? 'Completada' : 'En progreso'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Fecha:</div>
+                          <div className="font-bold text-red-700">
+                            {new Date(session.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {session.responses && session.responses.length > 0 && (
+                        <div className="mt-4">
+                          <div className="text-sm text-gray-600 mb-2">Respuestas:</div>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="bg-red-200 text-red-800 px-3 py-1 rounded text-center text-sm">
+                              🔴 {session.responses.filter((r: any) => r.user_choice === 'rojo').length}
+                            </div>
+                            <div className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded text-center text-sm">
+                              🟡 {session.responses.filter((r: any) => r.user_choice === 'amarillo').length}
+                            </div>
+                            <div className="bg-green-200 text-green-800 px-3 py-1 rounded text-center text-sm">
+                              🟢 {session.responses.filter((r: any) => r.user_choice === 'verde').length}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-white text-opacity-70">
+                  <Shield size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-xl" style={{ fontFamily: 'Comic Neue' }}>No hay sesiones de Semáforo de Límites</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Problema Resuelto */}
+          {activeTab === 'problema_resuelto' && (
+            <div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
+                <Brain size={24} className="text-blue-400" />
+                Problema Resuelto
+              </h3>
+              
+              {userDetails.problema_resuelto_sessions && userDetails.problema_resuelto_sessions.length > 0 ? (
+                <div className="space-y-6">
+                  {userDetails.problema_resuelto_sessions.map(session => (
+                    <div 
+                      key={session.id} 
+                      className="bg-blue-100 p-6 rounded-lg border-l-4 border-blue-500"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                          <div className="text-sm text-gray-600">Problemas:</div>
+                          <div className="font-bold text-blue-700">
+                            {session.completed_problems}/{session.total_problems}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Resiliencia:</div>
+                          <div className="font-bold text-blue-700">
+                            {Math.round(session.resilience_score)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Estado:</div>
+                          <div className="font-bold text-blue-700">
+                            {session.completed_at ? 'Completada' : 'En progreso'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Fecha:</div>
+                          <div className="font-bold text-blue-700">
+                            {new Date(session.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div className="bg-green-200 text-green-800 px-3 py-2 rounded text-center">
+                          <div className="font-bold">{session.resilient_responses}</div>
+                          <div className="text-sm">Respuestas Resilientes</div>
+                        </div>
+                        <div className="bg-red-200 text-red-800 px-3 py-2 rounded text-center">
+                          <div className="font-bold">{session.impulsive_responses}</div>
+                          <div className="text-sm">Respuestas Impulsivas</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-white text-opacity-70">
+                  <Brain size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-xl" style={{ fontFamily: 'Comic Neue' }}>No hay sesiones de Problema Resuelto</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Dulces Mágicos */}
+          {activeTab === 'dulces_magicos' && (
+            <div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2" style={{ fontFamily: 'Fredoka' }}>
+                <Candy size={24} className="text-pink-400" />
+                Dulces Mágicos
+              </h3>
+              
+              {userDetails.dulces_magicos_sessions && userDetails.dulces_magicos_sessions.length > 0 ? (
+                <div className="space-y-6">
+                  {userDetails.dulces_magicos_sessions.map(session => (
+                    <div 
+                      key={session.id} 
+                      className="bg-pink-100 p-6 rounded-lg border-l-4 border-pink-500"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                          <div className="text-sm text-gray-600">Final Alcanzado:</div>
+                          <div className="font-bold text-pink-700">
+                            {session.ending_reached === 'ending_sad' ? '😢 Final Triste' :
+                             session.ending_reached === 'ending_resilient' ? '💪 Final Resiliente' :
+                             session.ending_reached === 'ending_sharing' ? '🤝 Final Compartir' :
+                             session.ending_reached === 'ending_control' ? '🤔 Final Control' : 
+                             session.ending_reached}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Nivel de Resiliencia:</div>
+                          <div className="font-bold text-pink-700">
+                            {session.resilience_level}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Fecha:</div>
+                          <div className="font-bold text-pink-700">
+                            {new Date(session.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 bg-white p-4 rounded-lg">
+                        <div className="text-sm text-gray-600 mb-2">Camino de Decisiones:</div>
+                        <div className="flex flex-wrap gap-2">
+                          {session.decision_path.map((decision, index) => (
+                            <span 
+                              key={index}
+                              className="bg-pink-200 text-pink-800 px-3 py-1 rounded-full text-sm font-bold"
+                            >
+                              {decision}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-white text-opacity-70">
+                  <Candy size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-xl" style={{ fontFamily: 'Comic Neue' }}>No hay sesiones de Dulces Mágicos</p>
                 </div>
               )}
             </div>
