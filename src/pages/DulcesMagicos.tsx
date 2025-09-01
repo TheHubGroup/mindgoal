@@ -284,7 +284,7 @@ const DulcesMagicos = () => {
           <div>
             <div 
               className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl flex items-center justify-center"
-              style={{ width: '1024px', height: '1024px', maxWidth: '90vw', maxHeight: '70vh' }}
+              style={{ width: '400px', height: '400px', maxWidth: '90vw', maxHeight: '70vh' }}
             >
               <div className="text-center text-white">
                 <div className="text-8xl mb-4">😵</div>
