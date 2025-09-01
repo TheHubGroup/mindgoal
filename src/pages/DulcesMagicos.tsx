@@ -13,7 +13,7 @@ import {
   Star
 } from 'lucide-react'
 
-type Scene = 'cover' | 'intro' | 'scene1' | 'scene2a' | 'ending_sad' | 'ending_resilient'
+type Scene = 'cover' | 'intro' | 'scene1' | 'scene2a' | 'scene2b' | 'ending_sad' | 'ending_resilient' | 'ending_sharing' | 'ending_control'
 
 const DulcesMagicos = () => {
   const navigate = useNavigate()
@@ -533,6 +533,262 @@ const DulcesMagicos = () => {
     </div>
   )
 
+  const renderScene2B = () => (
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-green-500 to-teal-500 p-4">
+      <div className="max-w-7xl mx-auto py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* Imagen de la escena */}
+          <div>
+            <div 
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl mx-auto overflow-hidden"
+              style={{ width: '500px', maxWidth: '100%' }}
+            >
+              <img
+                src="/Decision_B_01.png"
+                alt="Martín decide parar y tomar agua"
+                className="w-full h-auto object-cover rounded-2xl"
+                style={{ maxHeight: '500px' }}
+                onLoad={() => console.log('✅ Scene2B: Decision_B_01.png loaded successfully')}
+                onError={(e) => {
+                  console.error('❌ Scene2B: Error loading Decision_B_01.png')
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="w-full h-64 flex items-center justify-center text-white bg-blue-500 bg-opacity-50 rounded-2xl">
+                        <div class="text-center">
+                          <div style="font-size: 80px; margin-bottom: 16px;">💧</div>
+                          <p class="text-xl font-bold" style="font-family: Fredoka;">
+                            SCENE2B: Decision_B_01.png
+                          </p>
+                          <p class="text-sm opacity-80" style="font-family: Comic Neue;">
+                            Martín toma agua
+                          </p>
+                        </div>
+                      </div>
+                    `
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Historia y opciones */}
+          <div className="text-center lg:text-left">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-8 border-2 border-white border-opacity-20">
+              <h2 className="text-3xl font-black text-white mb-6 flex items-center gap-3" style={{ fontFamily: 'Fredoka' }}>
+                <Heart size={32} className="text-blue-300" />
+                Decisión Inteligente
+              </h2>
+              
+              <div className="bg-white bg-opacity-20 rounded-2xl p-6 mb-8">
+                <p className="text-xl text-white leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                  Martín decide parar y tomar agua. El dolor comienza a mejorar. Se siente mejor por haber tomado una decisión inteligente.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-white mb-4" style={{ fontFamily: 'Fredoka' }}>
+                  ¿Qué debería hacer con los dulces restantes?
+                </h3>
+                
+                {/* Opción B1 */}
+                <button
+                  onClick={() => handleSceneTransition('ending_sharing')}
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-lg transition-all transform hover:scale-105 shadow-lg border-2 border-white border-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ fontFamily: 'Fredoka' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-black">B1</span>
+                    <span className="flex-1 text-center">Guardar los dulces para compartirlos después con sus amigos</span>
+                    <ChevronRight size={24} />
+                  </div>
+                </button>
+
+                {/* Opción B2 */}
+                <button
+                  onClick={() => handleSceneTransition('ending_control')}
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-4 px-6 rounded-2xl text-lg transition-all transform hover:scale-105 shadow-lg border-2 border-white border-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ fontFamily: 'Fredoka' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-black">B2</span>
+                    <span className="flex-1 text-center">Tirarlos a la basura para no tener tentación</span>
+                    <ChevronRight size={24} />
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderEndingSharing = () => (
+    <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-400 p-4">
+      <div className="max-w-7xl mx-auto py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* Imagen del final compartiendo */}
+          <div>
+            <div 
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl mx-auto overflow-hidden"
+              style={{ width: '500px', maxWidth: '100%' }}
+            >
+              <img
+                src="/Decision_B_02.png"
+                alt="Final: Compartiendo con Amigos"
+                className="w-full h-auto object-cover rounded-2xl"
+                style={{ maxHeight: '500px' }}
+                onLoad={() => console.log('✅ Ending Sharing: Decision_B_02.png loaded successfully')}
+                onError={(e) => {
+                  console.error('❌ Ending Sharing: Error loading Decision_B_02.png')
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="w-full h-64 flex items-center justify-center text-white bg-yellow-500 bg-opacity-50 rounded-2xl">
+                        <div class="text-center">
+                          <div style="font-size: 80px; margin-bottom: 16px;">🤝</div>
+                          <p class="text-xl font-bold" style="font-family: Fredoka;">
+                            ENDING SHARING: Decision_B_02.png
+                          </p>
+                          <p class="text-sm opacity-80" style="font-family: Comic Neue;">
+                            Compartiendo con Amigos
+                          </p>
+                        </div>
+                      </div>
+                    `
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Mensaje del final */}
+          <div className="text-center lg:text-left">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-8 border-2 border-white border-opacity-20">
+              <h2 className="text-3xl font-black text-white mb-6 flex items-center gap-3" style={{ fontFamily: 'Fredoka' }}>
+                <Star size={32} className="text-yellow-300" />
+                Final: ¡Compartir es Genial!
+              </h2>
+              
+              <div className="bg-yellow-900 bg-opacity-30 rounded-2xl p-6 mb-8 border-l-4 border-yellow-400">
+                <p className="text-xl text-white leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                  Martín comparte los dulces con sus amigos otro día y todos disfrutan sin exagerar. 
+                  ¡Aprendió que compartir hace que todo sea más divertido!
+                </p>
+              </div>
+
+              <div className="bg-white bg-opacity-20 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
+                  🌟 ¡Final Resiliente y Positivo!
+                </h3>
+                <p className="text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
+                  Martín demostró autocontrol, pensó en sus amigos y aprendió que compartir hace que las cosas buenas sean aún mejores. 
+                  ¡Esa es la verdadera magia de los dulces!
+                </p>
+              </div>
+
+              <button
+                onClick={() => handleSceneTransition('cover')}
+                className="mt-6 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 flex items-center gap-2 mx-auto lg:mx-0"
+                style={{ fontFamily: 'Fredoka' }}
+              >
+                <Sparkles size={20} />
+                Volver al Inicio
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderEndingControl = () => (
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500 p-4">
+      <div className="max-w-7xl mx-auto py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* Imagen del final de control */}
+          <div>
+            <div 
+              className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl border-4 border-white border-opacity-30 shadow-2xl mx-auto overflow-hidden"
+              style={{ width: '500px', maxWidth: '100%' }}
+            >
+              <img
+                src="/Decision_B_03.png"
+                alt="Final: Tomando Control"
+                className="w-full h-auto object-cover rounded-2xl"
+                style={{ maxHeight: '500px' }}
+                onLoad={() => console.log('✅ Ending Control: Decision_B_03.png loaded successfully')}
+                onError={(e) => {
+                  console.error('❌ Ending Control: Error loading Decision_B_03.png')
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  const parent = target.parentElement
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div class="w-full h-64 flex items-center justify-center text-white bg-purple-500 bg-opacity-50 rounded-2xl">
+                        <div class="text-center">
+                          <div style="font-size: 80px; margin-bottom: 16px;">🗑️</div>
+                          <p class="text-xl font-bold" style="font-family: Fredoka;">
+                            ENDING CONTROL: Decision_B_03.png
+                          </p>
+                          <p class="text-sm opacity-80" style="font-family: Comic Neue;">
+                            Tomando Control
+                          </p>
+                        </div>
+                      </div>
+                    `
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Mensaje del final */}
+          <div className="text-center lg:text-left">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-8 border-2 border-white border-opacity-20">
+              <h2 className="text-3xl font-black text-white mb-6 flex items-center gap-3" style={{ fontFamily: 'Fredoka' }}>
+                <AlertTriangle size={32} className="text-purple-300" />
+                Final: Tomando Control
+              </h2>
+              
+              <div className="bg-purple-900 bg-opacity-30 rounded-2xl p-6 mb-8 border-l-4 border-purple-400">
+                <p className="text-xl text-white leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                  Martín aprende que no todo se soluciona botando, pero se siente mejor por haber tomado el control de la situación.
+                </p>
+              </div>
+
+              <div className="bg-white bg-opacity-20 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: 'Fredoka' }}>
+                  🤔 Final Neutral - Lección Aprendida
+                </h3>
+                <p className="text-white text-opacity-90" style={{ fontFamily: 'Comic Neue' }}>
+                  Aunque tirar los dulces no fue la mejor opción, Martín demostró que puede tomar control cuando algo no le hace bien. 
+                  La próxima vez, tal vez pueda encontrar una solución aún mejor.
+                </p>
+              </div>
+
+              <button
+                onClick={() => handleSceneTransition('cover')}
+                className="mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 flex items-center gap-2 mx-auto lg:mx-0"
+                style={{ fontFamily: 'Fredoka' }}
+              >
+                <ChevronRight size={20} />
+                Volver al Inicio
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
   const renderCurrentScene = () => {
     switch (currentScene) {
       case 'cover':
@@ -543,10 +799,16 @@ const DulcesMagicos = () => {
         return renderScene1()
       case 'scene2a':
         return renderScene2A()
+      case 'scene2b':
+        return renderScene2B()
       case 'ending_sad':
         return renderEndingSad()
       case 'ending_resilient':
         return renderEndingResilient()
+      case 'ending_sharing':
+        return renderEndingSharing()
+      case 'ending_control':
+        return renderEndingControl()
       default:
         return renderCoverScene()
     }
