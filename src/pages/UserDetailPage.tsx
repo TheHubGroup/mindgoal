@@ -100,6 +100,50 @@ const UserDetailPage = () => {
             Usuario no encontrado
           </p>
           <button
+            onClick={() => setActiveTab('communication')}
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+              activeTab === 'communication' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+            }`}
+          >
+            La Comunicación ({userDetails.communication_sessions?.length || 0})
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('semaforo_limites')}
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+              activeTab === 'semaforo_limites' 
+                ? 'bg-red-500 text-white' 
+                : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+            }`}
+          >
+            Semáforo de Límites ({userDetails.semaforo_limites_sessions?.length || 0})
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('problema_resuelto')}
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+              activeTab === 'problema_resuelto' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+            }`}
+          >
+            Problema Resuelto ({userDetails.problema_resuelto_sessions?.length || 0})
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('dulces_magicos')}
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+              activeTab === 'dulces_magicos' 
+                ? 'bg-pink-500 text-white' 
+                : 'bg-white bg-opacity-10 text-white text-opacity-70 hover:bg-opacity-20'
+            }`}
+          >
+            Dulces Mágicos ({userDetails.dulces_magicos_sessions?.length || 0})
+          </button>
+
+          <button
             onClick={() => navigate('/dashboard')}
             className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all"
           >
