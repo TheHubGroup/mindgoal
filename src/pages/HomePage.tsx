@@ -499,11 +499,10 @@ const HomePage = () => {
             return (
               <div
                 key={activity.id}
-                onClick={() => handleActivityClick(activity)}
                 className={`
                   relative bg-white rounded-3xl shadow-2xl p-8 transform transition-all duration-300 hover:scale-105 
                   ${activity.available 
-                    ? 'cursor-pointer hover:shadow-3xl' 
+                    ? 'hover:shadow-3xl' 
                     : 'opacity-60 cursor-not-allowed'
                   }
                 `}
@@ -540,10 +539,13 @@ const HomePage = () => {
                 {/* Action Button */}
                 {activity.available && (
                   <div className="mt-6 text-center">
-                    <div className={`inline-flex items-center gap-2 bg-gradient-to-r ${activity.color} text-white px-6 py-3 rounded-full font-bold transition-all hover:shadow-lg`}>
+                    <button
+                      onClick={() => handleActivityClick(activity)}
+                      className={`inline-flex items-center gap-2 bg-gradient-to-r ${activity.color} text-white px-6 py-3 rounded-full font-bold transition-all hover:shadow-lg cursor-pointer transform hover:scale-105`}
+                    >
                       {activityStatuses[activity.id]?.hasData ? '¡Continuar!' : '¡Empezar!'}
                       <Sparkles size={16} />
-                    </div>
+                    </button>
                   </div>
                 )}
               </div>
