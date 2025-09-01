@@ -52,6 +52,10 @@ const DashboardPage = () => {
     totalEmotionMatches: 0,
     totalEmotionLogs: 0,
     totalAngerSessions: 0,
+    totalCommunicationSessions: 0,
+    totalSemaforoSessions: 0,
+    totalProblemaResueltoSessions: 0,
+    totalDulcesMagicosSessions: 0,
     averageScore: 0
   })
 
