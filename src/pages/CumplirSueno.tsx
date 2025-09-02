@@ -628,27 +628,6 @@ const CumplirSueno = () => {
                               <p className="text-gray-700 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
                                 {step.step_description}
                               </p>
-                              
-                              {/* Información adicional */}
-                              <div className="space-y-3">
-                                {step.estimated_time && (
-                                  <div className="flex items-center justify-center gap-2 bg-blue-100 rounded-full px-4 py-2">
-                                    <Clock size={16} className="text-blue-600" />
-                                    <span className="text-blue-800 font-bold text-sm" style={{ fontFamily: 'Fredoka' }}>
-                                      {step.estimated_time}
-                                    </span>
-                                  </div>
-                                )}
-                                
-                                {step.resources && step.resources.length > 0 && (
-                                  <div className="flex items-center justify-center gap-2 bg-purple-100 rounded-full px-4 py-2">
-                                    <Lightbulb size={16} className="text-purple-600" />
-                                    <span className="text-purple-800 font-bold text-sm" style={{ fontFamily: 'Fredoka' }}>
-                                      {step.resources.length} recurso{step.resources.length > 1 ? 's' : ''}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
                             </div>
                             
                             {/* Indicador de completado */}
@@ -662,29 +641,6 @@ const CumplirSueno = () => {
                             
                             {/* Efecto de brillo en hover */}
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-3xl" />
-                            
-                            {/* Call to action */}
-                            <div className="mt-6 text-center">
-                              <div className={`
-                                inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all
-                                ${step.is_completed 
-                                  ? 'bg-green-500 text-white' 
-                                  : 'bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 group-hover:from-orange-400 group-hover:to-red-400'
-                                }
-                              `} style={{ fontFamily: 'Fredoka' }}>
-                                {step.is_completed ? (
-                                  <>
-                                    <Award size={16} />
-                                    ¡COMPLETADO!
-                                  </>
-                                ) : (
-                                  <>
-                                    <Zap size={16} />
-                                    ¡HAZLO AHORA!
-                                  </>
-                                )}
-                              </div>
-                            </div>
                           </div>
                         )
                       })}
