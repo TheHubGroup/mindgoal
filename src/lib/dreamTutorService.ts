@@ -131,32 +131,34 @@ IMPORTANTE: Responde SOLO con el JSON válido, sin texto adicional.`
 
     try {
       // Determinar género para la imagen
-      const genderText = userGender === 'Femenino' ? 'niña' : userGender === 'Masculino' ? 'niño' : 'niño/niña'
+      const genderText = userGender === 'Femenino' ? 'una niña' : userGender === 'Masculino' ? 'un niño' : 'un niño o niña'
       
       // Crear prompt para Gemini optimizado para niños/adolescentes en español
-      const imagePrompt = `Crea una ilustración vibrante, inspiradora y amigable para niños que represente el sueño: "${dreamTitle}".
+      const imagePrompt = `Genera una ilustración digital vibrante, colorida e inspiradora que represente el sueño: "${dreamTitle}".
       
       Descripción del sueño: ${dreamDescription}
       
       Características específicas:
-      - Protagonista: Un ${genderText} de ${userAge} años de edad
-      - Estilo: Ilustración colorida, optimista, estilo cartoon/animado
-      - Ambiente: Inspirador y motivacional
-      - Colores: Brillantes y vibrantes
-      - Contexto: Educativo, apropiado para estudiantes hispanohablantes
-      - Elementos: Mostrar éxito, logros y progreso hacia la meta
+      - Protagonista principal: ${genderText} de ${userAge} años de edad, feliz y motivado/a
+      - Estilo artístico: Ilustración digital colorida, estilo cartoon/animado, amigable para niños
+      - Paleta de colores: Brillantes, vibrantes, optimistas (amarillos, naranjas, azules, verdes)
+      - Ambiente: Inspirador, motivacional, lleno de esperanza y posibilidades
+      - Contexto cultural: Apropiado para estudiantes de habla hispana
+      - Elementos visuales: Símbolos de éxito, progreso, aprendizaje y crecimiento personal
+      - Composición: Centrada en el protagonista alcanzando o trabajando hacia su sueño
       
       IMPORTANTE: 
-      - NO incluir texto o palabras escritas en la imagen
-      - Enfoque en elementos visuales que representen el sueño
-      - Estilo apropiado para contenido educativo en español
-      - Mostrar al ${genderText} feliz y motivado/a
+      - NO incluir texto, palabras o letras escritas en la imagen
+      - Enfoque 100% visual para representar el sueño de ${dreamTitle}
+      - Estilo apropiado para contenido educativo dirigido a estudiantes hispanohablantes
+      - Mostrar a ${genderText} sonriente, confiado/a y trabajando hacia su meta
+      - Incluir elementos que representen educación y crecimiento personal
       
-      Genera una imagen que inspire al estudiante a perseguir su sueño de ${dreamTitle}.`
+      Crea una imagen que motive e inspire al estudiante a perseguir activamente su sueño de convertirse en ${dreamTitle}.`
 
       console.log('🎨 Generando imagen con Gemini...')
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-nano-banana:generateContent?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
