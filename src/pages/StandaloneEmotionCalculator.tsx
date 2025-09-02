@@ -396,7 +396,15 @@ const StandaloneEmotionCalculator = () => {
           </button>
 
           {/* Navigation Buttons with Text */}
-
+          <button 
+            onClick={prevSlide}
+            disabled={isCompleted}
+            className="absolute -left-8 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-4 py-3 rounded-xl shadow-xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30 flex items-center gap-2"
+            style={{ fontFamily: 'Fredoka' }}
+          >
+            <ChevronLeft size={20} />
+            <span className="font-bold text-sm">Atrás</span>
+          </button>
           
           <button 
             onClick={nextSlide}
@@ -409,13 +417,7 @@ const StandaloneEmotionCalculator = () => {
           </button>
 
           {/* Navigation Buttons */}
-          <button 
-            onClick={prevSlide}
-            disabled={isCompleted}
-            className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
-          >
-            <ChevronLeft size={24} />
-          </button>
+
           
           <button 
             onClick={nextSlide}
