@@ -522,7 +522,7 @@ const CumplirSueno = () => {
                     Generando tu Roadmap Personalizado...
                   </h3>
                   <p className="text-gray-600" style={{ fontFamily: 'Comic Neue' }}>
-                    La IA está analizando tu sueño y creando un plan específico para ti
+                    MindGoal está analizando tu sueño y creando un plan específico para ti
                   </p>
                   {isGeneratingImage && (
                     <p className="text-yellow-600 font-medium mt-2">
@@ -549,7 +549,7 @@ const CumplirSueno = () => {
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
                   >
                     <Brain size={20} />
-                    Generar Roadmap con IA
+                    Generar Roadmap con MindGoal
                   </button>
                 </div>
               )}
