@@ -377,7 +377,7 @@ const StandaloneEmotionCalculator = () => {
         </div>
 
         {/* Emotion Carousel */}
-        <div className="flex-1 relative max-w-2xl mx-auto px-20">
+        <div className="flex-1 relative max-w-2xl mx-auto px-30">
           {/* Navigation Arrows - Más grandes y visibles */}
           <button 
             onClick={prevSlide}
