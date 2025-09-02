@@ -543,7 +543,7 @@ const CumplirSueno = () => {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8">
+                          const container = document.querySelector('.steps-scroll-container') as HTMLElement
                   <button
                     onClick={() => generateRoadmapForSession(activeSession)}
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
@@ -587,25 +587,25 @@ const CumplirSueno = () => {
                       }
                     }}
                     className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-80 border-2 border-yellow-400"
-                  >
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
                     <ChevronRight size={24} className="text-gray-700" />
                   </button>
 
                   <div className="steps-scroll-container overflow-x-auto pb-6 px-16" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                     <div className="flex gap-4 min-w-max">
                       {activeSession.steps.map((step, index) => {
-                        // Función para obtener ícono basado en el contenido del paso
+                          const container = document.querySelector('.steps-scroll-container') as HTMLElement
                         const getStepIcon = (title: string, description: string) => {
-                          const text = (title + ' ' + description).toLowerCase()
+                            container.scrollBy({ left: 220, behavior: 'smooth' })
                           
                           if (text.includes('bachillerato') || text.includes('estudiar') || text.includes('notas')) {
-                            return { icon: '🎓', color: 'from-blue-500 to-indigo-600' }
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
                           } else if (text.includes('universidad') || text.includes('carrera') || text.includes('profesional')) {
                             return { icon: '🏛️', color: 'from-purple-500 to-indigo-600' }
                           } else if (text.includes('práctica') || text.includes('experiencia') || text.includes('trabajo')) {
                             return { icon: '💼', color: 'from-green-500 to-teal-600' }
-                          } else if (text.includes('investigar') || text.includes('información') || text.includes('conocer')) {
-                            return { icon: '🔍', color: 'from-orange-500 to-red-500' }
+                      <div className="steps-scroll-container overflow-x-auto pb-6 px-12" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        <div className="flex gap-3 min-w-max">
                           } else if (text.includes('habilidades') || text.includes('desarrollar') || text.includes('aprender')) {
                             return { icon: '🚀', color: 'from-pink-500 to-rose-600' }
                           } else if (text.includes('red') || text.includes('contactos') || text.includes('mentores')) {
@@ -615,7 +615,7 @@ const CumplirSueno = () => {
                           } else if (text.includes('especialización') || text.includes('maestría') || text.includes('posgrado')) {
                             return { icon: '🎯', color: 'from-violet-500 to-purple-600' }
                           } else {
-                            return { icon: '⭐', color: 'from-yellow-500 to-orange-500' }
+                            container.scrollBy({ left: -220, behavior: 'smooth' })
                           }
                         }
                         
@@ -651,30 +651,30 @@ const CumplirSueno = () => {
                                   </span>
                                 )}
                               </div>
-                            </div>
-                            
+                                    w-16 h-16 rounded-full bg-gradient-to-br ${stepIcon.color} 
+                                    flex items-center justify-center mx-auto mb-3 shadow-lg
                             {/* Ícono principal del paso */}
                             <div className="text-center mb-6">
-                              <div className={`
+                                    <span className="text-3xl">{stepIcon.icon}</span>
                                 w-20 h-20 rounded-full bg-gradient-to-br ${stepIcon.color} 
                                 flex items-center justify-center mx-auto mb-4 shadow-lg
-                                transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6
+                                  min-w-[216px] max-w-[216px] cursor-pointer group flex-shrink-0
                               `}>
                                 <span className="text-4xl">{stepIcon.icon}</span>
-                              </div>
+                                  <h4 className="text-lg font-black text-gray-800 mb-2 leading-tight" style={{ fontFamily: 'Fredoka' }}>
                             </div>
                             
-                            {/* Contenido del paso */}
-                            <div className="text-center">
+                                  <p className="text-gray-700 text-xs leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                                    w-10 h-10 rounded-full border-4 border-white flex items-center justify-center shadow-xl transition-all duration-300 group-hover:scale-110
                               <h4 className="text-xl font-black text-gray-800 mb-3 leading-tight" style={{ fontFamily: 'Fredoka' }}>
                                 {step.step_title}
                               </h4>
                               <p className="text-gray-700 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
                                 {step.step_description}
                               </p>
-                            </div>
-                            
-                            {/* Indicador de completado */}
+                                      <CheckCircle size={20} className="text-white" />
+                                      <CheckCircle size={16} />
+                                      <span className="text-white font-black text-sm" style={{ fontFamily: 'Fredoka' }}>
                             {step.is_completed && (
                               <div className="absolute top-4 right-4">
                                 <div className="bg-green-500 text-white rounded-full p-2 shadow-lg animate-pulse">
