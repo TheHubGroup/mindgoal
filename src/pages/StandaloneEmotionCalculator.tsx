@@ -55,7 +55,7 @@ const StandaloneEmotionCalculator = () => {
     // Optimize for iframe
     document.body.style.margin = '0'
     document.body.style.padding = '0'
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = 'auto'
     document.body.style.backgroundColor = 'transparent'
     
     if (user) {
@@ -314,7 +314,7 @@ const StandaloneEmotionCalculator = () => {
   const visibleEmotions = getVisibleEmotions()
 
   return (
-    <div className="h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative">
       {/* Background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(15)].map((_, i) => (
@@ -377,28 +377,22 @@ const StandaloneEmotionCalculator = () => {
         </div>
 
         {/* Emotion Carousel */}
-        <div className="flex-1 relative max-w-lg mx-auto">
-          {/* Navigation Buttons */}
+        <div className="flex-1 relative max-w-2xl mx-auto">
+          {/* Navigation Arrows - Más grandes y visibles */}
           <button 
             onClick={prevSlide}
             disabled={isCompleted}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-lg shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute -left-16 top-1/2 transform -translate-y-1/2 z-30 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-4 border-white border-opacity-30"
           >
-            <div className="flex items-center gap-1">
-              <ChevronLeft size={16} />
-              <span className="text-xs font-bold" style={{ fontFamily: 'Fredoka' }}>Atrás</span>
-            </div>
+            <ChevronLeft size={32} />
           </button>
           
           <button 
             onClick={nextSlide}
             disabled={isCompleted}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-20 hover:bg-opacity-40 backdrop-blur-sm text-white p-2 rounded-lg shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute -right-16 top-1/2 transform -translate-y-1/2 z-30 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-4 border-white border-opacity-30"
           >
-            <div className="flex items-center gap-1">
-              <span className="text-xs font-bold" style={{ fontFamily: 'Fredoka' }}>Adelante</span>
-              <ChevronRight size={16} />
-            </div>
+            <ChevronRight size={32} />
           </button>
 
           {/* Navigation Buttons with Text */}
@@ -547,7 +541,7 @@ const StandaloneEmotionCalculator = () => {
                 >
                   <div 
                     className={`
-                      w-64 h-72 rounded-2xl shadow-2xl overflow-hidden cursor-pointer
+                      w-72 h-80 rounded-3xl shadow-2xl overflow-hidden cursor-pointer
                       transition-all duration-300 transform select-none
                       ${isSelected ? 'ring-4 ring-yellow-400 scale-105' : ''}
                       ${isCompleted ? 'opacity-50 cursor-not-allowed' : ''}
@@ -559,14 +553,14 @@ const StandaloneEmotionCalculator = () => {
                       onClick={() => emotion.position === 0 && handleEmotionSelect(emotion.name)}
                     >
                       {/* Emoji */}
-                      <div className="text-6xl mb-3">{emotion.emoji}</div>
+                      <div className="text-8xl mb-4">{emotion.emoji}</div>
                       
                       {/* Content */}
                       <div className="text-center">
-                        <h3 className="text-2xl font-black text-white mb-2 tracking-tight" style={{ fontFamily: 'Fredoka' }}>
+                        <h3 className="text-3xl font-black text-white mb-3 tracking-tight" style={{ fontFamily: 'Fredoka' }}>
                           {emotion.name.toUpperCase()}
                         </h3>
-                        <p className="text-white text-opacity-90 text-sm mb-4" style={{ fontFamily: 'Comic Neue' }}>
+                        <p className="text-white text-opacity-90 text-base mb-6" style={{ fontFamily: 'Comic Neue' }}>
                           {emotion.description}
                         </p>
                         
@@ -578,7 +572,7 @@ const StandaloneEmotionCalculator = () => {
                           }}
                           disabled={emotion.position !== 0 || isCompleted}
                           className={`
-                            px-4 py-2 rounded-full font-bold text-sm shadow-lg transition-all transform
+                            px-6 py-3 rounded-full font-bold text-base shadow-lg transition-all transform
                             ${emotion.position === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}
                             ${isSelected 
                               ? 'bg-white text-purple-600 hover:bg-gray-100' 
@@ -593,8 +587,8 @@ const StandaloneEmotionCalculator = () => {
                       
                       {/* Selection Indicator */}
                       {isSelected && (
-                        <div className="absolute top-3 right-3 bg-white rounded-full p-1 shadow-lg">
-                          <CheckCircle size={16} className="text-green-500" />
+                        <div className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg">
+                          <CheckCircle size={20} className="text-green-500" />
                         </div>
                       )}
                     </div>
@@ -611,10 +605,10 @@ const StandaloneEmotionCalculator = () => {
                 key={index}
                 onClick={() => goToSlide(index)}
                 disabled={isCompleted}
-                className={`w-2 h-2 rounded-full transition-all ${
+                className={`w-3 h-3 rounded-full transition-all ${
                   currentIndex === index 
-                    ? 'bg-white w-6' 
-                    : 'bg-white bg-opacity-30 hover:bg-opacity-50'
+                    ? 'bg-white w-8' 
+                    : 'bg-white bg-opacity-40 hover:bg-opacity-70'
                 }`}
               />
             ))}
