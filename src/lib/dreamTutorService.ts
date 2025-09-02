@@ -133,9 +133,9 @@ IMPORTANTE: Responde SOLO con el JSON válido, sin texto adicional.`
       const genderText = userGender === 'Femenino' ? 'niña' : userGender === 'Masculino' ? 'niño' : 'niño/niña'
       
       // Crear prompt para DALL-E optimizado para niños/adolescentes
-      const imagePrompt = `Una ilustración vibrante, inspiradora y amigable para niños que represente el sueño: "${dreamTitle}".
+      const imagePrompt = `Una ilustración vibrante, inspiradora y amigable para niños latinoamericanos que represente el sueño: "${dreamTitle}".
       
-      Estilo: Ilustración colorida, optimista, estilo cartoon adecuada para un ${genderText} de ${userAge} años.
+      Estilo: Ilustración colorida, optimista, estilo cartoon adecuada para un ${genderText} latinoamericano/a de ${userAge} años con características físicas latinas.
       
       Contenido: ${dreamDescription}
       
@@ -143,12 +143,14 @@ IMPORTANTE: Responde SOLO con el JSON válido, sin texto adicional.`
       - Brillante y colorida
       - Inspiradora y motivacional
       - Apropiada para un ${genderText} de ${userAge} años
+      - Con características físicas latinoamericanas (piel morena/trigueña, cabello oscuro)
+      - Representando la diversidad cultural latina
       - Profesional pero divertida
       - Mostrando éxito y logros
       - Sin texto o palabras en la imagen
-      - Con un ${genderText} como protagonista
+      - Con un ${genderText} latinoamericano/a como protagonista
       
-      Estilo artístico: Ilustración digital, colores brillantes, ambiente optimista, adecuado para contenido educativo en español.`
+      Estilo artístico: Ilustración digital, colores brillantes, ambiente optimista, con influencia cultural latinoamericana, adecuado para contenido educativo en español para niños latinos.`
 
       console.log('🎨 Generando imagen con DALL-E...')
 
