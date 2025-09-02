@@ -390,7 +390,7 @@ const StandaloneEmotionCalculator = () => {
           <button 
             onClick={nextSlide}
             disabled={isCompleted}
-            className="absolute -right-12 top-1/2 transform -translate-y-1/2 z-30 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-4 border-white border-opacity-30"
+            className="absolute -right-20 top-1/2 transform -translate-y-1/2 z-30 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-4 border-white border-opacity-30"
           >
             <ChevronRight size={32} />
           </button>
