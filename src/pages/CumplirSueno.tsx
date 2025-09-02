@@ -630,7 +630,7 @@ const CumplirSueno = () => {
                                 ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50' 
                                 : 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 hover:border-orange-400'
                               }
-                              min-w-[216px] max-w-[216px] cursor-pointer group flex-shrink-0
+                              min-w-[240px] max-w-[240px] cursor-pointer group flex-shrink-0
                             `}
                             onClick={() => step.id && toggleStepCompletion(step.id, !step.is_completed)}
                           >
