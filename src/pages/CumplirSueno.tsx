@@ -586,7 +586,7 @@ const CumplirSueno = () => {
                         container.scrollBy({ left: 250, behavior: 'smooth' })
                       }
                     }}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-80 border-2 border-yellow-400"
                   >
                     <ChevronRight size={24} className="text-gray-700" />
                   </button>
