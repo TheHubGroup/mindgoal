@@ -378,7 +378,7 @@ const CumplirSueno = () => {
                   Cuéntame tu Sueño
                 </h2>
                 <p className="text-lg text-gray-600" style={{ fontFamily: 'Comic Neue' }}>
-                  Describe tu sueño o meta más importante y la IA creará un roadmap personalizado para ti
+                  Describe tu sueño o meta más importante y MindGoal creará un roadmap personalizado para ti
                 </p>
               </div>
 
