@@ -546,7 +546,7 @@ const CumplirSueno = () => {
                   </div>
                 </div>
               ) : (
-                          const container = document.querySelector('.steps-scroll-container') as HTMLElement
+                <div>
                   <button
                     onClick={() => generateRoadmapForSession(activeSession)}
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
@@ -587,7 +587,6 @@ const CumplirSueno = () => {
                         stepsScrollContainerRef.current.scrollBy({ left: 220, behavior: 'smooth' })
                       }
                     }}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-80 border-2 border-yellow-400"
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
                   >
                     <ChevronRight size={24} className="text-gray-700" />
@@ -701,7 +700,7 @@ const CumplirSueno = () => {
                       display: none;
                     }
                   `}</style>
-                )}
+                </div>
               </div>
             )}
           </div>
