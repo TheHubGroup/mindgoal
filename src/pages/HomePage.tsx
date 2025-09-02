@@ -34,6 +34,7 @@ import { emotionMatchService } from '../lib/emotionMatchService'
 import { emotionLogService } from '../lib/emotionLogService'
 import { problemaResueltoService } from '../lib/problemaResueltoService'
 import { Candy } from 'lucide-react'
+import { Star as StarIcon } from 'lucide-react'
 
 interface ActivityStatus {
   hasData: boolean
@@ -215,6 +216,13 @@ const HomePage = () => {
         count: 0,
         lastActivity: undefined
       }
+      
+      // Cumplir mi Sueño (nueva actividad - sin datos por ahora)
+      statuses['cumplir-sueno'] = {
+        hasData: false,
+        count: 0,
+        lastActivity: undefined
+      }
       setActivityStatuses(statuses)
     } catch (error) {
       console.error('Error loading activity statuses:', error)
@@ -332,6 +340,16 @@ const HomePage = () => {
       color: 'from-pink-500 to-purple-500',
       available: true,
       route: '/actividad/dulces-magicos',
+      isNew: true
+    },
+    {
+      id: 'cumplir-sueno',
+      title: 'Cumplir mi Sueño',
+      description: 'Crea un roadmap personalizado con IA para cumplir tus sueños y metas más importantes',
+      icon: StarIcon,
+      color: 'from-yellow-500 to-orange-500',
+      available: true,
+      route: '/actividad/cumplir-sueno',
       isNew: true
     }
   ]
