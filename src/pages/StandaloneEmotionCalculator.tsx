@@ -414,13 +414,7 @@ const StandaloneEmotionCalculator = () => {
             onTouchEnd={handleTouchEnd}
           >
             {/* Navigation Arrows - Left */}
-            <button 
-              onClick={prevSlide}
-              disabled={isCompleted}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 z-30 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
-            >
-              <ChevronLeft size={24} />
-            </button>
+
             
             {/* Navigation Arrows - Right */}
             <button 
