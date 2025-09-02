@@ -418,14 +418,7 @@ const StandaloneEmotionCalculator = () => {
 
           {/* Navigation Buttons */}
 
-          
-          <button 
-            onClick={nextSlide}
-            disabled={isCompleted}
-            className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-3 rounded-full shadow-xl transition-all hover:scale-125 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30"
-          >
-            <ChevronRight size={24} />
-          </button>
+
 
           {/* Carousel */}
           <div 
