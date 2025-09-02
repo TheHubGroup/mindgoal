@@ -46,6 +46,9 @@ const CumplirSueno = () => {
   const [isGeneratingImage, setIsGeneratingImage] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
 
+  // Ref for steps scroll container
+  const stepsScrollContainerRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (user) {
       loadAllSessions()
@@ -569,7 +572,7 @@ const CumplirSueno = () => {
                   {/* Flechas de navegación */}
                   <button
                     onClick={() => {
-                      const container = document.querySelector('.steps-scroll-container') as HTMLElement
+                      const container = document.querySelector('.steps-scroll-container')
                       if (container) {
                         container.scrollBy({ left: -250, behavior: 'smooth' })
                       }
@@ -581,7 +584,7 @@ const CumplirSueno = () => {
                   
                   <button
                     onClick={() => {
-                      const container = document.querySelector('.steps-scroll-container') as HTMLElement
+                      const container = document.querySelector('.steps-scroll-container')
                       if (container) {
                         container.scrollBy({ left: 220, behavior: 'smooth' })
                       }
