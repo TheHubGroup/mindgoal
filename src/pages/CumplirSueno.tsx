@@ -46,9 +46,6 @@ const CumplirSueno = () => {
   const [isGeneratingImage, setIsGeneratingImage] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
 
-  // Ref for steps scroll container
-  const stepsScrollContainerRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
     if (user) {
       loadAllSessions()
@@ -572,8 +569,9 @@ const CumplirSueno = () => {
                   {/* Flechas de navegación */}
                   <button
                     onClick={() => {
-                      if (stepsScrollContainerRef.current) {
-                        stepsScrollContainerRef.current.scrollBy({ left: -220, behavior: 'smooth' })
+                      const container = document.querySelector('.steps-scroll-container') as HTMLElement
+                      if (container) {
+                        container.scrollBy({ left: -250, behavior: 'smooth' })
                       }
                     }}
                     className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
@@ -583,8 +581,9 @@ const CumplirSueno = () => {
                   
                   <button
                     onClick={() => {
-                      if (stepsScrollContainerRef.current) {
-                        stepsScrollContainerRef.current.scrollBy({ left: 220, behavior: 'smooth' })
+                      const container = document.querySelector('.steps-scroll-container') as HTMLElement
+                      if (container) {
+                        container.scrollBy({ left: 220, behavior: 'smooth' })
                       }
                     }}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
@@ -592,20 +591,18 @@ const CumplirSueno = () => {
                     <ChevronRight size={24} className="text-gray-700" />
                   </button>
 
-                  <div ref={stepsScrollContainerRef} className="steps-scroll-container overflow-x-auto pb-6 px-12" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <div className="steps-scroll-container overflow-x-auto pb-6 px-12" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                     <div className="flex gap-3 min-w-max">
                       {activeSession.steps.map((step, index) => {
                         const getStepIcon = (title: string, description: string) => {
                           const text = (title + ' ' + description).toLowerCase()
                           
                           if (text.includes('bachillerato') || text.includes('estudiar') || text.includes('notas')) {
-                            return { icon: '🎓', color: 'from-blue-500 to-indigo-600' }
+                            return { icon: '📚', color: 'from-blue-500 to-cyan-600' }
                           } else if (text.includes('universidad') || text.includes('carrera') || text.includes('profesional')) {
                             return { icon: '🏛️', color: 'from-purple-500 to-indigo-600' }
                           } else if (text.includes('práctica') || text.includes('experiencia') || text.includes('trabajo')) {
                             return { icon: '💼', color: 'from-green-500 to-teal-600' }
-                          } else if (text.includes('investigar') || text.includes('información') || text.includes('buscar')) {
-                            return { icon: '🔍', color: 'from-orange-500 to-red-600' }
                           } else if (text.includes('habilidades') || text.includes('desarrollar') || text.includes('aprender')) {
                             return { icon: '🚀', color: 'from-pink-500 to-rose-600' }
                           } else if (text.includes('red') || text.includes('contactos') || text.includes('mentores')) {
@@ -625,7 +622,7 @@ const CumplirSueno = () => {
                           <div
                             key={step.id}
                             className={`
-                              relative bg-white rounded-3xl shadow-2xl p-5 border-4 transition-all duration-300 transform hover:scale-105 hover:shadow-3xl
+                              relative bg-white rounded-3xl shadow-2xl p-6 border-4 transition-all duration-300 transform hover:scale-105 hover:shadow-3xl
                               ${step.is_completed 
                                 ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50' 
                                 : 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 hover:border-orange-400'
@@ -644,7 +641,7 @@ const CumplirSueno = () => {
                                 }
                               `}>
                                 {step.is_completed ? (
-                                  <CheckCircle size={16} className="text-white" />
+                                  <CheckCircle size={16} />
                                 ) : (
                                   <span className="text-white font-black text-sm" style={{ fontFamily: 'Fredoka' }}>
                                     {step.step_number}
@@ -652,27 +649,28 @@ const CumplirSueno = () => {
                                 )}
                               </div>
                             </div>
-                            
+
                             {/* Ícono principal del paso */}
-                            <div className="text-center mb-4">
+                            <div className="text-center mb-6">
                               <div className={`
-                                w-16 h-16 rounded-full bg-gradient-to-br ${stepIcon.color} 
-                                flex items-center justify-center mx-auto mb-3 shadow-lg
+                                w-20 h-20 rounded-full bg-gradient-to-br ${stepIcon.color} 
+                                flex items-center justify-center mx-auto mb-4 shadow-lg
                               `}>
-                                <span className="text-3xl">{stepIcon.icon}</span>
+                                <span className="text-4xl">{stepIcon.icon}</span>
                               </div>
-                              <h4 className="text-lg font-black text-gray-800 mb-2 leading-tight" style={{ fontFamily: 'Fredoka' }}>
+                              
+                              <h4 className="text-xl font-black text-gray-800 mb-3 leading-tight" style={{ fontFamily: 'Fredoka' }}>
                                 {step.step_title}
                               </h4>
-                              <p className="text-gray-700 text-xs leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                              <p className="text-gray-700 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
                                 {step.step_description}
                               </p>
                             </div>
-                            
+
                             {step.is_completed && (
                               <div className="absolute top-4 right-4">
                                 <div className="bg-green-500 text-white rounded-full p-2 shadow-lg animate-pulse">
-                                  <CheckCircle size={16} />
+                                  <CheckCircle size={20} />
                                 </div>
                               </div>
                             )}
