@@ -480,7 +480,7 @@ const CumplirSueno = () => {
                     <div className="flex items-center gap-2 mb-3">
                       <Image size={20} className="text-yellow-600" />
                       <h3 className="font-bold text-yellow-800" style={{ fontFamily: 'Fredoka' }}>
-                        Imagen Inspiracional Generada por IA
+                        Imagen Inspiracional Generada por MindGoal
                       </h3>
                     </div>
                     <div className="w-full max-w-md mx-auto rounded-xl overflow-hidden shadow-lg">
