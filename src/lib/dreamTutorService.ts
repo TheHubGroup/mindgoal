@@ -1,5 +1,6 @@
 // Dream Tutor AI Service using OpenAI API
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY
+import { supabase } from './supabase'
 
 export interface DreamRoadmap {
   roadmap: string
@@ -186,8 +187,41 @@ IMPORTANTE: Responde SOLO con el JSON válido, sin texto adicional.`
         return null
       }
 
+      // Fetch the image data from DALL-E URL
+      console.log('📥 Descargando imagen de DALL-E...')
+      const imageResponse = await fetch(imageUrl)
+      if (!imageResponse.ok) {
+        console.error('❌ Error descargando imagen de DALL-E:', imageResponse.status)
+        return null
+      }
+
+      const imageBlob = await imageResponse.blob()
+      const fileName = `dream_${Date.now()}_${Math.random().toString(36).substring(7)}.png`
+
+      // Upload to Supabase Storage
+      console.log('☁️ Subiendo imagen a Supabase Storage...')
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('dream_images')
+        .upload(fileName, imageBlob, {
+          contentType: 'image/png',
+          cacheControl: '3600'
+        })
+
+      if (uploadError) {
+        console.error('❌ Error subiendo imagen a Supabase:', uploadError)
+        return null
+      }
+
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('dream_images')
+        .getPublicUrl(fileName)
+
+      const permanentImageUrl = publicUrlData.publicUrl
+      console.log('✅ Imagen guardada permanentemente en Supabase Storage')
+
       return {
-        url: imageUrl,
+        url: permanentImageUrl,
         description: `Imagen inspiracional para: ${dreamTitle}`
       }
     } catch (error) {

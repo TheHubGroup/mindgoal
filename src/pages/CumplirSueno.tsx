@@ -499,7 +499,7 @@ const CumplirSueno = () => {
                                 <div class="text-center text-yellow-800">
                                   <div style="font-size: 48px; margin-bottom: 8px;">🎨</div>
                                   <p class="font-bold">Imagen no disponible</p>
-                                  <p class="text-sm opacity-80">La imagen se generará en el próximo intento</p>
+                                  <p class="text-sm opacity-80">Error cargando la imagen inspiracional</p>
                                 </div>
                               </div>
                             `
