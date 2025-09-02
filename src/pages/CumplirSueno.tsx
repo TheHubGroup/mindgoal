@@ -569,30 +569,30 @@ const CumplirSueno = () => {
                   {/* Flechas de navegación */}
                   <button
                     onClick={() => {
-                      const container = document.querySelector('.steps-container')
+                      const container = document.querySelector('.steps-scroll-container')
                       if (container) {
-                        container.scrollBy({ left: -300, behavior: 'smooth' })
+                        container.scrollBy({ left: -250, behavior: 'smooth' })
                       }
                     }}
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
                   >
                     <ChevronLeft size={24} className="text-gray-700" />
                   </button>
                   
                   <button
                     onClick={() => {
-                      const container = document.querySelector('.steps-container')
+                      const container = document.querySelector('.steps-scroll-container')
                       if (container) {
-                        container.scrollBy({ left: 300, behavior: 'smooth' })
+                        container.scrollBy({ left: 250, behavior: 'smooth' })
                       }
                     }}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
                   >
                     <ChevronRight size={24} className="text-gray-700" />
                   </button>
 
-                  <div className="overflow-x-auto pb-6">
-                    <div className="steps-container flex gap-4 min-w-max px-12">
+                  <div className="steps-scroll-container overflow-x-auto pb-6 px-16" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="flex gap-4 min-w-max">
                       {activeSession.steps.map((step, index) => {
                         // Función para obtener ícono basado en el contenido del paso
                         const getStepIcon = (title: string, description: string) => {
@@ -630,7 +630,7 @@ const CumplirSueno = () => {
                                 ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50' 
                                 : 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 hover:border-orange-400'
                               }
-                              min-w-[280px] max-w-[280px] cursor-pointer group
+                              min-w-[240px] max-w-[240px] cursor-pointer group flex-shrink-0
                             `}
                             onClick={() => step.id && toggleStepCompletion(step.id, !step.is_completed)}
                           >
@@ -699,6 +699,13 @@ const CumplirSueno = () => {
                       </span>
                     </div>
                   </div>
+                  
+                  {/* CSS para ocultar scrollbar */}
+                  <style jsx>{`
+                    .steps-scroll-container::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}</style>
                 </div>
               </div>
             )}
