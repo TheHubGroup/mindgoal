@@ -538,63 +538,168 @@ const CumplirSueno = () => {
 
             {/* Pasos del Roadmap */}
             {activeSession.steps && activeSession.steps.length > 0 && (
-              <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-white text-center mb-6" style={{ fontFamily: 'Fredoka' }}>
+              <div className="space-y-8">
+                <h3 className="text-3xl font-bold text-white text-center mb-8 flex items-center justify-center gap-3" style={{ fontFamily: 'Fredoka' }}>
+                  <Target size={32} className="text-yellow-300" />
                   📋 Pasos para Cumplir tu Sueño
+                  <Rocket size={32} className="text-blue-300" />
                 </h3>
                 
-                {activeSession.steps.map((step, index) => (
-                  <div
-                    key={step.id}
-                    className={`bg-white rounded-2xl shadow-lg p-4 border-l-4 transition-all ${
-                      step.is_completed ? 'border-green-500 bg-green-50' : 'border-yellow-400'
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="flex-shrink-0">
-                        <button
-                          onClick={() => step.id && toggleStepCompletion(step.id, !step.is_completed)}
-                          className={`w-10 h-10 rounded-full border-3 flex items-center justify-center transition-all ${
-                            step.is_completed 
-                              ? 'bg-green-500 border-green-500' 
-                              : 'bg-white border-yellow-400 hover:border-yellow-500'
-                          }`}
-                        >
-                          {step.is_completed ? (
-                            <CheckCircle size={20} className="text-white" />
-                          ) : (
-                            <span className="text-lg font-bold text-yellow-600">{step.step_number}</span>
-                          )}
-                        </button>
-                      </div>
-                      
-                      <div className="flex-1">
-                        <h4 className="text-2xl font-bold text-gray-800 mb-1" style={{ fontFamily: 'Fredoka' }}>
-                          {step.step_title}
-                        </h4>
-                        <p className="text-gray-600 text-sm mb-2" style={{ fontFamily: 'Comic Neue' }}>
-                          {step.step_description}
-                        </p>
-                        
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          {step.estimated_time && (
-                            <div className="flex items-center gap-1">
-                              <Clock size={12} className="text-blue-500" />
-                              <span>{step.estimated_time}</span>
-                            </div>
-                          )}
+                {/* Carrusel de pasos deslizante */}
+                <div className="relative">
+                  <div className="overflow-x-auto pb-6">
+                    <div className="flex gap-6 min-w-max px-4">
+                      {activeSession.steps.map((step, index) => {
+                        // Función para obtener ícono basado en el contenido del paso
+                        const getStepIcon = (title: string, description: string) => {
+                          const text = (title + ' ' + description).toLowerCase()
                           
-                          {step.resources && step.resources.length > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Lightbulb size={12} className="text-yellow-500" />
-                              <span>{step.resources.length} recurso{step.resources.length > 1 ? 's' : ''}</span>
+                          if (text.includes('bachillerato') || text.includes('estudiar') || text.includes('notas')) {
+                            return { icon: '🎓', color: 'from-blue-500 to-indigo-600' }
+                          } else if (text.includes('universidad') || text.includes('carrera') || text.includes('profesional')) {
+                            return { icon: '🏛️', color: 'from-purple-500 to-indigo-600' }
+                          } else if (text.includes('práctica') || text.includes('experiencia') || text.includes('trabajo')) {
+                            return { icon: '💼', color: 'from-green-500 to-teal-600' }
+                          } else if (text.includes('investigar') || text.includes('información') || text.includes('conocer')) {
+                            return { icon: '🔍', color: 'from-orange-500 to-red-500' }
+                          } else if (text.includes('habilidades') || text.includes('desarrollar') || text.includes('aprender')) {
+                            return { icon: '🚀', color: 'from-pink-500 to-rose-600' }
+                          } else if (text.includes('red') || text.includes('contactos') || text.includes('mentores')) {
+                            return { icon: '🤝', color: 'from-cyan-500 to-blue-600' }
+                          } else if (text.includes('certificación') || text.includes('título') || text.includes('diploma')) {
+                            return { icon: '📜', color: 'from-amber-500 to-orange-600' }
+                          } else if (text.includes('especialización') || text.includes('maestría') || text.includes('posgrado')) {
+                            return { icon: '🎯', color: 'from-violet-500 to-purple-600' }
+                          } else {
+                            return { icon: '⭐', color: 'from-yellow-500 to-orange-500' }
+                          }
+                        }
+                        
+                        const stepIcon = getStepIcon(step.step_title, step.step_description)
+                        
+                        return (
+                          <div
+                            key={step.id}
+                            className={`
+                              relative bg-white rounded-3xl shadow-2xl p-6 border-4 transition-all duration-300 transform hover:scale-105 hover:shadow-3xl
+                              ${step.is_completed 
+                                ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50' 
+                                : 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 hover:border-orange-400'
+                              }
+                              min-w-[350px] max-w-[350px] cursor-pointer group
+                            `}
+                            onClick={() => step.id && toggleStepCompletion(step.id, !step.is_completed)}
+                          >
+                            {/* Número del paso y estado */}
+                            <div className="absolute -top-4 -left-4 z-10">
+                              <div className={`
+                                w-12 h-12 rounded-full border-4 border-white flex items-center justify-center shadow-xl transition-all duration-300 group-hover:scale-110
+                                ${step.is_completed 
+                                  ? 'bg-gradient-to-br from-green-500 to-emerald-600' 
+                                  : 'bg-gradient-to-br from-yellow-500 to-orange-500'
+                                }
+                              `}>
+                                {step.is_completed ? (
+                                  <CheckCircle size={24} className="text-white" />
+                                ) : (
+                                  <span className="text-white font-black text-lg" style={{ fontFamily: 'Fredoka' }}>
+                                    {step.step_number}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          )}
-                        </div>
-                      </div>
+                            
+                            {/* Ícono principal del paso */}
+                            <div className="text-center mb-6">
+                              <div className={`
+                                w-20 h-20 rounded-full bg-gradient-to-br ${stepIcon.color} 
+                                flex items-center justify-center mx-auto mb-4 shadow-lg
+                                transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6
+                              `}>
+                                <span className="text-4xl">{stepIcon.icon}</span>
+                              </div>
+                            </div>
+                            
+                            {/* Contenido del paso */}
+                            <div className="text-center">
+                              <h4 className="text-xl font-black text-gray-800 mb-3 leading-tight" style={{ fontFamily: 'Fredoka' }}>
+                                {step.step_title}
+                              </h4>
+                              <p className="text-gray-700 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                                {step.step_description}
+                              </p>
+                              
+                              {/* Información adicional */}
+                              <div className="space-y-3">
+                                {step.estimated_time && (
+                                  <div className="flex items-center justify-center gap-2 bg-blue-100 rounded-full px-4 py-2">
+                                    <Clock size={16} className="text-blue-600" />
+                                    <span className="text-blue-800 font-bold text-sm" style={{ fontFamily: 'Fredoka' }}>
+                                      {step.estimated_time}
+                                    </span>
+                                  </div>
+                                )}
+                                
+                                {step.resources && step.resources.length > 0 && (
+                                  <div className="flex items-center justify-center gap-2 bg-purple-100 rounded-full px-4 py-2">
+                                    <Lightbulb size={16} className="text-purple-600" />
+                                    <span className="text-purple-800 font-bold text-sm" style={{ fontFamily: 'Fredoka' }}>
+                                      {step.resources.length} recurso{step.resources.length > 1 ? 's' : ''}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Indicador de completado */}
+                            {step.is_completed && (
+                              <div className="absolute top-4 right-4">
+                                <div className="bg-green-500 text-white rounded-full p-2 shadow-lg animate-pulse">
+                                  <CheckCircle size={20} />
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Efecto de brillo en hover */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-3xl" />
+                            
+                            {/* Call to action */}
+                            <div className="mt-6 text-center">
+                              <div className={`
+                                inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all
+                                ${step.is_completed 
+                                  ? 'bg-green-500 text-white' 
+                                  : 'bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 group-hover:from-orange-400 group-hover:to-red-400'
+                                }
+                              `} style={{ fontFamily: 'Fredoka' }}>
+                                {step.is_completed ? (
+                                  <>
+                                    <Award size={16} />
+                                    ¡COMPLETADO!
+                                  </>
+                                ) : (
+                                  <>
+                                    <Zap size={16} />
+                                    ¡HAZLO AHORA!
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
-                ))}
+                  
+                  {/* Indicador de scroll */}
+                  <div className="text-center mt-4">
+                    <div className="inline-flex items-center gap-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2 text-white">
+                      <span className="text-sm font-medium" style={{ fontFamily: 'Comic Neue' }}>
+                        👈 Desliza para ver todos los pasos 👉
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
