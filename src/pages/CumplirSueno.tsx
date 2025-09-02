@@ -252,7 +252,7 @@ const CumplirSueno = () => {
                 ⭐ Mis Sueños y Metas
               </h2>
               <p className="text-xl text-white text-opacity-90 max-w-3xl mx-auto" style={{ fontFamily: 'Comic Neue' }}>
-                Crea roadmaps personalizados con IA para cumplir tus sueños más importantes
+                Crea roadmaps personalizados con MindGoal para cumplir tus sueños más importantes
               </p>
             </div>
 
@@ -260,10 +260,10 @@ const CumplirSueno = () => {
               <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center mb-8">
                 <div className="text-white font-bold text-opacity-100 text-base space-y-2 mb-6" style={{ fontFamily: 'Comic Neue' }}>
                   <p>• Describe tu sueño o meta más importante</p>
-                  <p>• La IA creará un roadmap personalizado para ti</p>
+                  <p>• MindGoal creará un roadmap personalizado para ti</p>
                   <p>• Recibe pasos específicos y recursos útiles</p>
                   <p>• Marca tu progreso conforme avanzas</p>
-                  <p>• Obtén una imagen inspiracional generada por IA</p>
+                  <p>• Obtén una imagen inspiracional generada por MindGoal</p>
                 </div>
                 
                 <button
@@ -290,7 +290,7 @@ const CumplirSueno = () => {
                       Nuevo Sueño
                     </h4>
                     <p className="text-sm opacity-90" style={{ fontFamily: 'Comic Neue' }}>
-                      Crea un roadmap con IA
+                      Crea un roadmap con MindGoal
                     </p>
                   </div>
                 </div>
