@@ -234,7 +234,7 @@ const StandaloneEmotionCalculator = () => {
           emotion_name: emotionName,
           felt_at: new Date().toISOString(),
           intensity: 3,
-          notes: `Registrado desde widget MindGoal - ${new Date().toLocaleDateString()}`
+          notes: null
         }))
 
       for (const entry of logEntries) {
