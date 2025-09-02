@@ -406,15 +406,7 @@ const StandaloneEmotionCalculator = () => {
             <span className="font-bold text-sm">Atrás</span>
           </button>
           
-          <button 
-            onClick={nextSlide}
-            disabled={isCompleted}
-            className="absolute -right-8 top-1/2 transform -translate-y-1/2 z-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-3 rounded-xl shadow-xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white border-opacity-30 flex items-center gap-2"
-            style={{ fontFamily: 'Fredoka' }}
-          >
-            <span className="font-bold text-sm">Adelante</span>
-            <ChevronRight size={20} />
-          </button>
+ 
 
           {/* Navigation Buttons */}
 
