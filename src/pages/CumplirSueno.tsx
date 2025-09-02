@@ -630,7 +630,7 @@ const CumplirSueno = () => {
                                 ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50' 
                                 : 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 hover:border-orange-400'
                               }
-                              min-w-[240px] max-w-[240px] cursor-pointer group flex-shrink-0
+                              min-w-[216px] max-w-[216px] h-[270px] cursor-pointer group flex-shrink-0
                             `}
                             onClick={() => step.id && toggleStepCompletion(step.id, !step.is_completed)}
                           >
@@ -654,18 +654,18 @@ const CumplirSueno = () => {
                             </div>
 
                             {/* Ícono principal del paso */}
-                            <div className="text-center mb-6">
+                            <div className="text-center mb-4">
                               <div className={`
-                                w-20 h-20 rounded-full bg-gradient-to-br ${stepIcon.color} 
-                                flex items-center justify-center mx-auto mb-4 shadow-lg
+                                w-14 h-14 rounded-full bg-gradient-to-br ${stepIcon.color} 
+                                flex items-center justify-center mx-auto mb-3 shadow-lg
                               `}>
-                                <span className="text-4xl">{stepIcon.icon}</span>
+                                <span className="text-2xl">{stepIcon.icon}</span>
                               </div>
                               
-                              <h4 className="text-xl font-black text-gray-800 mb-3 leading-tight" style={{ fontFamily: 'Fredoka' }}>
+                              <h4 className="text-base font-black text-gray-800 mb-2 leading-tight" style={{ fontFamily: 'Fredoka' }}>
                                 {step.step_title}
                               </h4>
-                              <p className="text-gray-700 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
+                              <p className="text-gray-700 text-xs leading-relaxed" style={{ fontFamily: 'Comic Neue' }}>
                                 {step.step_description}
                               </p>
                             </div>
