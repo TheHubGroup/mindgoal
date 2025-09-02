@@ -359,6 +359,18 @@ const DashboardPage = () => {
               <div className="text-2xl font-bold text-white">{stats.totalAngerSessions}</div>
               <div className="text-sm text-white text-opacity-80">Menú de la Ira</div>
             </div>
+            
+            <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+              <MessageCircle size={32} className="mx-auto mb-2 text-green-400" />
+              <div className="text-2xl font-bold text-white">{stats.totalCommunicationSessions || 0}</div>
+              <div className="text-sm text-white text-opacity-80">Comunicación</div>
+            </div>
+            
+            <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+              <Shield size={32} className="mx-auto mb-2 text-yellow-400" />
+              <div className="text-2xl font-bold text-white">{stats.totalSemaforoSessions || 0}</div>
+              <div className="text-sm text-white text-opacity-80">Semáforo Límites</div>
+            </div>
           </div>
         </div>
         
@@ -653,7 +665,8 @@ const DashboardPage = () => {
                   <th className="px-4 py-3">Línea Tiempo</th>
                   <th className="px-4 py-3">Cartas</th>
                   <th className="px-4 py-3">Meditación</th>
-                  <th className="px-4 py-3">Comunicación</th>
+                  <th className="px-4 py-3">Emociones</th>
+                  <th className="px-4 py-3">Semáforo</th>
                   <th className="px-4 py-3">Score</th>
                   <th className="px-4 py-3">Acciones</th>
                 </tr>
@@ -710,79 +723,22 @@ const DashboardPage = () => {
                         <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold">
                           {userData.letters_stats.count}
                         </div>
-                        <div className="text-white text-opacity-80 text-sm">
-                          cartas
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
-                          {userData.meditation_stats.count}
-                        </div>
-                        <div className="text-white text-opacity-80 text-sm">
-                          sesiones
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="space-y-2">
-                        {/* Comunicación */}
-                        <div className="flex items-center gap-2">
-                          <MessageCircle size={16} className="text-green-400" />
+                        {/* Calculadora de Emociones */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <Heart size={16} className="text-pink-400" />
                           <span className="text-white text-sm">
-                            {userData.communication_stats?.count || 0} conversaciones
+                            {userData.emotion_logs_stats?.count || 0} registros
                           </span>
                         </div>
                         
-                        {/* Semáforo de Límites - Detallado */}
-                        <div className="bg-white bg-opacity-10 rounded-lg p-2">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Shield size={16} className="text-yellow-400" />
-                            <span className="text-white text-sm font-bold">
-                              Semáforo: {userData.semaforo_stats?.count || 0} sesiones
-                            </span>
-                          </div>
-                          
-                          {userData.semaforo_stats?.count > 0 && (
-                            <div className="grid grid-cols-3 gap-1 text-xs">
-                              <div className="bg-red-500 bg-opacity-30 rounded px-2 py-1 text-center">
-                                <div className="text-red-200 font-bold">🔴</div>
-                                <div className="text-white">No Permito</div>
-                              </div>
-                              <div className="bg-yellow-500 bg-opacity-30 rounded px-2 py-1 text-center">
-                                <div className="text-yellow-200 font-bold">🟡</div>
-                                <div className="text-white">Más o Menos</div>
-                              </div>
-                              <div className="bg-green-500 bg-opacity-30 rounded px-2 py-1 text-center">
-                                <div className="text-green-200 font-bold">🟢</div>
-                                <div className="text-white">Permitido</div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Problema Resuelto */}
+                        {/* Nombra tus Emociones */}
                         <div className="flex items-center gap-2">
-                          <Brain size={16} className="text-blue-400" />
+                          <Heart size={16} className="text-purple-400" />
                           <span className="text-white text-sm">
-                            {userData.problema_resuelto_stats?.count || 0} problemas
-                            {userData.problema_resuelto_stats?.resilience_score > 0 && (
+                            {userData.emotion_matches_stats?.attempts || 0} intentos
+                            {userData.emotion_matches_stats?.correct > 0 && (
                               <span className="text-green-400 ml-1">
-                                ({Math.round(userData.problema_resuelto_stats.resilience_score)}% resiliente)
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        
-                        {/* Dulces Mágicos */}
-                        <div className="flex items-center gap-2">
-                          <Candy size={16} className="text-pink-400" />
-                          <span className="text-white text-sm">
-                            {userData.dulces_magicos_stats?.count || 0} aventuras
-                            {userData.dulces_magicos_stats?.resilience_level && (
-                              <span className="text-purple-400 ml-1">
-                                ({userData.dulces_magicos_stats.resilience_level})
+                                ({userData.emotion_matches_stats.correct} correctos)
                               </span>
                             )}
                           </span>
@@ -790,12 +746,41 @@ const DashboardPage = () => {
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex items-center gap-2 text-white">
-                        <Trophy size={14} />
-                        {userData.total_score.toLocaleString()}
+                      <div className="bg-white bg-opacity-10 rounded-lg p-2">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Shield size={16} className="text-yellow-400" />
+                          <span className="text-white text-sm font-bold">
+                            {userData.semaforo_stats?.count || 0} sesiones
+                          </span>
+                        </div>
+                        
+                        {userData.semaforo_stats?.count > 0 && (
+                          <div className="grid grid-cols-3 gap-1 text-xs">
+                            <div className="bg-red-500 bg-opacity-30 rounded px-2 py-1 text-center">
+                              <div className="text-red-200 font-bold">🔴</div>
+                              <div className="text-white">No Permito</div>
+                            </div>
+                            <div className="bg-yellow-500 bg-opacity-30 rounded px-2 py-1 text-center">
+                              <div className="text-yellow-200 font-bold">🟡</div>
+                              <div className="text-white">Más o Menos</div>
+                            </div>
+                            <div className="bg-green-500 bg-opacity-30 rounded px-2 py-1 text-center">
+                              <div className="text-green-200 font-bold">🟢</div>
+                              <div className="text-white">Permitido</div>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="text-xs text-white text-opacity-70 mt-1">
-                        {userData.level}
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-yellow-900 px-3 py-2 rounded-full font-bold text-center shadow-lg border-2 border-yellow-300">
+                        <div className="flex items-center justify-center gap-1">
+                          <Trophy size={14} />
+                          <span>{userData.total_score.toLocaleString()}</span>
+                        </div>
+                        <div className="text-xs font-medium mt-1">
+                          {userData.level}
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">

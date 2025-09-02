@@ -28,7 +28,8 @@ export const emotionLogService = {
       const entryWithUserId = {
         ...emotionEntry,
         user_id: user.id,
-        felt_at: emotionEntry.felt_at || new Date().toISOString()
+        felt_at: emotionEntry.felt_at || new Date().toISOString(),
+        notes: emotionEntry.notes || `Registrado desde MindGoal - ${new Date().toLocaleDateString()}`
       }
 
       const { data, error } = await supabase
