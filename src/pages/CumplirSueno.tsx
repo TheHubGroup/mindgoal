@@ -157,7 +157,8 @@ const CumplirSueno = () => {
         const imageData = await dreamTutorService.generateDreamImage(
           session.dream_title,
           session.dream_description,
-          profile.edad || 15
+          profile.edad || 15,
+          profile.sexo
         )
 
         if (imageData) {
@@ -545,58 +546,51 @@ const CumplirSueno = () => {
                 {activeSession.steps.map((step, index) => (
                   <div
                     key={step.id}
-                    className={`bg-white rounded-2xl shadow-lg p-6 border-l-4 transition-all ${
+                    className={`bg-white rounded-2xl shadow-lg p-4 border-l-4 transition-all ${
                       step.is_completed ? 'border-green-500 bg-green-50' : 'border-yellow-400'
                     }`}
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-center gap-4">
                       <div className="flex-shrink-0">
                         <button
                           onClick={() => step.id && toggleStepCompletion(step.id, !step.is_completed)}
-                          className={`w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all ${
+                          className={`w-10 h-10 rounded-full border-3 flex items-center justify-center transition-all ${
                             step.is_completed 
                               ? 'bg-green-500 border-green-500' 
                               : 'bg-white border-yellow-400 hover:border-yellow-500'
                           }`}
                         >
                           {step.is_completed ? (
-                            <CheckCircle size={24} className="text-white" />
+                            <CheckCircle size={20} className="text-white" />
                           ) : (
-                            <span className="text-xl font-bold text-yellow-600">{step.step_number}</span>
+                            <span className="text-lg font-bold text-yellow-600">{step.step_number}</span>
                           )}
                         </button>
                       </div>
                       
                       <div className="flex-1">
-                        <h4 className="text-xl font-bold text-gray-800 mb-2" style={{ fontFamily: 'Fredoka' }}>
+                        <h4 className="text-2xl font-bold text-gray-800 mb-1" style={{ fontFamily: 'Fredoka' }}>
                           {step.step_title}
                         </h4>
-                        <p className="text-gray-700 leading-relaxed mb-4" style={{ fontFamily: 'Comic Neue' }}>
+                        <p className="text-gray-600 text-sm mb-2" style={{ fontFamily: 'Comic Neue' }}>
                           {step.step_description}
                         </p>
                         
-                        {step.estimated_time && (
-                          <div className="flex items-center gap-2 mb-3">
-                            <Clock size={16} className="text-blue-500" />
-                            <span className="text-sm font-medium text-blue-600">
-                              Tiempo estimado: {step.estimated_time}
-                            </span>
-                          </div>
-                        )}
-                        
-                        {step.resources && step.resources.length > 0 && (
-                          <div>
-                            <h5 className="font-bold text-gray-700 mb-2 flex items-center gap-2">
-                              <Lightbulb size={16} className="text-yellow-500" />
-                              Recursos Recomendados:
-                            </h5>
-                            <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                              {step.resources.map((resource, idx) => (
-                                <li key={idx}>{resource}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                          {step.estimated_time && (
+                            <div className="flex items-center gap-1">
+                              <Clock size={12} className="text-blue-500" />
+                              <span>{step.estimated_time}</span>
+                            </div>
+                          )}
+                          
+                          {step.resources && step.resources.length > 0 && (
+                            <div className="flex items-center gap-1">
+                              <Lightbulb size={12} className="text-yellow-500" />
+                              <span>{step.resources.length} recurso{step.resources.length > 1 ? 's' : ''}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

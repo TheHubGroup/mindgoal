@@ -26,7 +26,7 @@ export const dreamTutorService = {
     }
 
     try {
-      const prompt = `Eres un tutor de vida especializado en ayudar a niños y adolescentes a cumplir sus sueños. 
+      const prompt = `Eres un tutor de vida especializado en ayudar a niños y adolescentes a cumplir sus sueños.
 
 INFORMACIÓN DEL ESTUDIANTE:
 - Edad: ${userAge} años
@@ -35,29 +35,34 @@ INFORMACIÓN DEL ESTUDIANTE:
 - Descripción: ${dreamDescription}
 
 INSTRUCCIONES:
-Crea un roadmap detallado y motivador para ayudar a este estudiante a cumplir su sueño. El roadmap debe:
+Crea un roadmap motivador para ayudar a este estudiante a cumplir su sueño. El roadmap debe:
 
-1. Ser apropiado para su edad y nivel educativo
-2. Incluir pasos concretos y alcanzables
-3. Ser motivador y positivo
-4. Incluir recursos específicos y útiles
-5. Tener estimaciones de tiempo realistas
+1. SIEMPRE empezar con "Terminar el bachillerato con buenas notas" como primer paso
+2. Ser apropiado para su edad y nivel educativo
+3. Incluir pasos concretos y alcanzables (títulos cortos + frase breve)
+4. Ser motivador y positivo
+5. Incluir recursos específicos y útiles
 
 FORMATO DE RESPUESTA (JSON):
 {
-  "roadmap": "Introducción motivadora y explicación general del camino hacia el sueño (máximo 300 palabras)",
+  "roadmap": "Introducción motivadora y explicación general del camino hacia el sueño (máximo 200 palabras)",
   "steps": [
     {
       "step_number": 1,
-      "step_title": "Título del paso",
-      "step_description": "Descripción detallada de qué hacer en este paso",
+      "step_title": "Título corto del paso (máximo 6 palabras)",
+      "step_description": "Descripción breve y clara (máximo 100 palabras)",
       "estimated_time": "Tiempo estimado (ej: 1-2 meses, 6 meses, 1 año)",
       "resources": ["Recurso 1", "Recurso 2", "Recurso 3"]
     }
   ]
 }
 
-Crea entre 5-8 pasos progresivos que lleven desde donde está ahora hasta cumplir su sueño. Cada paso debe construir sobre el anterior.
+IMPORTANTE: 
+- El PRIMER paso SIEMPRE debe ser "Terminar el bachillerato con buenas notas"
+- Crea entre 6-8 pasos progresivos total
+- Títulos cortos y directos
+- Descripciones breves pero motivadoras
+- Cada paso debe construir sobre el anterior
 
 IMPORTANTE: Responde SOLO con el JSON válido, sin texto adicional.`
 
@@ -117,29 +122,33 @@ IMPORTANTE: Responde SOLO con el JSON válido, sin texto adicional.`
   },
 
   // Generar imagen inspiracional para el sueño usando DALL-E
-  async generateDreamImage(dreamTitle: string, dreamDescription: string, userAge: number): Promise<GeneratedImage | null> {
+  async generateDreamImage(dreamTitle: string, dreamDescription: string, userAge: number, userGender?: string): Promise<GeneratedImage | null> {
     if (!OPENAI_API_KEY) {
       console.error('❌ OpenAI API key not configured')
       return null
     }
 
     try {
+      // Determinar género para la imagen
+      const genderText = userGender === 'Femenino' ? 'niña' : userGender === 'Masculino' ? 'niño' : 'niño/niña'
+      
       // Crear prompt para DALL-E optimizado para niños/adolescentes
-      const imagePrompt = `A vibrant, inspiring, and child-friendly illustration representing the dream: "${dreamTitle}". 
+      const imagePrompt = `Una ilustración vibrante, inspiradora y amigable para niños que represente el sueño: "${dreamTitle}".
       
-      Style: Colorful, optimistic, cartoon-like illustration suitable for a ${userAge}-year-old. 
+      Estilo: Ilustración colorida, optimista, estilo cartoon adecuada para un ${genderText} de ${userAge} años.
       
-      Content: ${dreamDescription}
+      Contenido: ${dreamDescription}
       
-      The image should be:
-      - Bright and colorful
-      - Inspiring and motivational
-      - Age-appropriate for a ${userAge}-year-old
-      - Professional but fun
-      - Showing success and achievement
-      - No text or words in the image
+      La imagen debe ser:
+      - Brillante y colorida
+      - Inspiradora y motivacional
+      - Apropiada para un ${genderText} de ${userAge} años
+      - Profesional pero divertida
+      - Mostrando éxito y logros
+      - Sin texto o palabras en la imagen
+      - Con un ${genderText} como protagonista
       
-      Art style: Digital illustration, bright colors, optimistic mood, suitable for educational content.`
+      Estilo artístico: Ilustración digital, colores brillantes, ambiente optimista, adecuado para contenido educativo en español.`
 
       console.log('🎨 Generando imagen con DALL-E...')
 
