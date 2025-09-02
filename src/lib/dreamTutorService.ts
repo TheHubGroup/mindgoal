@@ -1,6 +1,6 @@
 // Dream Tutor AI Service using OpenAI API
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY
-const GEMINI_API_KEY = 'AIzaSyCivN2wbWYuh6opO6gEhu8r_J20aFbe5EM'
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
 export interface DreamRoadmap {
   roadmap: string
