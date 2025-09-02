@@ -24,7 +24,9 @@ import {
   Award,
   Image,
   Loader,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 
 const CumplirSueno = () => {
@@ -472,7 +474,7 @@ const CumplirSueno = () => {
               </div>
 
               {/* Imagen Generada por IA */}
-              {activeSession.ai_generated_image_url && (
+              {activeSession.ai_generated_image_url && activeSession.ai_generated_image_url.startsWith('http') && (
                 <div className="mb-6">
                   <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-4 border-2 border-yellow-300">
                     <div className="flex items-center gap-2 mb-3">
@@ -486,6 +488,23 @@ const CumplirSueno = () => {
                         src={activeSession.ai_generated_image_url}
                         alt={`Imagen inspiracional para: ${activeSession.dream_title}`}
                         className="w-full h-auto object-cover"
+                        onError={(e) => {
+                          console.error('Error loading AI generated image:', activeSession.ai_generated_image_url)
+                          const target = e.target as HTMLImageElement
+                          target.style.display = 'none'
+                          const parent = target.parentElement
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="w-full h-48 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-xl flex items-center justify-center">
+                                <div class="text-center text-yellow-800">
+                                  <div style="font-size: 48px; margin-bottom: 8px;">🎨</div>
+                                  <p class="font-bold">Imagen no disponible</p>
+                                  <p class="text-sm opacity-80">La imagen se generará en el próximo intento</p>
+                                </div>
+                              </div>
+                            `
+                          }
+                        }}
                       />
                     </div>
                   </div>
@@ -547,8 +566,33 @@ const CumplirSueno = () => {
                 
                 {/* Carrusel de pasos deslizante */}
                 <div className="relative">
+                  {/* Flechas de navegación */}
+                  <button
+                    onClick={() => {
+                      const container = document.querySelector('.steps-container')
+                      if (container) {
+                        container.scrollBy({ left: -300, behavior: 'smooth' })
+                      }
+                    }}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
+                  >
+                    <ChevronLeft size={24} className="text-gray-700" />
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      const container = document.querySelector('.steps-container')
+                      if (container) {
+                        container.scrollBy({ left: 300, behavior: 'smooth' })
+                      }
+                    }}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-xl transition-all hover:scale-110 border-2 border-yellow-400"
+                  >
+                    <ChevronRight size={24} className="text-gray-700" />
+                  </button>
+
                   <div className="overflow-x-auto pb-6">
-                    <div className="flex gap-6 min-w-max px-4">
+                    <div className="steps-container flex gap-4 min-w-max px-12">
                       {activeSession.steps.map((step, index) => {
                         // Función para obtener ícono basado en el contenido del paso
                         const getStepIcon = (title: string, description: string) => {
@@ -586,7 +630,7 @@ const CumplirSueno = () => {
                                 ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50' 
                                 : 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 hover:border-orange-400'
                               }
-                              min-w-[350px] max-w-[350px] cursor-pointer group
+                              min-w-[320px] max-w-[320px] cursor-pointer group
                             `}
                             onClick={() => step.id && toggleStepCompletion(step.id, !step.is_completed)}
                           >
