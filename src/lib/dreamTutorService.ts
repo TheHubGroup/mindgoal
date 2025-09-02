@@ -158,7 +158,7 @@ IMPORTANTE: Responde SOLO con el JSON válido, sin texto adicional.`
 
       console.log('🎨 Generando imagen con Gemini...')
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
